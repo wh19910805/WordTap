@@ -9,9 +9,15 @@ export const useCourseStore = defineStore("course", () => {
   const currentCourse = ref(null);
   const currentLesson = ref(null);
   const lessonData = ref(null); // 当前课时的详细数据
+  const coursesLoaded = ref(false); // 课程是否已经加载的标志位
 
   // 加载所有课程列表
   async function loadCourses() {
+    // 如果课程已经加载过，不再重复加载
+    if (coursesLoaded.value) {
+      console.log('[course.js] 课程已经加载过，跳过重复加载');
+      return;
+    }
     try {
       // 1. 优先使用后端API获取最新课程数据
       try {
@@ -60,6 +66,8 @@ export const useCourseStore = defineStore("course", () => {
 
         // 更新课程列表
         courses.value = formattedCourses;
+        // 设置课程加载完成标志
+        coursesLoaded.value = true;
 
         // 2. 将API获取的课程数据缓存到IndexedDB中
         // 创建一个临时表用于存储缓存的课程
@@ -83,6 +91,8 @@ export const useCourseStore = defineStore("course", () => {
 
         if (cachedCourses.length > 0) {
           courses.value = cachedCourses;
+          // 设置课程加载完成标志
+          coursesLoaded.value = true;
         } else {
           // 4. 缓存也失败时，使用静态文件作为最后降级方案
           // 同时加载 article、word 和 xingrong 类型的课程
@@ -108,6 +118,8 @@ export const useCourseStore = defineStore("course", () => {
 
           // 合并所有课程
           courses.value = [...articleCourses, ...wordCourses, ...xingrongCourses];
+          // 设置课程加载完成标志
+          coursesLoaded.value = true;
         }
       }
 

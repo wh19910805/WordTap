@@ -1,54 +1,96 @@
 <template>
-  <div class="fixed bottom-0 left-0 right-0 bg-white/95 dark:bg-gray-800/95 backdrop-blur-lg border-t border-gray-200/50 dark:border-gray-700/50 safe-area-inset-bottom shadow-lg">
+  <div
+    class="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 safe-area-inset-bottom"
+  >
     <div class="flex items-center justify-around h-16 px-2">
       <router-link
         v-for="tab in tabs"
         :key="tab.path"
         :to="tab.path"
-        class="flex flex-col items-center justify-center flex-1 h-full relative transition-all duration-300"
-        :class="isActive(tab.path) ? 'text-primary-500' : 'text-gray-500 dark:text-gray-400'"
+        class="flex flex-col items-center justify-center flex-1 h-full relative transition-all duration-200"
+        :class="isActive(tab.path) ? 'text-indigo-600' : 'text-gray-500'"
       >
         <div class="relative">
-          <component :is="tab.icon" class="w-6 h-6 mb-1 transition-transform duration-300" :class="isActive(tab.path) ? 'scale-110' : ''" />
-          <div v-if="isActive(tab.path)" class="absolute -top-1 -right-1 w-2 h-2 bg-primary-500 rounded-full animate-pulse"></div>
+          <!-- 直接使用SVG图标而不是动态组件 -->
+          <div
+            v-if="tab.path === '/'"
+            class="w-8 h-8 mb-1 transition-transform duration-200"
+            :class="isActive(tab.path) ? 'scale-105' : ''"
+          >
+            <svg
+              fill="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" />
+            </svg>
+          </div>
+          <div
+            v-if="tab.path === '/discovery'"
+            class="w-7 h-7 mb-1 transition-transform duration-200"
+            :class="isActive(tab.path) ? 'scale-105' : ''"
+          >
+            <svg
+              fill="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M21 3H3c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H3V5h18v14zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"
+              />
+            </svg>
+          </div>
+          <div
+            v-else-if="tab.path === '/profile'"
+            class="w-8 h-8 mb-1 transition-transform duration-200"
+            :class="isActive(tab.path) ? 'scale-105' : ''"
+          >
+            <svg
+              fill="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"
+              />
+            </svg>
+          </div>
         </div>
-        <span class="text-xs font-medium transition-all duration-300" :class="isActive(tab.path) ? 'scale-105' : ''">{{ tab.label }}</span>
-        <div v-if="isActive(tab.path)" class="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-8 h-1 bg-primary-500 rounded-t-full"></div>
+        <span
+          class="text-xs font-semibold transition-all duration-200"
+          :class="isActive(tab.path) ? 'scale-105' : ''"
+          >{{ tab.label }}</span
+        >
       </router-link>
     </div>
   </div>
 </template>
 
 <script setup>
-import { computed } from 'vue'
-import { useRoute } from 'vue-router'
-import { HomeIcon, ExploreIcon, ProfileIcon } from './icons/index.js'
+import { computed } from "vue";
+import { useRoute } from "vue-router";
 
-const route = useRoute()
+const route = useRoute();
 
 const tabs = [
   {
-    path: '/',
-    label: '首页',
-    icon: HomeIcon
+    path: "/",
+    label: "首页",
   },
   {
-    path: '/discovery',
-    label: '发现',
-    icon: ExploreIcon
+    path: "/discovery",
+    label: "发现",
   },
   {
-    path: '/profile',
-    label: '我的',
-    icon: ProfileIcon
-  }
-]
+    path: "/profile",
+    label: "我的",
+  },
+];
 
 function isActive(path) {
-  if (path === '/') {
-    return route.path === '/'
+  if (path === "/") {
+    return route.path === "/";
   }
-  return route.path.startsWith(path)
+  return route.path.startsWith(path);
 }
 </script>
-

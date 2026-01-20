@@ -1,53 +1,82 @@
 <template>
-  <div class="h-screen bg-gray-50 dark:bg-gray-900 overflow-y-auto pb-20">
-    <div class="space-y-4 p-4">
+  <div class="h-screen bg-slate-50 overflow-y-auto pb-20">
+    <div class="page-container content-area">
       <!-- 每日打卡部分 -->
-      <div class="card card-hover">
+      <div
+        class="bg-white border-2 border-slate-200 rounded-3xl p-3 transition-all duration-200 hover:border-indigo-600"
+      >
         <!-- 标题栏 -->
-        <div class="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
-          <div class="flex items-center gap-2">
-            <div class="w-8 h-8 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
-              <component :is="FireIcon" class="w-5 h-5 text-white" />
+        <div
+          class="flex items-center justify-between mb-6 pb-4 border-b border-slate-200"
+        >
+          <div class="flex items-center gap-3">
+            <div
+              class="w-10 h-10 bg-indigo-600 rounded-full flex items-center justify-center"
+            >
+              <component :is="FireIcon" class="w-6 h-6 text-white" />
             </div>
-            <h2 class="text-lg font-bold text-gray-900 dark:text-white">每日打卡</h2>
+            <h2 class="text-xl font-bold text-gray-900">每日打卡</h2>
           </div>
-          <button @click="showSettings = true" class="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">
-            <component :is="SettingsIcon" class="w-5 h-5 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300" />
+          <button
+            @click="showSettings = true"
+            class="p-2 hover:bg-slate-100 rounded-full transition-colors"
+          >
+            <component
+              :is="SettingsIcon"
+              class="w-6 h-6 text-gray-400 hover:text-indigo-600"
+            />
           </button>
         </div>
 
-        <div class="p-4 space-y-3">
+        <div class="space-y-6">
           <!-- 连胜和累计打卡 -->
-          <div class="grid grid-cols-2 gap-2.5">
-            <div class="bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl p-3 text-white shadow-lg relative overflow-hidden">
-              <div class="absolute top-0 right-0 w-16 h-16 bg-white/10 rounded-full -mr-8 -mt-8"></div>
-              <div class="relative z-10">
-                <div class="flex items-center gap-1.5 mb-1">
-                  <component :is="FireIcon" class="w-4 h-4" />
-                  <div class="text-xs font-medium opacity-90">连胜</div>
-                </div>
-                <div class="text-2xl font-bold mt-0.5">
-                  <span>{{ userStore.streak }}</span><span class="text-xs opacity-80 ml-0.5">天</span>
+          <div class="grid grid-cols-2 sm:grid-cols-2 gap-4">
+            <div
+              class="bg-indigo-600 rounded-3xl p-5 text-white transition-all duration-200 hover:bg-indigo-700"
+            >
+              <div class="flex items-center gap-2 mb-3">
+                <component
+                  :is="FireIcon"
+                  class="w-6 h-6 text-yellow-300 animate-bounce"
+                />
+                <div class="text-xs font-bold uppercase tracking-wide opacity-95">
+                  连胜
                 </div>
               </div>
+              <div class="text-4xl font-bold mt-1 flex items-baseline gap-1">
+                <span>{{ userStore.streak }}</span>
+                <span class="text-sm opacity-80">天</span>
+              </div>
+              <div class="text-xs opacity-75 mt-2">连续学习，挑战自我</div>
             </div>
-            <div class="card p-3 border-2 border-gray-100 dark:border-gray-700">
-              <div class="flex items-center gap-1.5 mb-1">
-                <div class="w-4 h-4 bg-primary-500 rounded-full flex items-center justify-center">
-                  <component :is="CheckIcon" class="w-2.5 h-2.5 text-white" />
+            <div
+              class="bg-lime-400 rounded-3xl p-5 text-black transition-all duration-200 hover:bg-lime-500"
+            >
+              <div class="flex items-center gap-2 mb-3">
+                <div
+                  class="w-6 h-6 bg-black/20 rounded-full flex items-center justify-center"
+                >
+                  <component :is="CheckIcon" class="w-4 h-4 text-black" />
                 </div>
-                <div class="text-xs font-medium text-gray-500 dark:text-gray-400">累计打卡</div>
+                <div class="text-xs font-bold uppercase tracking-wide opacity-95">
+                  累计打卡
+                </div>
               </div>
-              <div class="text-2xl font-bold mt-0.5 text-gray-900 dark:text-white">
-                <span>{{ userStore.totalCheckIn }}</span><span class="text-xs text-gray-500 dark:text-gray-400 ml-0.5">天</span>
+              <div class="text-4xl font-bold mt-1 flex items-baseline gap-1">
+                <span>{{ userStore.totalCheckIn }}</span>
+                <span class="text-sm opacity-80">天</span>
               </div>
+              <div class="text-xs opacity-75 mt-2">坚持学习，成就未来</div>
             </div>
           </div>
 
           <!-- 本周打卡记录 -->
-          <div>
-            <div class="text-[11px] text-gray-600 dark:text-gray-400 mb-1">本周打卡记录</div>
-            <div class="flex gap-1">
+          <div class="bg-white border-2 border-slate-200 rounded-3xl p-5">
+            <div class="text-sm font-medium text-gray-600 mb-4 flex items-center gap-2">
+              <component :is="CalendarIcon" class="w-5 h-5 text-indigo-600" />
+              <span>本周打卡记录</span>
+            </div>
+            <div class="flex gap-3">
               <div
                 v-for="(day, index) in weekDays"
                 :key="index"
@@ -55,121 +84,252 @@
               >
                 <div
                   :class="[
-                    'w-full h-8 rounded flex items-center justify-center border transition-all',
+                    'w-full h-12 rounded-full flex items-center justify-center border-2 transition-all duration-300',
                     day.checked
-                      ? 'bg-purple-500 border-purple-500 text-white'
+                      ? 'bg-indigo-600 border-indigo-600 text-white hover:bg-indigo-700'
                       : day.isToday
-                      ? 'bg-white dark:bg-gray-700 border-purple-500 text-gray-900 dark:text-white'
-                      : 'bg-white dark:bg-gray-700 border-gray-200 dark:border-gray-600 text-gray-400'
+                      ? 'bg-white border-indigo-600 text-indigo-600 hover:bg-indigo-50'
+                      : 'bg-slate-100 border-slate-200 text-gray-400 hover:border-indigo-300 hover:bg-slate-200',
                   ]"
                 >
-                  <component v-if="day.checked" :is="CheckIcon" class="w-3 h-3" />
+                  <component v-if="day.checked" :is="CheckIcon" class="w-5 h-5" />
+                  <div v-else-if="day.isToday" class="text-sm font-bold">今日</div>
+                  <div v-else class="text-sm font-medium"></div>
                 </div>
-                <div class="text-[9px] text-gray-500 dark:text-gray-400 mt-0.5 leading-tight">{{ day.label }}</div>
+                <div class="text-xs font-medium text-gray-500 mt-2 leading-tight">
+                  {{ day.label }}
+                </div>
               </div>
             </div>
           </div>
 
           <!-- 推广横幅 -->
-          <div
+          <!-- <div
             v-if="showPromoBanner"
-            class="bg-gradient-to-r from-yellow-400 to-orange-400 rounded-xl p-4 flex items-center gap-3 relative shadow-lg animate-slide-up"
+            class="bg-gradient-to-r from-yellow-400 via-orange-400 to-red-400 rounded-2xl p-4 flex items-center gap-3 relative shadow-xl animate-pulse transition-all duration-500 hover:shadow-2xl"
           >
-            <div class="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center flex-shrink-0">
+            <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center flex-shrink-0 backdrop-blur-sm">
               <component :is="GiftIcon" class="w-6 h-6 text-yellow-900" />
             </div>
             <div class="flex-1 text-sm text-yellow-900 font-medium">
-              炫耀战绩带邀请码,好友注册付费双方都有奖励哦
+              炫耀战绩带邀请码，好友注册付费双方都有奖励哦
             </div>
-            <button class="text-yellow-900 text-sm font-semibold hover:underline">了解→</button>
-            <button @click="showPromoBanner = false" class="absolute top-2 right-2 p-1 hover:bg-white/20 rounded-lg transition-colors">
+            <button class="text-yellow-900 text-sm font-semibold hover:underline flex items-center gap-1">
+              <span>了解</span>
+              <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+              </svg>
+            </button>
+            <button @click="showPromoBanner = false" class="absolute top-2 right-2 p-1.5 hover:bg-white/20 rounded-full transition-all">
               <component :is="CloseIcon" class="w-4 h-4 text-yellow-900" />
             </button>
-          </div>
+          </div> -->
 
           <!-- 继续学习按钮 -->
-          <div class="mb-3">
-            <button 
+          <div class="mb-2">
+            <button
               v-if="latestProgress && !loadingProgress"
               @click="continueLearning"
-              class="w-full bg-gradient-to-r from-primary-500 to-blue-500 text-white rounded-lg p-3 flex items-center justify-center gap-2 shadow-lg hover:shadow-xl transition-all"
+              class="w-full bg-indigo-600 text-white rounded-full p-5 flex items-center justify-center gap-3 transition-transform duration-200 active:scale-95"
             >
-              <component :is="PlayIcon" class="w-5 h-5" />
-              <span class="text-sm font-semibold">继续学习</span>
+              <div
+                class="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center"
+              >
+                <component :is="PlayIcon" class="w-6 h-6" />
+              </div>
+              <span class="text-lg font-bold">继续学习</span>
+              <div class="text-xs bg-white/20 px-3 py-1 rounded-full">上次学习</div>
             </button>
+            <button
+              v-else-if="!loadingProgress"
+              @click="$router.push('/discovery')"
+              class="w-full bg-lime-400 text-black rounded-full p-5 flex items-center justify-center gap-3 transition-transform duration-200 active:scale-95"
+            >
+              <div
+                class="w-10 h-10 bg-black/20 rounded-full flex items-center justify-center"
+              >
+                <component :is="BookIcon" class="w-6 h-6 text-black" />
+              </div>
+              <span class="text-lg font-bold">开始学习</span>
+            </button>
+            <div
+              v-else
+              class="w-full bg-slate-100 rounded-full p-5 flex items-center justify-center"
+            >
+              <div
+                class="w-6 h-6 border-2 border-gray-400 border-t-transparent rounded-full animate-spin"
+              ></div>
+              <span class="ml-3 text-sm text-gray-500">加载中...</span>
+            </div>
           </div>
 
           <!-- 操作按钮 -->
-          <div class="flex gap-3">
-            <button class="flex-1 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg p-3 flex items-center justify-center gap-2">
-              <svg class="w-5 h-5 text-gray-600 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+          <!-- <div class="flex gap-4">
+            <button
+              class="flex-1 bg-white border-2 border-slate-200 rounded-full p-4 flex items-center justify-center gap-3 hover:border-indigo-600 transition-all duration-200"
+            >
+              <svg
+                class="w-6 h-6 text-indigo-600"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                />
               </svg>
-              <span class="text-sm text-gray-700 dark:text-gray-300">打卡日历</span>
+              <span class="text-base font-bold text-gray-900">打卡日历</span>
             </button>
-            <button class="flex-1 bg-purple-500 text-white rounded-lg p-3 flex items-center justify-center gap-2">
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.885 12.938 9 12.482 9 12c0-.482-.115-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+            <button
+              class="flex-1 bg-indigo-600 text-white rounded-full p-4 flex items-center justify-center gap-3 transition-transform duration-200 active:scale-95"
+            >
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M8.684 13.342C8.885 12.938 9 12.482 9 12c0-.482-.115-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"
+                />
               </svg>
-              <span class="text-sm font-medium">炫耀战绩</span>
+              <span class="text-base font-bold">炫耀战绩</span>
             </button>
-          </div>
+          </div> -->
         </div>
       </div>
 
       <!-- 最近学习 -->
-      <div class="bg-white dark:bg-gray-800">
-        <div class="p-4 border-b border-gray-200 dark:border-gray-700">
-          <h2 class="text-lg font-semibold">最近学习</h2>
+      <div
+        class="bg-white border-2 border-slate-200 rounded-3xl overflow-hidden transition-all duration-200 hover:border-indigo-600"
+      >
+        <div class="p-3 border-b border-slate-200 flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <div
+              class="w-10 h-10 bg-indigo-600 rounded-full flex items-center justify-center"
+            >
+              <component :is="ClockIcon" class="w-6 h-6 text-white" />
+            </div>
+            <h2 class="text-xl font-bold text-gray-900">最近学习</h2>
+          </div>
+          <button
+            @click="$router.push('/discovery')"
+            class="text-sm text-indigo-600 font-bold hover:text-indigo-700 flex items-center gap-1"
+          >
+            <span>查看更多</span>
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M13 7l5 5m0 0l-5 5m5-5H6"
+              />
+            </svg>
+          </button>
         </div>
-        <div class="p-4 space-y-3">
+        <div class="p-3 space-y-4">
           <div
             v-for="(lesson, index) in recentLessons"
             :key="index"
             @click="goToLesson(lesson)"
-            class="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg"
+            class="flex items-center gap-4 p-4 bg-slate-50 rounded-2xl border border-slate-200 transition-all duration-200 cursor-pointer hover:border-indigo-600"
           >
-            <div class="w-12 h-12 bg-gray-200 dark:bg-gray-600 rounded-lg flex-shrink-0 overflow-hidden">
+            <div
+              class="w-16 h-16 bg-indigo-600 rounded-2xl flex-shrink-0 overflow-hidden relative"
+            >
               <img
-                :src="getCourseCover(lesson.courseId)"
+                :src="getCourseCover(lesson.courseId, lesson.courseName)"
                 :alt="lesson.title"
                 class="w-full h-full object-cover"
                 @error="handleImageError"
               />
+              <div
+                class="absolute inset-0 bg-black/30 opacity-0 hover:opacity-100 transition-opacity duration-300 flex items-center justify-center"
+              >
+                <component :is="PlayIcon" class="w-8 h-8 text-white" />
+              </div>
             </div>
             <div class="flex-1 min-w-0">
-              <div class="font-medium text-gray-900 dark:text-white truncate">{{ lesson.courseName || '课程' }}</div>
-              <div class="text-sm text-gray-600 dark:text-gray-400">{{ lesson.title }}</div>
-              <div class="text-xs text-gray-500 dark:text-gray-500 mt-1">{{ formatRelativeTime(lesson.time) }}</div>
+              <div class="font-bold text-gray-900 truncate flex items-center gap-2">
+                <span>{{ lesson.courseName || "课程" }}</span>
+                <div
+                  class="text-xs bg-lime-400 text-black px-2 py-1 rounded-full font-bold"
+                >
+                  {{ index + 1 }}
+                </div>
+              </div>
+              <div
+                class="text-sm text-gray-600 truncate hover:text-indigo-600 transition-colors duration-300"
+              >
+                {{ lesson.title }}
+              </div>
+              <div class="text-xs text-gray-500 mt-2 flex items-center gap-2">
+                <component :is="ClockIcon" class="w-4 h-4" />
+                <span>{{ formatRelativeTime(lesson.time) }}</span>
+              </div>
+            </div>
+            <div
+              class="text-gray-400 opacity-0 hover:opacity-100 transition-opacity duration-300"
+            >
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M9 5l7 7-7 7"
+                />
+              </svg>
             </div>
           </div>
-          <div v-if="recentLessons.length === 0" class="text-center py-8 text-gray-400 text-sm">
-            暂无最近学习记录
+          <div v-if="recentLessons.length === 0" class="text-center py-10 px-4">
+            <div
+              class="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4"
+            >
+              <component :is="BookIcon" class="w-10 h-10 text-gray-400" />
+            </div>
+            <div class="text-gray-500 text-base mb-4">暂无最近学习记录</div>
+            <button
+              @click="$router.push('/discovery')"
+              class="text-indigo-600 font-bold hover:text-indigo-700 text-sm flex items-center gap-1 mx-auto"
+            >
+              <span>去课程广场开始学习</span>
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M13 7l5 5m0 0l-5 5m5-5H6"
+                />
+              </svg>
+            </button>
           </div>
         </div>
       </div>
 
       <!-- 学习统计部分 -->
-      <div class="card">
-        <div class="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
-          <div class="flex items-center gap-2">
-            <div class="w-8 h-8 bg-gradient-to-br from-primary-500 to-blue-600 rounded-lg flex items-center justify-center">
-              <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-              </svg>
+      <div
+        class="bg-white border-2 border-slate-200 rounded-3xl overflow-hidden transition-all duration-200 hover:border-indigo-600"
+      >
+        <div class="flex items-center justify-between p-3 border-b border-slate-200">
+          <div class="flex items-center gap-3">
+            <div
+              class="w-10 h-10 bg-indigo-600 rounded-full flex items-center justify-center"
+            >
+              <component :is="CalendarIcon" class="w-6 h-6 text-white" />
             </div>
-            <h2 class="text-lg font-bold text-gray-900 dark:text-white">学习统计</h2>
+            <h2 class="text-xl font-bold text-gray-900">统计</h2>
           </div>
-          <div class="flex gap-1 bg-gray-100 dark:bg-gray-700 rounded-lg p-1">
+          <div class="flex gap-2 bg-slate-100 rounded-full p-1">
             <button
               v-for="period in timePeriods"
               :key="period.key"
               @click="currentPeriod = period.key"
               :class="[
-                'px-2 py-1 rounded text-xs font-medium transition-colors',
+                'px-4 py-2 rounded-full text-xs font-bold transition-all duration-200',
                 currentPeriod === period.key
-                  ? 'bg-white dark:bg-gray-600 text-blue-600 dark:text-blue-400 shadow-sm'
-                  : 'text-gray-600 dark:text-gray-400'
+                  ? 'bg-indigo-600 text-white transform scale-105'
+                  : 'text-gray-700 hover:bg-slate-200',
               ]"
             >
               {{ period.label }}
@@ -177,49 +337,206 @@
           </div>
         </div>
 
-        <div class="p-4">
-          <div class="grid grid-cols-2 gap-3">
-            <div class="bg-gray-50 dark:bg-gray-700/50 rounded-xl p-4">
-              <div class="text-sm text-gray-500 dark:text-gray-400 mb-1">学习时长</div>
-              <div class="text-2xl font-bold text-gray-900 dark:text-white">
-                {{ formatStudyTime(currentStudyTime) }}
+        <div class="p-3">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <div
+              class="bg-indigo-50 rounded-3xl p-6 border border-indigo-100 transition-all duration-200 hover:border-indigo-300"
+            >
+              <div class="flex items-center justify-between mb-4">
+                <div class="text-sm font-bold text-gray-600">学习时长</div>
+                <div
+                  class="w-12 h-12 bg-indigo-600 rounded-full flex items-center justify-center"
+                >
+                  <svg
+                    class="w-6 h-6 text-white"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
+                  </svg>
+                </div>
+              </div>
+              <div class="text-4xl font-bold text-gray-900 flex items-baseline gap-2">
+                <span>{{ formatStudyTime(currentStudyTime) }}</span>
+                <div
+                  class="text-sm text-indigo-600 font-bold bg-indigo-100 px-3 py-1 rounded-full"
+                  :class="currentPeriod === 'total' ? 'animate-pulse' : ''"
+                >
+                  {{
+                    currentPeriod === "total"
+                      ? "总计"
+                      : currentPeriod === "week"
+                      ? "本周"
+                      : currentPeriod === "month"
+                      ? "本月"
+                      : "本年"
+                  }}
+                </div>
+              </div>
+              <div class="text-xs text-gray-500 mt-2">
+                {{
+                  currentPeriod === "total"
+                    ? "累计学习时长"
+                    : `过去${
+                        currentPeriod === "week"
+                          ? "7天"
+                          : currentPeriod === "month"
+                          ? "30天"
+                          : "12个月"
+                      }的学习时长`
+                }}
               </div>
             </div>
-            <div class="bg-gray-50 dark:bg-gray-700/50 rounded-xl p-4">
-              <div class="text-sm text-gray-500 dark:text-gray-400 mb-1">完成课程</div>
-              <div class="text-2xl font-bold text-gray-900 dark:text-white">
-                {{ userStore.completedLessons }}
+            <div
+              class="bg-lime-50 rounded-3xl p-6 border border-lime-100 transition-all duration-200 hover:border-lime-300"
+            >
+              <div class="flex items-center justify-between mb-4">
+                <div class="text-sm font-bold text-gray-600">完成课程</div>
+                <div
+                  class="w-12 h-12 bg-lime-400 rounded-full flex items-center justify-center"
+                >
+                  <svg
+                    class="w-6 h-6 text-black"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M5 13l4 4L19 7"
+                    />
+                  </svg>
+                </div>
               </div>
-              <div class="text-xs text-gray-500 dark:text-gray-400 mt-1">节</div>
+              <div class="text-4xl font-bold text-gray-900 flex items-baseline gap-2">
+                <span>{{ userStore.completedLessons }}</span>
+                <span class="text-sm text-gray-500">节</span>
+              </div>
+              <div class="text-xs text-gray-500 mt-2">已经完成的课程数量</div>
+              <div class="mt-4 w-full bg-slate-200 rounded-full h-3 overflow-hidden">
+                <div
+                  class="h-full bg-lime-400 rounded-full transition-all duration-1000"
+                  :style="{ width: `${Math.min(userStore.completedLessons * 5, 100)}%` }"
+                ></div>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
       <!-- 学习工具 -->
-      <div class="bg-white dark:bg-gray-800">
-        <div class="p-4">
-          <div class="grid grid-cols-2 gap-3">
+      <div
+        class="bg-white border-2 border-slate-200 rounded-3xl overflow-hidden transition-all duration-200 hover:border-indigo-600"
+      >
+        <div class="p-3 border-b border-slate-200">
+          <div class="flex items-center gap-3">
+            <div
+              class="w-10 h-10 bg-indigo-600 rounded-full flex items-center justify-center"
+            >
+              <component :is="ToolsIcon" class="w-6 h-6 text-white" />
+            </div>
+            <h2 class="text-xl font-bold text-gray-900">学习工具</h2>
+          </div>
+        </div>
+        <div class="p-3">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <!-- 错题本 -->
-            <div class="flex items-center gap-2.5 p-3 bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 rounded-xl border border-blue-200 dark:border-blue-800 card-hover">
-              <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center shadow-lg flex-shrink-0">
-                <component :is="BookIcon" class="w-5 h-5 text-white" />
+            <div
+              class="flex items-center gap-4 p-6 bg-indigo-50 rounded-3xl border border-indigo-100 transition-all duration-200 cursor-pointer hover:border-indigo-300"
+            >
+              <div
+                class="w-14 h-14 bg-indigo-600 rounded-full flex items-center justify-center flex-shrink-0 transition-all duration-200"
+              >
+                <component :is="BookOpenIcon" class="w-8 h-8 text-white" />
               </div>
               <div class="flex-1 min-w-0">
-                <div class="font-medium text-sm text-gray-900 dark:text-white">错题本</div>
-                <div class="text-[10px] text-gray-500 dark:text-gray-400 mt-0.5">记录学习中遇到的错误</div>
-                <div class="text-xs text-blue-600 dark:text-blue-400 font-medium mt-1">74题待复习</div>
+                <div
+                  class="font-bold text-xl text-gray-900 transition-colors duration-200"
+                >
+                  错题本
+                </div>
+                <div class="text-sm text-gray-600 mt-2 line-clamp-1">
+                  记录学习中遇到的错误
+                </div>
+                <div class="mt-3 flex items-center gap-1">
+                  <div
+                    class="text-xs font-bold text-indigo-600 bg-indigo-100 px-3 py-1 rounded-full flex items-center gap-1"
+                  >
+                    <span>74题</span>
+                    <span class="text-[10px] opacity-80">待复习</span>
+                  </div>
+                </div>
+              </div>
+              <div
+                class="text-gray-400 opacity-0 hover:opacity-100 transition-opacity duration-200"
+              >
+                <svg
+                  class="w-6 h-6"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M9 5l7 7-7 7"
+                  />
+                </svg>
               </div>
             </div>
 
             <!-- 生词本 -->
-            <div class="flex items-center gap-2.5 p-3 bg-gradient-to-r from-purple-50 to-pink-100 dark:from-purple-900/20 dark:to-pink-800/20 rounded-xl border border-purple-200 dark:border-purple-800 card-hover">
-              <div class="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg flex items-center justify-center shadow-lg flex-shrink-0">
-                <component :is="BookIcon" class="w-5 h-5 text-white" />
+            <div
+              class="flex items-center gap-4 p-6 bg-lime-50 rounded-3xl border border-lime-100 transition-all duration-200 cursor-pointer hover:border-lime-300"
+            >
+              <div
+                class="w-14 h-14 bg-lime-400 rounded-full flex items-center justify-center flex-shrink-0 transition-all duration-200"
+              >
+                <component :is="BookIcon" class="w-8 h-8 text-black" />
               </div>
               <div class="flex-1 min-w-0">
-                <div class="font-medium text-sm text-gray-900 dark:text-white">生词本</div>
-                <div class="text-[10px] text-gray-500 dark:text-gray-400 mt-0.5">记录学习中遇到的生词</div>
+                <div
+                  class="font-bold text-xl text-gray-900 transition-colors duration-200"
+                >
+                  生词本
+                </div>
+                <div class="text-sm text-gray-600 mt-2 line-clamp-1">
+                  记录学习中遇到的生词
+                </div>
+                <div class="mt-3 flex items-center gap-1">
+                  <div
+                    class="text-xs font-bold text-black bg-lime-200 px-3 py-1 rounded-full flex items-center gap-1"
+                  >
+                    <span>236个</span>
+                    <span class="text-[10px] opacity-80">生词</span>
+                  </div>
+                </div>
+              </div>
+              <div
+                class="text-gray-400 opacity-0 hover:opacity-100 transition-opacity duration-200"
+              >
+                <svg
+                  class="w-6 h-6"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M9 5l7 7-7 7"
+                  />
+                </svg>
               </div>
             </div>
           </div>
@@ -227,37 +544,64 @@
       </div>
 
       <!-- 学习热力图 -->
-      <div class="bg-white dark:bg-gray-800">
-        <div class="flex items-center justify-between px-4 py-2 border-b border-gray-200 dark:border-gray-700">
-          <h2 class="text-sm font-semibold">学习热力图</h2>
-          <div class="flex items-center gap-1">
-            <button @click="prevMonth" class="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors">
-              <component :is="ArrowLeftIcon" class="w-3.5 h-3.5 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300" />
+      <div
+        class="bg-white border-2 border-slate-200 rounded-3xl overflow-hidden transition-all duration-200 hover:border-indigo-600"
+      >
+        <div class="flex items-center justify-between p-3 border-b border-slate-200">
+          <div class="flex items-center gap-3">
+            <div
+              class="w-10 h-10 bg-indigo-600 rounded-full flex items-center justify-center"
+            >
+              <component :is="CheckCircleIcon" class="w-6 h-6 text-white" />
+            </div>
+            <h2 class="text-xl font-bold text-gray-900">学习热力图</h2>
+          </div>
+          <div class="flex items-center gap-2">
+            <button
+              @click="prevMonth"
+              class="p-2 hover:bg-slate-100 rounded-full transition-colors"
+            >
+              <component
+                :is="ArrowLeftIcon"
+                class="w-5 h-5 text-gray-400 hover:text-indigo-600"
+              />
             </button>
-            <span class="text-[11px] font-semibold text-gray-700 dark:text-gray-300 px-1">{{ currentMonthLabel }}</span>
-            <button @click="nextMonth" class="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors">
-              <component :is="ArrowRightIcon" class="w-3.5 h-3.5 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300" />
+            <span class="text-sm font-bold text-gray-700 px-2">{{
+              currentMonthLabel
+            }}</span>
+            <button
+              @click="nextMonth"
+              class="p-2 hover:bg-slate-100 rounded-full transition-colors"
+            >
+              <component
+                :is="ArrowRightIcon"
+                class="w-5 h-5 text-gray-400 hover:text-indigo-600"
+              />
             </button>
           </div>
         </div>
-        <div class="px-4 py-2">
+        <div class="px-3 py-4">
           <div class="heatmap-container">
-            <div class="grid grid-cols-7 gap-0.5 mb-0.5">
-              <div class="text-[9px] text-gray-500 dark:text-gray-400 text-center leading-tight" v-for="day in weekDayLabels" :key="day">
+            <div class="grid grid-cols-7 gap-1 mb-1">
+              <div
+                class="text-[10px] font-bold text-gray-500 text-center leading-tight"
+                v-for="day in weekDayLabels"
+                :key="day"
+              >
                 {{ day }}
               </div>
             </div>
-            <div class="grid grid-cols-7 gap-0.5">
+            <div class="grid grid-cols-7 gap-1">
               <div
                 v-for="(day, index) in heatmapDays"
                 :key="index"
                 :class="[
-                  'h-2.5 rounded-sm',
+                  'h-3 rounded-full',
                   day.hasData
-                    ? 'bg-green-500'
+                    ? 'bg-indigo-600'
                     : day.isToday
-                    ? 'bg-gray-200 dark:bg-gray-700 border border-gray-400'
-                    : 'bg-gray-100 dark:bg-gray-800'
+                    ? 'bg-white border-2 border-indigo-600'
+                    : 'bg-slate-200',
                 ]"
                 :title="day.date"
               ></div>
@@ -276,163 +620,179 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
-import { useUserStore } from '@/stores/user'
-import { useCourseStore } from '@/stores/course'
-import { progressApi } from '@/api/client'
-import TabBar from '@/components/TabBar.vue'
-import SettingsModal from '@/components/SettingsModal.vue'
-import { 
-  FireIcon, 
-  SettingsIcon, 
-  CheckIcon, 
-  CalendarIcon, 
-  ShareIcon, 
-  BookIcon, 
-  GiftIcon, 
-  CloseIcon, 
-  ArrowLeftIcon, 
+import { ref, computed, onMounted } from "vue";
+import { useRouter } from "vue-router";
+import { useUserStore } from "@/stores/user";
+import { useCourseStore } from "@/stores/course";
+import { progressApi } from "@/api/client";
+import TabBar from "@/components/TabBar.vue";
+import SettingsModal from "@/components/SettingsModal.vue";
+import {
+  FireIcon,
+  SettingsIcon,
+  CheckIcon,
+  CalendarIcon,
+  ShareIcon,
+  BookIcon,
+  BookOpenIcon,
+  ToolsIcon,
+  GiftIcon,
+  CloseIcon,
+  ArrowLeftIcon,
   ArrowRightIcon,
-  PlayIcon
-} from '@/components/icons/index.js'
+  PlayIcon,
+  ClockIcon,
+  CheckCircleIcon,
+} from "@/components/icons/index.js";
 
-const router = useRouter()
-const userStore = useUserStore()
-const courseStore = useCourseStore()
+const router = useRouter();
+const userStore = useUserStore();
+const courseStore = useCourseStore();
 
-const showSettings = ref(false)
-const showPromoBanner = ref(true)
-const currentPeriod = ref('week')
-const currentMonth = ref(new Date().getMonth())
-const currentYear = ref(new Date().getFullYear())
-const latestProgress = ref(null) // 最新学习进度
-const loadingProgress = ref(false)
+const showSettings = ref(false);
+const showPromoBanner = ref(true);
+const currentPeriod = ref("week");
+const currentMonth = ref(new Date().getMonth());
+const currentYear = ref(new Date().getFullYear());
+const latestProgress = ref(null); // 最新学习进度
+const loadingProgress = ref(false);
 
 const timePeriods = [
-  { key: 'total', label: '总计' },
-  { key: 'week', label: '本周' },
-  { key: 'month', label: '本月' },
-  { key: 'year', label: '今年' }
-]
+  { key: "total", label: "总计" },
+  { key: "week", label: "本周" },
+  { key: "month", label: "本月" },
+  { key: "year", label: "今年" },
+];
 
 const weekDays = computed(() => {
-  const days = ['周一', '周二', '周三', '周四', '周五', '周六', '周日']
+  const days = ["周一", "周二", "周三", "周四", "周五", "周六", "周日"];
   return userStore.weeklyActivity.map((day, index) => ({
     ...day,
-    label: days[index]
-  }))
-})
+    label: days[index],
+  }));
+});
 
 const currentStudyTime = computed(() => {
-  if (currentPeriod.value === 'total') {
-    return userStore.studyTime.total || 0
+  if (currentPeriod.value === "total") {
+    return userStore.studyTime.total || 0;
   }
-  return userStore.studyTime[currentPeriod.value] || 0
-})
+  return userStore.studyTime[currentPeriod.value] || 0;
+});
 
 const recentLessons = computed(() => {
-  return userStore.recentLessons.map(lesson => {
-    const course = courseStore.courses.find(c => c.id === lesson.courseId)
-    return {
-      ...lesson,
-      courseName: course?.name || '未知课程'
-    }
-  })
-})
+  return userStore.recentLessons.map((lesson) => ({
+    ...lesson,
+    courseName: "未知课程", // 不再依赖课程列表
+  }));
+});
 
 const currentMonthLabel = computed(() => {
-  return `${currentYear.value}年${currentMonth.value + 1}月`
-})
+  return `${currentYear.value}年${currentMonth.value + 1}月`;
+});
 
-const weekDayLabels = ['一', '二', '三', '四', '五', '六', '日']
+const weekDayLabels = ["一", "二", "三", "四", "五", "六", "日"];
 
 const heatmapDays = computed(() => {
-  const days = []
-  const firstDay = new Date(currentYear.value, currentMonth.value, 1)
-  const lastDay = new Date(currentYear.value, currentMonth.value + 1, 0)
-  const startDayOfWeek = firstDay.getDay() === 0 ? 6 : firstDay.getDay() - 1 // 周一为0
-  
+  const days = [];
+  const firstDay = new Date(currentYear.value, currentMonth.value, 1);
+  const lastDay = new Date(currentYear.value, currentMonth.value + 1, 0);
+  const startDayOfWeek = firstDay.getDay() === 0 ? 6 : firstDay.getDay() - 1; // 周一为0
+
   // 填充月初空白
   for (let i = 0; i < startDayOfWeek; i++) {
-    days.push({ hasData: false, isToday: false, date: '' })
+    days.push({ hasData: false, isToday: false, date: "" });
   }
-  
+
   // 填充当月日期
-  const today = new Date()
+  const today = new Date();
   for (let day = 1; day <= lastDay.getDate(); day++) {
-    const date = new Date(currentYear.value, currentMonth.value, day)
-    const dateStr = date.toISOString().split('T')[0]
-    const hasData = userStore.learningHeatmap[dateStr] > 0
-    const isToday = date.toDateString() === today.toDateString()
-    
+    const date = new Date(currentYear.value, currentMonth.value, day);
+    const dateStr = date.toISOString().split("T")[0];
+    const hasData = userStore.learningHeatmap[dateStr] > 0;
+    const isToday = date.toDateString() === today.toDateString();
+
     days.push({
       hasData,
       isToday,
       date: dateStr,
-      day
-    })
+      day,
+    });
   }
-  
-  return days
-})
+
+  return days;
+});
 
 function formatStudyTime(minutes) {
   if (minutes < 60) {
-    return `${minutes}m`
+    return `${minutes}m`;
   }
-  const hours = Math.floor(minutes / 60)
-  const mins = minutes % 60
-  return mins > 0 ? `${hours}h${mins}m` : `${hours}h`
+  const hours = Math.floor(minutes / 60);
+  const mins = minutes % 60;
+  return mins > 0 ? `${hours}h${mins}m` : `${hours}h`;
 }
 
 function formatRelativeTime(timeStr) {
-  if (!timeStr) return ''
-  const time = new Date(timeStr)
-  const now = new Date()
-  const diff = now - time
-  const minutes = Math.floor(diff / (1000 * 60))
-  const hours = Math.floor(minutes / 60)
-  const days = Math.floor(hours / 24)
-  
-  if (minutes < 1) return '刚刚'
-  if (minutes < 60) return `${minutes} 分钟前`
-  if (hours < 24) return `${hours} 小时前`
-  if (days === 1) return '昨天'
-  if (days < 7) return `${days} 天前`
-  return `${Math.floor(days / 7)} 周前`
+  if (!timeStr) return "";
+  const time = new Date(timeStr);
+  const now = new Date();
+  const diff = now - time;
+  const minutes = Math.floor(diff / (1000 * 60));
+  const hours = Math.floor(minutes / 60);
+  const days = Math.floor(hours / 24);
+
+  if (minutes < 1) return "刚刚";
+  if (minutes < 60) return `${minutes} 分钟前`;
+  if (hours < 24) return `${hours} 小时前`;
+  if (days === 1) return "昨天";
+  if (days < 7) return `${days} 天前`;
+  return `${Math.floor(days / 7)} 周前`;
 }
 
-function getCourseCover(courseId) {
-  const course = courseStore.courses.find(c => c.id === courseId)
-  return course?.cover || '/imgs/covers/nce-1.png'
+function getCourseCover(courseId, courseName) {
+  // 新概念英语课程使用特定封面
+  if (courseName && (courseName.includes("新概念英语") || courseName.includes("NCE"))) {
+    // 根据课程名称或ID返回对应的新概念英语封面
+    if (courseName.includes("1") || courseId.includes("1"))
+      return "/imgs/covers/nce-1.png";
+    if (courseName.includes("2") || courseId.includes("2"))
+      return "/imgs/covers/nce-2.png";
+    if (courseName.includes("3") || courseId.includes("3"))
+      return "/imgs/covers/nce-3.png";
+    if (courseName.includes("4") || courseId.includes("4"))
+      return "/imgs/covers/nce-4.png";
+    return "/imgs/covers/nce-1.png"; // 默认返回新概念英语1
+  }
+
+  // 其他课程随机返回普通图片目录的图片
+  const randomIndex = Math.floor(Math.random() * 10);
+  return `/imgs/${randomIndex}.jpg`;
 }
 
 function handleImageError(event) {
-  event.target.src = '/imgs/covers/nce-1.png'
+  event.target.src = "/imgs/covers/nce-1.png";
 }
 
 // 获取最新学习进度
 async function loadLatestProgress() {
   try {
-    loadingProgress.value = true
-    const progress = await progressApi.getLatestProgress()
-    latestProgress.value = progress
-    console.log('最新学习进度:', progress)
+    loadingProgress.value = true;
+    const progress = await progressApi.getLatestProgress();
+    latestProgress.value = progress;
+    console.log("最新学习进度:", progress);
   } catch (error) {
     // 如果是404错误（没有找到学习进度），这是正常情况（用户可能还没有开始学习）
-    if (error.detail === '没有找到学习进度') {
-      console.log('用户还没有学习记录，这是正常情况')
-      latestProgress.value = null
-    } else if (error.detail === '无效的认证凭据') {
-      console.log('用户未登录，跳过获取学习进度')
-      latestProgress.value = null
+    if (error.detail === "没有找到学习进度") {
+      console.log("用户还没有学习记录，这是正常情况");
+      latestProgress.value = null;
+    } else if (error.detail === "无效的认证凭据") {
+      console.log("用户未登录，跳过获取学习进度");
+      latestProgress.value = null;
     } else {
-      console.warn('获取最新学习进度失败:', error)
-      latestProgress.value = null
+      console.warn("获取最新学习进度失败:", error);
+      latestProgress.value = null;
     }
   } finally {
-    loadingProgress.value = false
+    loadingProgress.value = false;
   }
 }
 
@@ -440,62 +800,58 @@ async function loadLatestProgress() {
 function continueLearning() {
   if (latestProgress.value) {
     router.push({
-      name: 'Learning',
+      name: "Learning",
       params: {
         courseId: latestProgress.value.course_id,
-        lessonId: latestProgress.value.lesson_id
-      }
-    })
+        lessonId: latestProgress.value.lesson_id,
+      },
+    });
   }
 }
 
 function goToLesson(lesson) {
   router.push({
-    name: 'Learning',
+    name: "Learning",
     params: {
       courseId: lesson.courseId,
-      lessonId: lesson.id
-    }
-  })
+      lessonId: lesson.id,
+    },
+  });
 }
 
 function prevMonth() {
   if (currentMonth.value === 0) {
-    currentMonth.value = 11
-    currentYear.value--
+    currentMonth.value = 11;
+    currentYear.value--;
   } else {
-    currentMonth.value--
+    currentMonth.value--;
   }
 }
 
 function nextMonth() {
   if (currentMonth.value === 11) {
-    currentMonth.value = 0
-    currentYear.value++
+    currentMonth.value = 0;
+    currentYear.value++;
   } else {
-    currentMonth.value++
+    currentMonth.value++;
   }
 }
 
 onMounted(async () => {
-  console.log('[Dashboard] onMounted 执行')
+  console.log("[Dashboard] onMounted 执行");
   try {
-    console.log('[Dashboard] 开始加载用户数据')
-    await userStore.loadUserData()
-    console.log('[Dashboard] 用户数据加载完成')
-    
-    console.log('[Dashboard] 开始加载课程列表')
-    await courseStore.loadCourses()
-    console.log('[Dashboard] 课程列表加载完成，课程数量:', courseStore.courses.length)
-    
-    console.log('[Dashboard] 开始加载最新学习进度')
-    await loadLatestProgress()
-    console.log('[Dashboard] 最新学习进度加载完成')
+    console.log("[Dashboard] 开始加载用户数据");
+    await userStore.loadUserData();
+    console.log("[Dashboard] 用户数据加载完成");
+
+    console.log("[Dashboard] 开始加载最新学习进度");
+    await loadLatestProgress();
+    console.log("[Dashboard] 最新学习进度加载完成");
   } catch (error) {
-    console.error('[Dashboard] 初始化失败:', error)
-    console.error('[Dashboard] 错误堆栈:', error.stack)
+    console.error("[Dashboard] 初始化失败:", error);
+    console.error("[Dashboard] 错误堆栈:", error.stack);
   }
-})
+});
 </script>
 
 <style scoped>

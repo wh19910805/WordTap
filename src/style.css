@@ -6,17 +6,64 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  box-shadow: none !important;
 }
 
-html, body {
+html,
+body {
   height: 100%;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  font-family: "Plus Jakarta Sans", "Space Grotesk", sans-serif;
 }
 
 #app {
   height: 100%;
   width: 100%;
+  background-color: #f8fafc;
+}
+
+/* 页面基础容器样式 - 统一控制内边距和外边距 */
+.page-container {
+  @apply px-0 py-2 space-y-4;
+}
+
+/* 页面内容区域样式 */
+.content-area {
+  @apply mx-auto w-full;
+  max-width: 1500px; /* 进一步增加最大宽度 */
+  padding: 10px 6px; /* 保留最小的内边距，避免内容贴边 */
+}
+
+/* 统一所有section元素的间距 */
+section {
+  @apply mb-8;
+}
+
+/* 统一所有页面标题的间距 */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  @apply mb-2;
+}
+
+/* 统一所有段落的间距 */
+p {
+  @apply mb-3;
+}
+
+/* 统一列表间距 */
+ul,
+ol {
+  @apply mb-4 pl-5;
+}
+
+/* 统一卡片间距 */
+.card {
+  @apply mb-6;
 }
 
 /* 防止移动端双击缩放 */
@@ -55,9 +102,23 @@ html, body {
 
 /* 震动动画 */
 @keyframes shake {
-  0%, 100% { transform: translateX(0); }
-  10%, 30%, 50%, 70%, 90% { transform: translateX(-4px); }
-  20%, 40%, 60%, 80% { transform: translateX(4px); }
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  10%,
+  30%,
+  50%,
+  70%,
+  90% {
+    transform: translateX(-4px);
+  }
+  20%,
+  40%,
+  60%,
+  80% {
+    transform: translateX(4px);
+  }
 }
 
 .shake {
@@ -66,70 +127,107 @@ html, body {
 
 /* 淡入动画 */
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 .fade-in {
   animation: fadeIn 0.3s ease-in;
 }
 
-/* 卡片样式 */
+/* 核心组件样式 - Gen Z Flat Design */
 @layer components {
+  /* 卡片样式 */
   .card {
-    @apply bg-white dark:bg-gray-800 rounded-2xl transition-all duration-300;
-    box-shadow: 0 2px 15px -3px rgba(0, 0, 0, 0.07), 0 10px 20px -2px rgba(0, 0, 0, 0.04);
+    @apply bg-white border-2 border-slate-200 rounded-3xl p-4 transition-all duration-200 mb-6 w-full;
   }
-  
+
   .card-hover {
-    @apply hover:-translate-y-1;
+    @apply hover:border-indigo-600;
   }
-  
-  .card-hover:hover {
-    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-  }
-  
+
+  /* 主要按钮 */
   .btn-primary {
-    @apply bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 text-white font-semibold py-3 px-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105;
+    @apply bg-indigo-600 text-white font-bold px-8 py-3 rounded-full active:scale-95 transition-transform duration-200;
   }
-  
+
+  /* 次要按钮 */
   .btn-secondary {
-    @apply bg-white dark:bg-gray-700 border-2 border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-300 font-semibold py-3 px-6 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-600 transition-all duration-300;
+    @apply bg-white border-2 border-slate-200 text-indigo-600 font-bold px-8 py-3 rounded-full hover:border-indigo-600 active:scale-95 transition-all duration-200;
   }
-  
+
+  /* 强调按钮 */
+  .btn-accent {
+    @apply bg-lime-400 text-black font-bold px-8 py-3 rounded-full active:scale-95 transition-transform duration-200;
+  }
+
+  /* 危险按钮 */
+  .btn-danger {
+    @apply bg-red-500 text-white font-bold px-8 py-3 rounded-full active:scale-95 transition-transform duration-200;
+  }
+
+  /* 输入框 */
   .input-field {
-    @apply w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-all duration-300;
+    @apply w-full bg-slate-100 rounded-2xl px-4 py-3 text-lg font-medium focus:ring-0 focus:border-2 focus:border-indigo-600 focus:bg-white transition-all duration-200;
   }
-  
-  .gradient-text {
-    @apply bg-gradient-to-r from-primary-500 to-purple-500 bg-clip-text text-transparent;
+
+  /* 标签样式 */
+  .tag {
+    @apply bg-lime-400 text-black text-xs font-bold px-3 py-1 rounded-full;
   }
-  
-  .gradient-bg {
-    @apply bg-gradient-to-br from-primary-500 via-purple-500 to-pink-500;
+
+  /* 数据统计卡片 */
+  .stat-card {
+    @apply bg-white border-2 border-slate-200 rounded-3xl p-5 transition-all duration-200 hover:border-indigo-600;
+  }
+
+  /* 进度条 */
+  .progress-bar {
+    @apply w-full bg-slate-200 rounded-full h-2 overflow-hidden;
+  }
+
+  .progress-fill {
+    @apply h-full bg-indigo-600 transition-all duration-500;
   }
 }
 
 /* Logo 动画 */
 @keyframes logoFloat {
-  0%, 100% { transform: translateY(0px) rotate(0deg); }
-  50% { transform: translateY(-10px) rotate(5deg); }
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
 }
 
 .logo-float {
   animation: logoFloat 3s ease-in-out infinite;
 }
 
-/* 背景渐变 */
-.bg-gradient-primary {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+/* 主题色变量覆盖 */
+:root {
+  --primary-color: #4f46e5;
+  --accent-color: #a3e635;
+  --background-color: #f8fafc;
+  --surface-color: #ffffff;
+  --border-color: #e2e8f0;
+  --error-color: #f43f5e;
+  --success-color: #22c55e;
 }
 
-.bg-gradient-purple {
-  background: linear-gradient(135deg, #a855f7 0%, #9333ea 100%);
+/* 移除所有默认阴影 */
+.shadow-sm,
+.shadow,
+.shadow-md,
+.shadow-lg,
+.shadow-xl,
+.shadow-2xl,
+.shadow-inner {
+  box-shadow: none !important;
 }
-
-.bg-gradient-blue {
-  background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
-}
-

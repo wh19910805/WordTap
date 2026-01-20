@@ -1,14 +1,14 @@
 <template>
-  <div class="min-h-screen bg-gray-50 dark:bg-gray-900 pb-20">
+  <div class="min-h-screen bg-slate-50 pb-20">
     <!-- 顶部导航栏 -->
-    <div class="sticky top-0 z-10 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+    <div class="sticky top-0 z-10 bg-white border-b border-slate-200">
       <div class="flex items-center gap-4 px-4 py-3">
         <button
           @click="goBack"
-          class="p-2 -ml-2 active:bg-gray-100 dark:active:bg-gray-700 rounded-lg transition-colors"
+          class="p-2 -ml-2 active:bg-slate-100 rounded-full transition-colors"
         >
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+          <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" />
           </svg>
         </button>
         <h1 class="text-lg font-semibold flex-1">{{ settingTitle }}</h1>
@@ -16,52 +16,61 @@
       </div>
     </div>
 
-    <div class="p-4 space-y-4">
+    <div class="page-container content-area">
       <!-- 外观设置 -->
       <div v-if="settingType === 'appearance'">
         <!-- 主题设置 -->
-        <div class="bg-white dark:bg-gray-800 rounded-xl p-4 mb-4">
+        <div class="card mb-4">
           <h3 class="text-base font-semibold mb-4">主题设置</h3>
           <div class="grid grid-cols-3 gap-3">
             <button
-              @click="settingsStore.theme = 'light'; settingsStore.applyTheme()"
+              @click="
+                settingsStore.theme = 'light';
+                settingsStore.applyTheme();
+              "
               :class="[
-                'p-4 rounded-xl border-2 transition-colors flex flex-col items-center gap-2 active:scale-95',
+                'p-4 rounded-lg border-2 transition-colors flex flex-col items-center gap-2 active:scale-95',
                 settingsStore.theme === 'light'
-                  ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/20'
-                  : 'border-gray-200 dark:border-gray-700'
+                  ? 'border-indigo-600 bg-indigo-50'
+                  : 'border-slate-200',
               ]"
             >
-              <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+              <svg class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zM2 13h2c.55 0 1-.45 1-1s-.45-1-1-1H2c-.55 0-1 .45-1 1s.45 1 1 1zm18 0h2c.55 0 1-.45 1-1s-.45-1-1-1h-2c-.55 0-1 .45-1 1s.45 1 1 1zM11 2v2c0 .55.45 1 1 1s1-.45 1-1V2c0-.55-.45-1-1-1s-1 .45-1 1zm0 18v2c0 .55.45 1 1 1s1-.45 1-1v-2c0-.55-.45-1-1-1s-1 .45-1 1zM5.99 4.58c-.39-.39-1.03-.39-1.41 0-.39.39-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0 .39-.39.39-1.03 0-1.41L5.99 4.58zm12.37 12.37c-.39-.39-1.03-.39-1.41 0-.39.39-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0 .39-.39.39-1.03 0-1.41l-1.06-1.06zm1.06-10.96c.39-.39.39-1.03 0-1.41-.39-.39-1.03-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41.39.39 1.03.39 1.41 0l1.06-1.06zM7.05 18.36c.39-.39.39-1.03 0-1.41-.39-.39-1.03-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41.39.39 1.03.39 1.41 0l1.06-1.06z" />
               </svg>
               <span class="text-sm">浅色</span>
             </button>
             <button
-              @click="settingsStore.theme = 'dark'; settingsStore.applyTheme()"
+              @click="
+                settingsStore.theme = 'dark';
+                settingsStore.applyTheme();
+              "
               :class="[
-                'p-4 rounded-xl border-2 transition-colors flex flex-col items-center gap-2 active:scale-95',
+                'p-4 rounded-lg border-2 transition-colors flex flex-col items-center gap-2 active:scale-95',
                 settingsStore.theme === 'dark'
-                  ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/20'
-                  : 'border-gray-200 dark:border-gray-700'
+                  ? 'border-indigo-600 bg-indigo-50'
+                  : 'border-slate-200',
               ]"
             >
-              <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+              <svg class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
               </svg>
               <span class="text-sm">深色</span>
             </button>
             <button
-              @click="settingsStore.theme = 'system'; settingsStore.applyTheme()"
+              @click="
+                settingsStore.theme = 'system';
+                settingsStore.applyTheme();
+              "
               :class="[
-                'p-4 rounded-xl border-2 transition-colors flex flex-col items-center gap-2 active:scale-95',
+                'p-4 rounded-lg border-2 transition-colors flex flex-col items-center gap-2 active:scale-95',
                 settingsStore.theme === 'system'
-                  ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/20'
-                  : 'border-gray-200 dark:border-gray-700'
+                  ? 'border-indigo-600 bg-indigo-50'
+                  : 'border-slate-200',
               ]"
             >
-              <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+              <svg class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" />
               </svg>
               <span class="text-sm">跟随系统</span>
             </button>
@@ -69,13 +78,20 @@
         </div>
 
         <!-- 字体设置 -->
-        <div class="bg-white dark:bg-gray-800 rounded-xl p-4 mb-4">
+        <div class="card mb-4">
           <h3 class="text-base font-semibold mb-3">字体设置</h3>
           <div class="space-y-2">
-            <label class="flex items-center justify-between p-3 rounded-lg active:bg-gray-100 dark:active:bg-gray-700 cursor-pointer">
+            <label
+              class="flex items-center justify-between p-3 rounded-lg active:bg-slate-100 cursor-pointer"
+            >
               <span>系统默认字体</span>
-              <svg v-if="settingsStore.fontFamily === 'system'" class="w-6 h-6 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+              <svg
+                v-if="settingsStore.fontFamily === 'system'"
+                class="w-6 h-6 text-indigo-600"
+                fill="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
               </svg>
               <input
                 type="radio"
@@ -84,10 +100,17 @@
                 class="hidden"
               />
             </label>
-            <label class="flex items-center justify-between p-3 rounded-lg active:bg-gray-100 dark:active:bg-gray-700 cursor-pointer">
+            <label
+              class="flex items-center justify-between p-3 rounded-lg active:bg-slate-100 cursor-pointer"
+            >
               <span>Fredoka</span>
-              <svg v-if="settingsStore.fontFamily === 'fredoka'" class="w-6 h-6 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+              <svg
+                v-if="settingsStore.fontFamily === 'fredoka'"
+                class="w-6 h-6 text-indigo-600"
+                fill="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
               </svg>
               <input
                 type="radio"
@@ -100,52 +123,60 @@
         </div>
 
         <!-- 预览文本 -->
-        <div class="bg-white dark:bg-gray-800 rounded-xl p-4 mb-4">
+        <div class="card mb-4">
           <h3 class="text-base font-semibold mb-3">预览文本</h3>
-          <div class="text-base p-3 bg-gray-50 dark:bg-gray-700 rounded-lg" :style="{ fontFamily: settingsStore.fontFamily === 'fredoka' ? 'Fredoka, sans-serif' : 'system-ui, sans-serif' }">
+          <div
+            class="text-base p-3 bg-slate-100 rounded-lg"
+            :style="{
+              fontFamily:
+                settingsStore.fontFamily === 'fredoka'
+                  ? 'Fredoka, sans-serif'
+                  : 'system-ui, sans-serif',
+            }"
+          >
             你好,世界! Hello, World!
           </div>
         </div>
 
         <!-- 音标大小 -->
-        <div class="bg-white dark:bg-gray-800 rounded-xl p-4">
+        <div class="card">
           <h3 class="text-base font-semibold mb-3">音标大小</h3>
           <div class="grid grid-cols-3 gap-3">
             <button
               @click="settingsStore.phoneticSize = 'small'"
               :class="[
-                'p-4 rounded-xl border-2 transition-colors active:scale-95',
+                'p-4 rounded-lg border-2 transition-colors active:scale-95',
                 settingsStore.phoneticSize === 'small'
-                  ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/20'
-                  : 'border-gray-200 dark:border-gray-700'
+                  ? 'border-indigo-600 bg-indigo-50'
+                  : 'border-slate-200',
               ]"
             >
               <div class="text-sm mb-2 font-medium">小</div>
-              <div class="text-xs text-gray-600 dark:text-gray-400">/'helǝʊ/</div>
+              <div class="text-xs text-gray-600">/'helǝʊ/</div>
             </button>
             <button
               @click="settingsStore.phoneticSize = 'medium'"
               :class="[
-                'p-4 rounded-xl border-2 transition-colors active:scale-95',
+                'p-4 rounded-lg border-2 transition-colors active:scale-95',
                 settingsStore.phoneticSize === 'medium'
-                  ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/20'
-                  : 'border-gray-200 dark:border-gray-700'
+                  ? 'border-indigo-600 bg-indigo-50'
+                  : 'border-slate-200',
               ]"
             >
               <div class="text-sm mb-2 font-medium">中</div>
-              <div class="text-sm text-gray-600 dark:text-gray-400">/'helǝʊ/</div>
+              <div class="text-sm text-gray-600">/'helǝʊ/</div>
             </button>
             <button
               @click="settingsStore.phoneticSize = 'large'"
               :class="[
-                'p-4 rounded-xl border-2 transition-colors active:scale-95',
+                'p-4 rounded-lg border-2 transition-colors active:scale-95',
                 settingsStore.phoneticSize === 'large'
-                  ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/20'
-                  : 'border-gray-200 dark:border-gray-700'
+                  ? 'border-indigo-600 bg-indigo-50'
+                  : 'border-slate-200',
               ]"
             >
               <div class="text-sm mb-2 font-medium">大</div>
-              <div class="text-base text-gray-600 dark:text-gray-400">/'hɛləʊ/</div>
+              <div class="text-base text-gray-600">/'hɛləʊ/</div>
             </button>
           </div>
         </div>
@@ -153,18 +184,18 @@
 
       <!-- 答题设置 -->
       <div v-else-if="settingType === 'answering'">
-        <div class="bg-white dark:bg-gray-800 rounded-xl p-4 space-y-5">
+        <div class="card space-y-5">
           <!-- 答题正确后自动下一题 -->
           <label class="flex items-center justify-between py-2">
             <span class="text-base">答题正确后自动下一题</span>
             <input
               type="checkbox"
               v-model="settingsStore.autoNextAfterCorrect"
-              class="w-12 h-6 rounded-full bg-gray-200 appearance-none relative transition-colors checked:bg-primary-500"
+              class="w-12 h-6 rounded-full bg-gray-200 appearance-none relative transition-colors checked:bg-indigo-600"
             />
           </label>
 
-          <div class="h-px bg-gray-200 dark:bg-gray-700"></div>
+          <div class="h-px bg-slate-200"></div>
 
           <!-- 忽略大小写 -->
           <label class="flex items-center justify-between py-2">
@@ -172,11 +203,11 @@
             <input
               type="checkbox"
               v-model="settingsStore.ignoreCase"
-              class="w-12 h-6 rounded-full bg-gray-200 appearance-none relative transition-colors checked:bg-primary-500"
+              class="w-12 h-6 rounded-full bg-gray-200 appearance-none relative transition-colors checked:bg-indigo-600"
             />
           </label>
 
-          <div class="h-px bg-gray-200 dark:bg-gray-700"></div>
+          <div class="h-px bg-slate-200"></div>
 
           <!-- 答题输入框样式 -->
           <div>
@@ -185,7 +216,7 @@
             </div>
             <select
               v-model="settingsStore.inputBoxStyle"
-              class="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-base"
+              class="w-full p-3 border border-slate-200 rounded-lg bg-white text-base"
             >
               <option value="word-length">单词长度</option>
               <option value="fixed">固定宽度</option>
@@ -193,7 +224,7 @@
             </select>
           </div>
 
-          <div class="h-px bg-gray-200 dark:bg-gray-700"></div>
+          <div class="h-px bg-slate-200"></div>
 
           <!-- 自动显示答案 -->
           <div>
@@ -202,7 +233,7 @@
             </div>
             <select
               v-model="settingsStore.autoShowAnswer"
-              class="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-base"
+              class="w-full p-3 border border-slate-200 rounded-lg bg-white text-base"
             >
               <option value="never">从不</option>
               <option value="after-3-errors">错误3次后</option>
@@ -214,12 +245,14 @@
 
       <!-- 播放设置 -->
       <div v-else-if="settingType === 'playback'">
-        <div class="bg-white dark:bg-gray-800 rounded-xl p-4 space-y-5">
+        <div class="card space-y-5">
           <!-- 倍速 -->
           <div>
             <div class="flex items-center justify-between mb-3">
               <span class="text-base">倍速</span>
-              <span class="text-primary-500 font-semibold text-lg">{{ settingsStore.playbackSpeed }}x</span>
+              <span class="text-indigo-600 font-semibold text-lg"
+                >{{ settingsStore.playbackSpeed }}x</span
+              >
             </div>
             <input
               type="range"
@@ -227,7 +260,7 @@
               max="2"
               step="0.25"
               v-model.number="settingsStore.playbackSpeed"
-              class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-primary-500"
+              class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-indigo-600"
             />
             <div class="flex justify-between text-xs text-gray-500 mt-2">
               <span>0.5x</span>
@@ -237,13 +270,15 @@
             </div>
           </div>
 
-          <div class="h-px bg-gray-200 dark:bg-gray-700"></div>
+          <div class="h-px bg-slate-200"></div>
 
           <!-- 播放次数 -->
           <div>
             <div class="flex items-center justify-between mb-3">
               <span class="text-base">播放次数</span>
-              <span class="text-primary-500 font-semibold text-lg">{{ settingsStore.playbackCount }}次</span>
+              <span class="text-indigo-600 font-semibold text-lg"
+                >{{ settingsStore.playbackCount }}次</span
+              >
             </div>
             <input
               type="range"
@@ -251,7 +286,7 @@
               max="5"
               step="1"
               v-model.number="settingsStore.playbackCount"
-              class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-primary-500"
+              class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-indigo-600"
             />
             <div class="flex justify-between text-xs text-gray-500 mt-2">
               <span>1次</span>
@@ -260,13 +295,15 @@
             </div>
           </div>
 
-          <div class="h-px bg-gray-200 dark:bg-gray-700"></div>
+          <div class="h-px bg-slate-200"></div>
 
           <!-- 播放间隔 -->
           <div>
             <div class="flex items-center justify-between mb-3">
               <span class="text-base">播放间隔</span>
-              <span class="text-primary-500 font-semibold text-lg">{{ settingsStore.playbackInterval }}s</span>
+              <span class="text-indigo-600 font-semibold text-lg"
+                >{{ settingsStore.playbackInterval }}s</span
+              >
             </div>
             <input
               type="range"
@@ -274,7 +311,7 @@
               max="5"
               step="0.5"
               v-model.number="settingsStore.playbackInterval"
-              class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-primary-500"
+              class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-indigo-600"
             />
             <div class="flex justify-between text-xs text-gray-500 mt-2">
               <span>0s</span>
@@ -283,7 +320,7 @@
             </div>
           </div>
 
-          <div class="h-px bg-gray-200 dark:bg-gray-700"></div>
+          <div class="h-px bg-slate-200"></div>
 
           <!-- 课程循环播放 -->
           <label class="flex items-center justify-between py-2">
@@ -291,11 +328,11 @@
             <input
               type="checkbox"
               v-model="settingsStore.loopCourse"
-              class="w-12 h-6 rounded-full bg-gray-200 appearance-none relative transition-colors checked:bg-primary-500"
+              class="w-12 h-6 rounded-full bg-gray-200 appearance-none relative transition-colors checked:bg-indigo-600"
             />
           </label>
 
-          <div class="h-px bg-gray-200 dark:bg-gray-700"></div>
+          <div class="h-px bg-slate-200"></div>
 
           <!-- 隐藏答案 -->
           <label class="flex items-center justify-between py-2">
@@ -303,11 +340,11 @@
             <input
               type="checkbox"
               v-model="settingsStore.hideAnswer"
-              class="w-12 h-6 rounded-full bg-gray-200 appearance-none relative transition-colors checked:bg-primary-500"
+              class="w-12 h-6 rounded-full bg-gray-200 appearance-none relative transition-colors checked:bg-indigo-600"
             />
           </label>
 
-          <div class="h-px bg-gray-200 dark:bg-gray-700"></div>
+          <div class="h-px bg-slate-200"></div>
 
           <!-- 自动跳到下一题 -->
           <label class="flex items-center justify-between py-2">
@@ -315,7 +352,7 @@
             <input
               type="checkbox"
               v-model="settingsStore.autoSkipNext"
-              class="w-12 h-6 rounded-full bg-gray-200 appearance-none relative transition-colors checked:bg-primary-500"
+              class="w-12 h-6 rounded-full bg-gray-200 appearance-none relative transition-colors checked:bg-indigo-600"
             />
           </label>
         </div>
@@ -323,20 +360,24 @@
 
       <!-- 听力设置 -->
       <div v-else-if="settingType === 'listening'">
-        <div class="bg-white dark:bg-gray-800 rounded-xl p-4">
-          <p class="text-gray-500 dark:text-gray-400 text-center py-8">暂无设置项</p>
+        <div class="card">
+          <p class="text-gray-500 text-center py-8">暂无设置项</p>
         </div>
       </div>
 
       <!-- 口语设置 -->
       <div v-else-if="settingType === 'speaking'">
-        <div class="bg-white dark:bg-gray-800 rounded-xl p-4">
+        <div class="card">
           <h3 class="text-base font-semibold mb-4">显示模式</h3>
           <div class="space-y-3">
-            <label class="flex items-start gap-3 p-4 rounded-xl border-2 cursor-pointer transition-colors active:scale-[0.98]"
-              :class="settingsStore.speakingDisplayMode === 'english' 
-                ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/20' 
-                : 'border-gray-200 dark:border-gray-700'">
+            <label
+              class="flex items-start gap-3 p-4 rounded-lg border-2 cursor-pointer transition-colors active:scale-95"
+              :class="
+                settingsStore.speakingDisplayMode === 'english'
+                  ? 'border-indigo-600 bg-indigo-50'
+                  : 'border-slate-200'
+              "
+            >
               <input
                 type="radio"
                 v-model="settingsStore.speakingDisplayMode"
@@ -345,17 +386,26 @@
               />
               <div class="flex-1">
                 <div class="font-semibold mb-1 text-base">显示英文</div>
-                <div class="text-sm text-gray-600 dark:text-gray-400">看英文原句,练习朗读发音</div>
+                <div class="text-sm text-gray-600">看英文原句,练习朗读发音</div>
               </div>
-              <svg v-if="settingsStore.speakingDisplayMode === 'english'" class="w-6 h-6 text-primary-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+              <svg
+                v-if="settingsStore.speakingDisplayMode === 'english'"
+                class="w-6 h-6 text-indigo-600 flex-shrink-0"
+                fill="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
               </svg>
             </label>
 
-            <label class="flex items-start gap-3 p-4 rounded-xl border-2 cursor-pointer transition-colors active:scale-[0.98]"
-              :class="settingsStore.speakingDisplayMode === 'chinese' 
-                ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/20' 
-                : 'border-gray-200 dark:border-gray-700'">
+            <label
+              class="flex items-start gap-3 p-4 rounded-lg border-2 cursor-pointer transition-colors active:scale-95"
+              :class="
+                settingsStore.speakingDisplayMode === 'chinese'
+                  ? 'border-indigo-600 bg-indigo-50'
+                  : 'border-slate-200'
+              "
+            >
               <input
                 type="radio"
                 v-model="settingsStore.speakingDisplayMode"
@@ -364,17 +414,26 @@
               />
               <div class="flex-1">
                 <div class="font-semibold mb-1 text-base">显示中文</div>
-                <div class="text-sm text-gray-600 dark:text-gray-400">看中文翻译,练习口语翻译</div>
+                <div class="text-sm text-gray-600">看中文翻译,练习口语翻译</div>
               </div>
-              <svg v-if="settingsStore.speakingDisplayMode === 'chinese'" class="w-6 h-6 text-primary-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+              <svg
+                v-if="settingsStore.speakingDisplayMode === 'chinese'"
+                class="w-6 h-6 text-indigo-600 flex-shrink-0"
+                fill="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
               </svg>
             </label>
 
-            <label class="flex items-start gap-3 p-4 rounded-xl border-2 cursor-pointer transition-colors active:scale-[0.98]"
-              :class="settingsStore.speakingDisplayMode === 'blind' 
-                ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/20' 
-                : 'border-gray-200 dark:border-gray-700'">
+            <label
+              class="flex items-start gap-3 p-4 rounded-lg border-2 cursor-pointer transition-colors active:scale-95"
+              :class="
+                settingsStore.speakingDisplayMode === 'blind'
+                  ? 'border-indigo-600 bg-indigo-50'
+                  : 'border-slate-200'
+              "
+            >
               <input
                 type="radio"
                 v-model="settingsStore.speakingDisplayMode"
@@ -383,10 +442,15 @@
               />
               <div class="flex-1">
                 <div class="font-semibold mb-1 text-base">盲读模式</div>
-                <div class="text-sm text-gray-600 dark:text-gray-400">不显示任何提示,挑战记忆</div>
+                <div class="text-sm text-gray-600">不显示任何提示,挑战记忆</div>
               </div>
-              <svg v-if="settingsStore.speakingDisplayMode === 'blind'" class="w-6 h-6 text-primary-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+              <svg
+                v-if="settingsStore.speakingDisplayMode === 'blind'"
+                class="w-6 h-6 text-indigo-600 flex-shrink-0"
+                fill="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
               </svg>
             </label>
           </div>
@@ -397,37 +461,37 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
-import { useSettingsStore } from '@/stores/settings'
+import { computed } from "vue";
+import { useRoute, useRouter } from "vue-router";
+import { useSettingsStore } from "@/stores/settings";
 
-const route = useRoute()
-const router = useRouter()
-const settingsStore = useSettingsStore()
+const route = useRoute();
+const router = useRouter();
+const settingsStore = useSettingsStore();
 
 const settingType = computed(() => {
-  return route.params.settingType || 'appearance'
-})
+  return route.params.settingType || "appearance";
+});
 
 const settingTitle = computed(() => {
   const titles = {
-    appearance: '外观设置',
-    answering: '答题设置',
-    playback: '播放设置',
-    listening: '听力设置',
-    speaking: '口语设置'
-  }
-  return titles[settingType.value] || '设置'
-})
+    appearance: "外观设置",
+    answering: "答题设置",
+    playback: "播放设置",
+    listening: "听力设置",
+    speaking: "口语设置",
+  };
+  return titles[settingType.value] || "设置";
+});
 
 function goBack() {
-  router.back()
+  router.back();
 }
 </script>
 
 <style scoped>
 input[type="checkbox"]::before {
-  content: '';
+  content: "";
   position: absolute;
   width: 20px;
   height: 20px;
@@ -447,7 +511,7 @@ input[type="range"]::-webkit-slider-thumb {
   width: 20px;
   height: 20px;
   border-radius: 50%;
-  background: #8b5cf6;
+  background: #4f46e5;
   cursor: pointer;
   -webkit-appearance: none;
 }
@@ -456,7 +520,7 @@ input[type="range"]::-moz-range-thumb {
   width: 20px;
   height: 20px;
   border-radius: 50%;
-  background: #8b5cf6;
+  background: #4f46e5;
   cursor: pointer;
   border: none;
 }

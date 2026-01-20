@@ -1,33 +1,33 @@
 <template>
-  <div class="min-h-screen bg-gray-50 dark:bg-gray-900 pb-20 p-4">
-    <div class="max-w-4xl mx-auto space-y-4">
+  <div class="min-h-screen bg-slate-50 pb-20">
+    <div class="page-container content-area">
       <!-- 标题 -->
-      <div class="bg-white dark:bg-gray-800 rounded-xl p-4">
-        <h1 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">本地数据库管理</h1>
-        <p class="text-sm text-gray-500 dark:text-gray-400">
+      <div class="card">
+        <h1 class="text-2xl font-bold text-gray-900 mb-2">本地数据库管理</h1>
+        <p class="text-sm text-gray-500">
           数据库名称: <span class="font-mono">WordTapDB</span> | 
           版本: <span class="font-mono">{{ dbVersion }}</span>
         </p>
       </div>
 
       <!-- 操作按钮 -->
-      <div class="bg-white dark:bg-gray-800 rounded-xl p-4">
+      <div class="card">
         <div class="flex gap-2 flex-wrap">
           <button
             @click="refreshData"
-            class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+            class="px-4 py-2 bg-indigo-600 text-white rounded-full hover:bg-indigo-700 active:scale-95 transition-all duration-200"
           >
             刷新数据
           </button>
           <button
             @click="exportData"
-            class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors"
+            class="px-4 py-2 bg-lime-400 text-white rounded-full hover:bg-lime-500 active:scale-95 transition-all duration-200"
           >
             导出数据
           </button>
           <button
             @click="clearAllData"
-            class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
+            class="px-4 py-2 bg-red-500 text-white rounded-full hover:bg-red-600 active:scale-95 transition-all duration-200"
           >
             清空所有数据
           </button>
@@ -35,28 +35,28 @@
       </div>
 
       <!-- 用户表 -->
-      <div class="bg-white dark:bg-gray-800 rounded-xl p-4">
+      <div class="card">
         <div class="flex items-center justify-between mb-4">
-          <h2 class="text-lg font-semibold text-gray-900 dark:text-white">用户表 (users)</h2>
-          <span class="text-sm text-gray-500 dark:text-gray-400">{{ users.length }} 条记录</span>
+          <h2 class="text-lg font-semibold text-gray-900">用户表 (users)</h2>
+          <span class="text-sm text-gray-500">{{ users.length }} 条记录</span>
         </div>
         <div class="overflow-x-auto">
           <table class="w-full text-sm">
             <thead>
-              <tr class="border-b border-gray-200 dark:border-gray-700">
-                <th class="text-left p-2 text-gray-600 dark:text-gray-400">ID</th>
-                <th class="text-left p-2 text-gray-600 dark:text-gray-400">用户名</th>
-                <th class="text-left p-2 text-gray-600 dark:text-gray-400">邮箱</th>
-                <th class="text-left p-2 text-gray-600 dark:text-gray-400">创建时间</th>
-                <th class="text-left p-2 text-gray-600 dark:text-gray-400">最后登录</th>
-                <th class="text-left p-2 text-gray-600 dark:text-gray-400">操作</th>
+              <tr class="border-b border-slate-200">
+                <th class="text-left p-2 text-gray-600">ID</th>
+                <th class="text-left p-2 text-gray-600">用户名</th>
+                <th class="text-left p-2 text-gray-600">邮箱</th>
+                <th class="text-left p-2 text-gray-600">创建时间</th>
+                <th class="text-left p-2 text-gray-600">最后登录</th>
+                <th class="text-left p-2 text-gray-600">操作</th>
               </tr>
             </thead>
             <tbody>
               <tr
                 v-for="user in users"
                 :key="user.id"
-                class="border-b border-gray-100 dark:border-gray-700"
+                class="border-b border-slate-100"
               >
                 <td class="p-2 font-mono text-xs">{{ user.id }}</td>
                 <td class="p-2">{{ user.username }}</td>
@@ -73,7 +73,7 @@
                 </td>
               </tr>
               <tr v-if="users.length === 0">
-                <td colspan="6" class="p-4 text-center text-gray-500 dark:text-gray-400">
+                <td colspan="6" class="p-4 text-center text-gray-500">
                   暂无用户数据
                 </td>
               </tr>
@@ -83,28 +83,28 @@
       </div>
 
       <!-- 用户统计表 -->
-      <div class="bg-white dark:bg-gray-800 rounded-xl p-4">
+      <div class="card">
         <div class="flex items-center justify-between mb-4">
-          <h2 class="text-lg font-semibold text-gray-900 dark:text-white">用户统计 (userStats)</h2>
-          <span class="text-sm text-gray-500 dark:text-gray-400">{{ userStats.length }} 条记录</span>
+          <h2 class="text-lg font-semibold text-gray-900">用户统计 (userStats)</h2>
+          <span class="text-sm text-gray-500">{{ userStats.length }} 条记录</span>
         </div>
         <div class="overflow-x-auto">
           <table class="w-full text-sm">
             <thead>
-              <tr class="border-b border-gray-200 dark:border-gray-700">
-                <th class="text-left p-2 text-gray-600 dark:text-gray-400">ID</th>
-                <th class="text-left p-2 text-gray-600 dark:text-gray-400">连胜</th>
-                <th class="text-left p-2 text-gray-600 dark:text-gray-400">累计打卡</th>
-                <th class="text-left p-2 text-gray-600 dark:text-gray-400">词汇量</th>
-                <th class="text-left p-2 text-gray-600 dark:text-gray-400">学习时长</th>
-                <th class="text-left p-2 text-gray-600 dark:text-gray-400">完成课程</th>
+              <tr class="border-b border-slate-200">
+                <th class="text-left p-2 text-gray-600">ID</th>
+                <th class="text-left p-2 text-gray-600">连胜</th>
+                <th class="text-left p-2 text-gray-600">累计打卡</th>
+                <th class="text-left p-2 text-gray-600">词汇量</th>
+                <th class="text-left p-2 text-gray-600">学习时长</th>
+                <th class="text-left p-2 text-gray-600">完成课程</th>
               </tr>
             </thead>
             <tbody>
               <tr
                 v-for="stat in userStats"
                 :key="stat.id"
-                class="border-b border-gray-100 dark:border-gray-700"
+                class="border-b border-slate-100"
               >
                 <td class="p-2 font-mono text-xs">{{ stat.id }}</td>
                 <td class="p-2">{{ stat.streak || 0 }}</td>
@@ -114,7 +114,7 @@
                 <td class="p-2">{{ stat.completedLessons || 0 }}</td>
               </tr>
               <tr v-if="userStats.length === 0">
-                <td colspan="6" class="p-4 text-center text-gray-500 dark:text-gray-400">
+                <td colspan="6" class="p-4 text-center text-gray-500">
                   暂无统计数据
                 </td>
               </tr>
@@ -124,26 +124,26 @@
       </div>
 
       <!-- 课程表 -->
-      <div class="bg-white dark:bg-gray-800 rounded-xl p-4">
+      <div class="card">
         <div class="flex items-center justify-between mb-4">
-          <h2 class="text-lg font-semibold text-gray-900 dark:text-white">我的课程 (courses)</h2>
-          <span class="text-sm text-gray-500 dark:text-gray-400">{{ courses.length }} 条记录</span>
+          <h2 class="text-lg font-semibold text-gray-900">我的课程 (courses)</h2>
+          <span class="text-sm text-gray-500">{{ courses.length }} 条记录</span>
         </div>
         <div class="overflow-x-auto">
           <table class="w-full text-sm">
             <thead>
-              <tr class="border-b border-gray-200 dark:border-gray-700">
-                <th class="text-left p-2 text-gray-600 dark:text-gray-400">ID</th>
-                <th class="text-left p-2 text-gray-600 dark:text-gray-400">名称</th>
-                <th class="text-left p-2 text-gray-600 dark:text-gray-400">分类</th>
-                <th class="text-left p-2 text-gray-600 dark:text-gray-400">添加时间</th>
+              <tr class="border-b border-slate-200">
+                <th class="text-left p-2 text-gray-600">ID</th>
+                <th class="text-left p-2 text-gray-600">名称</th>
+                <th class="text-left p-2 text-gray-600">分类</th>
+                <th class="text-left p-2 text-gray-600">添加时间</th>
               </tr>
             </thead>
             <tbody>
               <tr
                 v-for="course in courses"
                 :key="course.id"
-                class="border-b border-gray-100 dark:border-gray-700"
+                class="border-b border-slate-100"
               >
                 <td class="p-2 font-mono text-xs">{{ course.id }}</td>
                 <td class="p-2">{{ course.name }}</td>
@@ -151,7 +151,7 @@
                 <td class="p-2 text-xs text-gray-500">{{ formatDate(course.addedAt) }}</td>
               </tr>
               <tr v-if="courses.length === 0">
-                <td colspan="4" class="p-4 text-center text-gray-500 dark:text-gray-400">
+                <td colspan="4" class="p-4 text-center text-gray-500">
                   暂无课程数据
                 </td>
               </tr>
@@ -161,28 +161,28 @@
       </div>
 
       <!-- 课时表 -->
-      <div class="bg-white dark:bg-gray-800 rounded-xl p-4">
+      <div class="card">
         <div class="flex items-center justify-between mb-4">
-          <h2 class="text-lg font-semibold text-gray-900 dark:text-white">课时记录 (lessons)</h2>
-          <span class="text-sm text-gray-500 dark:text-gray-400">{{ lessons.length }} 条记录</span>
+          <h2 class="text-lg font-semibold text-gray-900">课时记录 (lessons)</h2>
+          <span class="text-sm text-gray-500">{{ lessons.length }} 条记录</span>
         </div>
         <div class="overflow-x-auto max-h-96 overflow-y-auto">
           <table class="w-full text-sm">
-            <thead class="sticky top-0 bg-white dark:bg-gray-800">
-              <tr class="border-b border-gray-200 dark:border-gray-700">
-                <th class="text-left p-2 text-gray-600 dark:text-gray-400">ID</th>
-                <th class="text-left p-2 text-gray-600 dark:text-gray-400">课程ID</th>
-                <th class="text-left p-2 text-gray-600 dark:text-gray-400">标题</th>
-                <th class="text-left p-2 text-gray-600 dark:text-gray-400">完成时间</th>
-                <th class="text-left p-2 text-gray-600 dark:text-gray-400">最佳时长</th>
-                <th class="text-left p-2 text-gray-600 dark:text-gray-400">尝试次数</th>
+            <thead class="sticky top-0 bg-white">
+              <tr class="border-b border-slate-200">
+                <th class="text-left p-2 text-gray-600">ID</th>
+                <th class="text-left p-2 text-gray-600">课程ID</th>
+                <th class="text-left p-2 text-gray-600">标题</th>
+                <th class="text-left p-2 text-gray-600">完成时间</th>
+                <th class="text-left p-2 text-gray-600">最佳时长</th>
+                <th class="text-left p-2 text-gray-600">尝试次数</th>
               </tr>
             </thead>
             <tbody>
               <tr
                 v-for="lesson in lessons"
                 :key="lesson.id"
-                class="border-b border-gray-100 dark:border-gray-700"
+                class="border-b border-slate-100"
               >
                 <td class="p-2 font-mono text-xs">{{ lesson.id }}</td>
                 <td class="p-2 font-mono text-xs">{{ lesson.courseId }}</td>
@@ -192,7 +192,7 @@
                 <td class="p-2">{{ lesson.attemptCount || 0 }}</td>
               </tr>
               <tr v-if="lessons.length === 0">
-                <td colspan="6" class="p-4 text-center text-gray-500 dark:text-gray-400">
+                <td colspan="6" class="p-4 text-center text-gray-500">
                   暂无课时数据
                 </td>
               </tr>
