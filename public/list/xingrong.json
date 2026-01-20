@@ -1,0 +1,14 @@
+[
+  {
+    "id": "xingrong",
+    "name": "星荣英语课程",
+    "description": "星荣英语学习课程，共55个课时，从基础到进阶，系统学习英语",
+    "category": "星荣课程",
+    "tags": ["星荣课程", "英语学习"],
+    "url": "xingrong-courses/data/courses",
+    "length": 55,
+    "translateLanguage": "zh-CN",
+    "language": "en",
+    "type": "xingrong"
+  }
+]
