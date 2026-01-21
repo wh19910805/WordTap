@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from typing import Annotated, List
 import uuid
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from app.core.database import get_db
 from app.models.course import Course, Lesson, UserLearningProgress, UserCourse
@@ -352,6 +352,9 @@ def update_learning_progress(
         UserLearningProgress.lesson_id == progress_data.lesson_id
     ).first()
     
+    # 记录是否是新完成的课时
+    was_completed_before = existing_progress.is_completed if existing_progress else False
+    
     if existing_progress:
         # 更新现有进度
         existing_progress.current_line = progress_data.current_line
@@ -374,6 +377,77 @@ def update_learning_progress(
             is_completed=progress_data.is_completed
         )
         db.add(progress)
+    
+    # 更新用户统计数据
+    from app.models.user import UserStats
+    
+    # 获取或创建用户统计记录
+    user_stats = db.query(UserStats).filter(UserStats.user_id == user_id).first()
+    if not user_stats:
+        user_stats = UserStats(
+            id=f"stats_{user_id}",
+            user_id=user_id
+        )
+        db.add(user_stats)
+    
+    # 更新学习时长
+    user_stats.study_time_total += progress_data.study_time
+    
+    # 获取今天、本周、本月、本年的开始时间
+    today = datetime.now().date()
+    today_start = datetime.combine(today, datetime.min.time())
+    
+    week_start = today - timedelta(days=today.weekday())
+    week_start_datetime = datetime.combine(week_start, datetime.min.time())
+    
+    month_start = datetime(today.year, today.month, 1)
+    year_start = datetime(today.year, 1, 1)
+    
+    # 更新今日学习时长
+    if progress.last_studied_at >= today_start:
+        user_stats.study_time_today += progress_data.study_time
+    
+    # 更新本周学习时长
+    if progress.last_studied_at >= week_start_datetime:
+        user_stats.study_time_week += progress_data.study_time
+    
+    # 更新本月学习时长
+    if progress.last_studied_at >= month_start:
+        user_stats.study_time_month += progress_data.study_time
+    
+    # 更新本年学习时长
+    if progress.last_studied_at >= year_start:
+        user_stats.study_time_year += progress_data.study_time
+    
+    # 更新最后学习日期
+    user_stats.last_study_date = progress.last_studied_at
+    
+    # 更新连续学习天数和累计打卡
+    if user_stats.last_study_date:
+        last_date = user_stats.last_study_date.date()
+        
+        if last_date == today:
+            # 今天已经学习过，不更新打卡记录
+            pass
+        else:
+            yesterday = today - timedelta(days=1)
+            if last_date == yesterday:
+                # 连续学习，增加连胜天数
+                user_stats.streak += 1
+            else:
+                # 中断了，重置连胜天数
+                user_stats.streak = 1
+            
+            # 增加累计打卡次数
+            user_stats.total_check_in += 1
+    else:
+        # 第一次学习
+        user_stats.streak = 1
+        user_stats.total_check_in = 1
+    
+    # 如果课时是新完成的，更新已完成课时数
+    if progress_data.is_completed and not was_completed_before:
+        user_stats.completed_lessons += 1
     
     db.commit()
     db.refresh(progress)

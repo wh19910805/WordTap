@@ -211,15 +211,32 @@ export const useUserStore = defineStore("user", () => {
     const monday = new Date(today);
     monday.setDate(today.getDate() - (dayOfWeek === 0 ? 6 : dayOfWeek - 1));
 
+    // 获取所有学习记录的日期
+    let studyDates = new Set();
+
+    try {
+      // 从后端获取最近的学习记录
+      const response = await userApi.getRecentStudies(30); // 获取30天内的记录
+      if (response && response.records) {
+        // 提取所有学习日期
+        response.records.forEach((record) => {
+          if (record.last_studied_at) {
+            const studyDate = new Date(record.last_studied_at).toDateString();
+            studyDates.add(studyDate);
+          }
+        });
+      }
+    } catch (error) {
+      console.error("获取最近学习记录失败:", error);
+    }
+
     for (let i = 0; i < 7; i++) {
       const date = new Date(monday);
       date.setDate(monday.getDate() + i);
       const dateStr = date.toDateString();
 
       // 检查当天是否有学习记录
-      const hasStudy =
-        lastStudyDate.value &&
-        new Date(lastStudyDate.value).toDateString() === dateStr;
+      const hasStudy = studyDates.has(dateStr);
 
       activities.push({
         date: dateStr,
@@ -241,7 +258,7 @@ export const useUserStore = defineStore("user", () => {
 
       if (response && response.records) {
         recentLessons.value = response.records.map((record) => ({
-          id: record.id,
+          id: record.lesson_id, // 使用lesson_id作为id，这样goToLesson函数可以直接使用lesson.id作为lessonId
           courseId: record.course_id,
           courseName: record.course_name || "未知课程",
           title: record.lesson_name || `Lesson`,

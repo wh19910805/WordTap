@@ -699,13 +699,18 @@ const heatmapDays = computed(() => {
     days.push({ hasData: false, isToday: false, date: "" });
   }
 
-  // 填充当月日期
+  // 填充当月日期，只显示到今天
   const today = new Date();
+  const todayStr = today.toISOString().split("T")[0];
+  
   for (let day = 1; day <= lastDay.getDate(); day++) {
     const date = new Date(currentYear.value, currentMonth.value, day);
     const dateStr = date.toISOString().split("T")[0];
-    const hasData = userStore.learningHeatmap[dateStr] > 0;
-    const isToday = date.toDateString() === today.toDateString();
+    
+    // 只显示到今天，未来的日期不显示数据
+    const isFutureDate = date > today;
+    const hasData = !isFutureDate && userStore.learningHeatmap[dateStr] > 0;
+    const isToday = dateStr === todayStr;
 
     days.push({
       hasData,
@@ -795,13 +800,19 @@ async function loadLatestProgress() {
 // 继续学习
 function continueLearning() {
   if (latestProgress.value) {
-    router.push({
-      name: "Learning",
-      params: {
-        courseId: latestProgress.value.course_id,
-        lessonId: latestProgress.value.lesson_id,
-      },
-    });
+    // 确保latestProgress.value包含course_id和lesson_id属性
+    if (latestProgress.value.course_id && latestProgress.value.lesson_id) {
+      router.push({
+        name: "Learning",
+        params: {
+          courseId: latestProgress.value.course_id,
+          lessonId: latestProgress.value.lesson_id,
+        },
+      });
+    } else {
+      console.error("最新学习进度数据不完整，缺少course_id或lesson_id属性");
+      console.error("最新学习进度数据:", latestProgress.value);
+    }
   }
 }
 
