@@ -1,13 +1,13 @@
 <template>
-  <div class="h-screen bg-slate-50 overflow-y-auto pb-20">
+  <div class="h-screen bg-[var(--background-color)] overflow-y-auto pb-20">
     <div class="page-container content-area">
       <!-- 每日打卡部分 -->
       <div
-        class="bg-white border-2 border-slate-200 rounded-3xl p-3 transition-all duration-200 hover:border-indigo-600"
+        class="bg-[var(--surface-color)] border-2 border-[var(--border-color)] rounded-3xl p-3 transition-all duration-200 hover:border-indigo-600"
       >
         <!-- 标题栏 -->
         <div
-          class="flex items-center justify-between mb-6 pb-4 border-b border-slate-200"
+          class="flex items-center justify-between mb-6 pb-4 border-b border-[var(--border-color)]"
         >
           <div class="flex items-center gap-3">
             <div
@@ -15,17 +15,8 @@
             >
               <component :is="FireIcon" class="w-6 h-6 text-white" />
             </div>
-            <h2 class="text-xl font-bold text-gray-900">每日打卡</h2>
+            <h2 class="text-xl font-bold text-[var(--text-primary)]">每日打卡</h2>
           </div>
-          <button
-            @click="showSettings = true"
-            class="p-2 hover:bg-slate-100 rounded-full transition-colors"
-          >
-            <component
-              :is="SettingsIcon"
-              class="w-6 h-6 text-gray-400 hover:text-indigo-600"
-            />
-          </button>
         </div>
 
         <div class="space-y-6">
@@ -71,8 +62,12 @@
           </div>
 
           <!-- 本周打卡记录 -->
-          <div class="bg-white border-2 border-slate-200 rounded-3xl p-5">
-            <div class="text-sm font-medium text-gray-600 mb-4 flex items-center gap-2">
+          <div
+            class="bg-[var(--surface-color)] border-2 border-[var(--border-color)] rounded-3xl p-5"
+          >
+            <div
+              class="text-sm font-medium text-[var(--text-primary)] mb-4 flex items-center gap-2"
+            >
               <component :is="CalendarIcon" class="w-5 h-5 text-indigo-600" />
               <span>本周打卡记录</span>
             </div>
@@ -88,8 +83,8 @@
                     day.checked
                       ? 'bg-indigo-600 border-indigo-600 text-white hover:bg-indigo-700'
                       : day.isToday
-                      ? 'bg-white border-indigo-600 text-indigo-600 hover:bg-indigo-50'
-                      : 'bg-slate-100 border-slate-200 text-gray-400 hover:border-indigo-300 hover:bg-slate-200',
+                      ? 'bg-[var(--surface-color)] border-indigo-600 text-indigo-600 hover:bg-[var(--hover-color)]'
+                      : 'bg-[var(--hover-color)] border-[var(--border-color)] text-[var(--text-tertiary)] hover:border-indigo-300 hover:bg-[var(--surface-color)]',
                   ]"
                 >
                   <component v-if="day.checked" :is="CheckIcon" class="w-5 h-5" />
@@ -202,16 +197,18 @@
 
       <!-- 最近学习 -->
       <div
-        class="bg-white border-2 border-slate-200 rounded-3xl overflow-hidden transition-all duration-200 hover:border-indigo-600"
+        class="bg-[var(--surface-color)] border-2 border-[var(--border-color)] rounded-3xl overflow-hidden transition-all duration-200 hover:border-indigo-600"
       >
-        <div class="p-3 border-b border-slate-200 flex items-center justify-between">
+        <div
+          class="p-3 border-b border-[var(--border-color)] flex items-center justify-between"
+        >
           <div class="flex items-center gap-3">
             <div
               class="w-10 h-10 bg-indigo-600 rounded-full flex items-center justify-center"
             >
               <component :is="ClockIcon" class="w-6 h-6 text-white" />
             </div>
-            <h2 class="text-xl font-bold text-gray-900">最近学习</h2>
+            <h2 class="text-xl font-bold text-[var(--text-primary)]">最近学习</h2>
           </div>
           <button
             @click="$router.push('/discovery')"
@@ -233,7 +230,7 @@
             v-for="(lesson, index) in recentLessons"
             :key="index"
             @click="goToLesson(lesson)"
-            class="flex items-center gap-4 p-4 bg-slate-50 rounded-2xl border border-slate-200 transition-all duration-200 cursor-pointer hover:border-indigo-600"
+            class="flex items-center gap-4 p-4 bg-[var(--surface-color)] rounded-2xl border border-[var(--border-color)] transition-all duration-200 cursor-pointer hover:border-indigo-600"
           >
             <div
               class="w-16 h-16 bg-indigo-600 rounded-2xl flex-shrink-0 overflow-hidden relative"
@@ -251,7 +248,9 @@
               </div>
             </div>
             <div class="flex-1 min-w-0">
-              <div class="font-bold text-gray-900 truncate flex items-center gap-2">
+              <div
+                class="font-bold text-[var(--text-primary)] truncate flex items-center gap-2"
+              >
                 <span>{{ lesson.courseName || "课程" }}</span>
                 <div
                   class="text-xs bg-lime-400 text-black px-2 py-1 rounded-full font-bold"
@@ -260,17 +259,19 @@
                 </div>
               </div>
               <div
-                class="text-sm text-gray-600 truncate hover:text-indigo-600 transition-colors duration-300"
+                class="text-sm text-[var(--text-secondary)] truncate hover:text-indigo-600 transition-colors duration-300"
               >
                 {{ lesson.title }}
               </div>
-              <div class="text-xs text-gray-500 mt-2 flex items-center gap-2">
+              <div
+                class="text-xs text-[var(--text-tertiary)] mt-2 flex items-center gap-2"
+              >
                 <component :is="ClockIcon" class="w-4 h-4" />
                 <span>{{ formatRelativeTime(lesson.time) }}</span>
               </div>
             </div>
             <div
-              class="text-gray-400 opacity-0 hover:opacity-100 transition-opacity duration-300"
+              class="text-[var(--text-tertiary)] opacity-0 hover:opacity-100 transition-opacity duration-300"
             >
               <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path
@@ -284,11 +285,11 @@
           </div>
           <div v-if="recentLessons.length === 0" class="text-center py-10 px-4">
             <div
-              class="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4"
+              class="w-20 h-20 bg-[var(--hover-color)] rounded-full flex items-center justify-center mx-auto mb-4"
             >
-              <component :is="BookIcon" class="w-10 h-10 text-gray-400" />
+              <component :is="BookIcon" class="w-10 h-10 text-[var(--text-tertiary)]" />
             </div>
-            <div class="text-gray-500 text-base mb-4">暂无最近学习记录</div>
+            <div class="text-[var(--text-tertiary)] text-base mb-4">暂无最近学习记录</div>
             <button
               @click="$router.push('/discovery')"
               class="text-indigo-600 font-bold hover:text-indigo-700 text-sm flex items-center gap-1 mx-auto"
@@ -309,16 +310,18 @@
 
       <!-- 学习统计部分 -->
       <div
-        class="bg-white border-2 border-slate-200 rounded-3xl overflow-hidden transition-all duration-200 hover:border-indigo-600"
+        class="bg-[var(--surface-color)] border-2 border-[var(--border-color)] rounded-3xl overflow-hidden transition-all duration-200 hover:border-indigo-600"
       >
-        <div class="flex items-center justify-between p-3 border-b border-slate-200">
+        <div
+          class="flex items-center justify-between p-3 border-b border-[var(--border-color)]"
+        >
           <div class="flex items-center gap-3">
             <div
               class="w-10 h-10 bg-indigo-600 rounded-full flex items-center justify-center"
             >
               <component :is="CalendarIcon" class="w-6 h-6 text-white" />
             </div>
-            <h2 class="text-xl font-bold text-gray-900">统计</h2>
+            <h2 class="text-xl font-bold text-[var(--text-primary)]">统计</h2>
           </div>
           <div class="flex gap-2 bg-slate-100 rounded-full p-1">
             <button
@@ -434,16 +437,16 @@
 
       <!-- 学习工具 -->
       <div
-        class="bg-white border-2 border-slate-200 rounded-3xl overflow-hidden transition-all duration-200 hover:border-indigo-600"
+        class="bg-[var(--surface-color)] border-2 border-[var(--border-color)] rounded-3xl overflow-hidden transition-all duration-200 hover:border-indigo-600"
       >
-        <div class="p-3 border-b border-slate-200">
+        <div class="p-3 border-b border-[var(--border-color)]">
           <div class="flex items-center gap-3">
             <div
               class="w-10 h-10 bg-indigo-600 rounded-full flex items-center justify-center"
             >
               <component :is="ToolsIcon" class="w-6 h-6 text-white" />
             </div>
-            <h2 class="text-xl font-bold text-gray-900">学习工具</h2>
+            <h2 class="text-xl font-bold text-[var(--text-primary)]">学习工具</h2>
           </div>
         </div>
         <div class="p-3">
@@ -545,16 +548,18 @@
 
       <!-- 学习热力图 -->
       <div
-        class="bg-white border-2 border-slate-200 rounded-3xl overflow-hidden transition-all duration-200 hover:border-indigo-600"
+        class="bg-[var(--surface-color)] border-2 border-[var(--border-color)] rounded-3xl overflow-hidden transition-all duration-200 hover:border-indigo-600"
       >
-        <div class="flex items-center justify-between p-3 border-b border-slate-200">
+        <div
+          class="flex items-center justify-between p-3 border-b border-[var(--border-color)]"
+        >
           <div class="flex items-center gap-3">
             <div
               class="w-10 h-10 bg-indigo-600 rounded-full flex items-center justify-center"
             >
               <component :is="CheckCircleIcon" class="w-6 h-6 text-white" />
             </div>
-            <h2 class="text-xl font-bold text-gray-900">学习热力图</h2>
+            <h2 class="text-xl font-bold text-[var(--text-primary)]">学习热力图</h2>
           </div>
           <div class="flex items-center gap-2">
             <button
@@ -613,9 +618,6 @@
 
     <!-- Tab Bar -->
     <TabBar />
-
-    <!-- 设置弹窗 -->
-    <SettingsModal v-if="showSettings" @close="showSettings = false" />
   </div>
 </template>
 
@@ -626,10 +628,8 @@ import { useUserStore } from "@/stores/user";
 import { useCourseStore } from "@/stores/course";
 import { progressApi } from "@/api/client";
 import TabBar from "@/components/TabBar.vue";
-import SettingsModal from "@/components/SettingsModal.vue";
 import {
   FireIcon,
-  SettingsIcon,
   CheckIcon,
   CalendarIcon,
   ShareIcon,
@@ -649,7 +649,6 @@ const router = useRouter();
 const userStore = useUserStore();
 const courseStore = useCourseStore();
 
-const showSettings = ref(false);
 const showPromoBanner = ref(true);
 const currentPeriod = ref("week");
 const currentMonth = ref(new Date().getMonth());
@@ -680,10 +679,7 @@ const currentStudyTime = computed(() => {
 });
 
 const recentLessons = computed(() => {
-  return userStore.recentLessons.map((lesson) => ({
-    ...lesson,
-    courseName: "未知课程", // 不再依赖课程列表
-  }));
+  return userStore.recentLessons;
 });
 
 const currentMonthLabel = computed(() => {

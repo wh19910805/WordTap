@@ -1,8 +1,8 @@
 <template>
-  <div class="h-screen bg-slate-50 overflow-y-auto pb-20">
+  <div class="h-screen bg-[var(--background-color)] overflow-y-auto pb-20">
     <div class="page-container content-area">
       <!-- 用户信息卡片 -->
-      <div class="card p-4">
+      <div class="card bg-[var(--surface-color)] border-[var(--border-color)] text-[var(--text-primary)] p-4">
         <div class="flex items-center gap-3" @click="goToProfileDetail">
           <div
             class="w-16 h-16 bg-indigo-600 rounded-full flex items-center justify-center text-white text-2xl flex-shrink-0"
@@ -24,26 +24,18 @@
             <span v-else class="font-bold">{{ userInitial }}</span>
           </div>
           <div class="flex-1 min-w-0">
-            <div class="font-semibold text-lg">
-              {{
-                authStore.isAuthenticated
-                  ? authStore.currentUser?.username || "用户"
-                  : "游客"
-              }}
+            <div class="font-semibold text-lg text-[var(--text-primary)]">
+              {{ authStore.isAuthenticated ? authStore.currentUser?.username || "用户" : "游客" }}
             </div>
-            <div class="text-sm text-gray-500 mt-1">
-              {{
-                authStore.isAuthenticated
-                  ? `@${authStore.currentUser?.username || "user"}`
-                  : "@guest"
-              }}
+            <div class="text-sm text-[var(--text-tertiary)] mt-1">
+              {{ authStore.isAuthenticated ? `@${authStore.currentUser?.username || "user"}` : "@guest" }}
             </div>
-            <div class="text-sm text-gray-500 mt-1">
+            <div class="text-sm text-[var(--text-tertiary)] mt-1">
               学习天数: {{ userStore.streak }} 天
             </div>
           </div>
           <svg
-            class="w-5 h-5 text-gray-400 flex-shrink-0"
+            class="w-5 h-5 text-[var(--text-tertiary)] flex-shrink-0"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -62,32 +54,32 @@
       <div class="mb-6">
         <div class="grid grid-cols-2 gap-4">
           <div
-            class="bg-white border-2 border-slate-200 rounded-3xl p-4 transition-all duration-200"
+            class="bg-[var(--surface-color)] border-2 border-[var(--border-color)] rounded-3xl p-4 transition-all duration-200 text-[var(--text-primary)]"
           >
-            <div class="text-sm text-gray-500 mb-1">累计词汇</div>
+            <div class="text-sm text-[var(--text-tertiary)] mb-1">累计词汇</div>
             <div class="text-2xl font-bold">{{ userStore.wordCount }}</div>
           </div>
           <div
-            class="bg-white border-2 border-slate-200 rounded-3xl p-4 transition-all duration-200"
+            class="bg-[var(--surface-color)] border-2 border-[var(--border-color)] rounded-3xl p-4 transition-all duration-200 text-[var(--text-primary)]"
           >
-            <div class="text-sm text-gray-500 mb-1">学习时长</div>
+            <div class="text-sm text-[var(--text-tertiary)] mb-1">学习时长</div>
             <div class="text-2xl font-bold">{{ totalStudyTime }}</div>
-            <div class="text-xs text-gray-500">分钟</div>
+            <div class="text-xs text-[var(--text-tertiary)]">分钟</div>
           </div>
         </div>
       </div>
 
       <!-- 设置列表 -->
-      <div class="card p-0">
+      <div class="card bg-[var(--surface-color)] border-[var(--border-color)] p-0">
         <button
           v-for="setting in settingsList"
           :key="setting.key"
           @click="goToSettings(setting.key)"
-          class="w-full p-4 flex items-center justify-between border-b border-slate-200 last:border-b-0 active:bg-slate-100 transition-colors"
+          class="w-full p-4 flex items-center justify-between border-b border-[var(--border-color)] last:border-b-0 active:bg-[var(--hover-color)] transition-colors text-[var(--text-primary)]"
         >
           <div class="flex items-center gap-3">
             <div
-              class="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center flex-shrink-0"
+              class="w-10 h-10 rounded-full bg-[var(--hover-color)] flex items-center justify-center flex-shrink-0"
             >
               <svg
                 class="w-5 h-5 text-indigo-600"
@@ -119,7 +111,7 @@
             <span class="text-base font-medium">{{ setting.label }}</span>
           </div>
           <svg
-            class="w-5 h-5 text-gray-400 flex-shrink-0"
+            class="w-5 h-5 text-[var(--text-tertiary)] flex-shrink-0"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"

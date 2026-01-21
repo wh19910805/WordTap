@@ -1,23 +1,23 @@
 <template>
-  <div class="min-h-screen bg-slate-50 pb-20">
+  <div class="min-h-screen bg-[var(--background-color)] pb-20">
     <!-- 顶部 Tab 切换 -->
-    <div class="sticky top-0 z-10 bg-white border-b border-slate-200">
-      <div class="flex">
-        <button
-          v-for="tab in tabs"
-          :key="tab.key"
-          @click="activeTab = tab.key"
-          :class="[
-            'flex-1 py-4 px-4 text-center font-medium border-b-2 transition-colors',
-            activeTab === tab.key
-              ? 'border-indigo-600 text-indigo-600'
-              : 'border-transparent text-gray-500'
-          ]"
-        >
-          {{ tab.label }}
-        </button>
-      </div>
+  <div class="sticky top-0 z-10 bg-[var(--surface-color)] border-b border-[var(--border-color)]">
+    <div class="flex">
+      <button
+        v-for="tab in tabs"
+        :key="tab.key"
+        @click="activeTab = tab.key"
+        :class="[
+          'flex-1 py-4 px-4 text-center font-medium border-b-2 transition-colors',
+          activeTab === tab.key
+            ? 'border-indigo-600 text-indigo-600'
+            : 'border-transparent text-[var(--text-tertiary)]'
+        ]"
+      >
+        {{ tab.label }}
+      </button>
     </div>
+  </div>
 
     <!-- 我的课程 -->
     <div v-if="activeTab === 'my'" class="pb-20">
@@ -33,14 +33,14 @@
         </div>
 
         <!-- 课程网格 -->
-        <div v-else class="pt-6 pb-4">
-          <div class="grid grid-cols-2 gap-4">
-            <div
-              v-for="course in courseStore.myCourses"
-              :key="course.id"
-              :data-course-name="course.name"
-              class="bg-white border-2 border-slate-200 rounded-3xl overflow-hidden transition-all duration-300 hover:-translate-y-1 relative group hover:border-indigo-300"
-            >
+            <div v-else class="pt-6 pb-4">
+              <div class="grid grid-cols-2 gap-4">
+                <div
+                  v-for="course in courseStore.myCourses"
+                  :key="course.id"
+                  :data-course-name="course.name"
+                  class="bg-[var(--surface-color)] border-2 border-[var(--border-color)] rounded-3xl overflow-hidden transition-all duration-300 hover:-translate-y-1 relative group hover:border-indigo-300"
+                >
               <!-- 移除按钮 -->
               <button
                 @click.stop="handleRemoveCourse(course.id, course.name)"
@@ -105,7 +105,7 @@
     <!-- 课程广场 -->
     <div v-else class="pb-20">
       <!-- 分类筛选 -->
-      <div class="sticky top-[57px] z-10 bg-white border-b border-slate-200 px-4 py-3">
+      <div class="sticky top-[57px] z-10 bg-[var(--surface-color)] border-b border-[var(--border-color)] px-4 py-3">
         <div class="content-area flex gap-2 overflow-x-auto scrollbar-hide">
           <button
             @click="selectedCategory = null"
@@ -113,7 +113,7 @@
               'px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors',
               selectedCategory === null
                 ? 'bg-indigo-600 text-white'
-                : 'bg-slate-100 text-gray-700'
+                : 'bg-[var(--hover-color)] text-[var(--text-primary)]'
             ]"
           >
             全部
@@ -126,7 +126,7 @@
               'px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors',
               selectedCategory === category
                 ? 'bg-indigo-600 text-white'
-                : 'bg-slate-100 text-gray-700'
+                : 'bg-[var(--hover-color)] text-[var(--text-primary)]'
             ]"
           >
             {{ category }}
@@ -142,7 +142,7 @@
             :key="course.id"
             :data-course-name="course.name"
             @click="goToDetail(course.id)"
-            class="bg-white border-2 border-slate-200 rounded-3xl overflow-hidden transition-all duration-300 hover:-translate-y-1 cursor-pointer group hover:border-indigo-300"
+            class="bg-[var(--surface-color)] border-2 border-[var(--border-color)] rounded-3xl overflow-hidden transition-all duration-300 hover:-translate-y-1 cursor-pointer group hover:border-indigo-300"
           >
             <!-- 课程封面 -->
             <div class="relative w-full aspect-[4/3] overflow-hidden rounded-t-3xl">

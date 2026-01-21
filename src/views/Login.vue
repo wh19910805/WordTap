@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-slate-50 flex items-center justify-center p-4">
+  <div class="min-h-screen bg-[var(--background-color)] flex items-center justify-center p-4">
     <div class="w-full max-w-md">
       <!-- Logo -->
       <div class="text-center mb-8 animate-fade-in">
@@ -8,24 +8,24 @@
             <div class="w-20 h-20 bg-indigo-600 rounded-3xl flex items-center justify-center">
               <span class="text-white font-bold text-4xl">W</span>
             </div>
-            <div class="absolute -top-2 -right-2 w-6 h-6 bg-yellow-400 rounded-full border-4 border-slate-50 animate-pulse-slow"></div>
+            <div class="absolute -top-2 -right-2 w-6 h-6 bg-yellow-400 rounded-full border-4 border-[var(--background-color)] animate-pulse-slow"></div>
           </div>
         </div>
         <h1 class="text-4xl font-bold text-indigo-600 mb-2">WordTap</h1>
-        <p class="text-gray-500 text-lg">沉浸式英语听写练习</p>
+        <p class="text-[var(--text-tertiary)] text-lg">沉浸式英语听写练习</p>
       </div>
 
       <!-- 登录/注册表单 -->
-      <div class="card space-y-6">
+      <div class="card bg-[var(--surface-color)] border-[var(--border-color)] text-[var(--text-primary)] space-y-6">
         <!-- Tab 切换 -->
-        <div class="flex gap-2 border-b border-slate-200">
+        <div class="flex gap-2 border-b border-[var(--border-color)]">
           <button
             @click="isLogin = true"
             :class="[
               'flex-1 py-3 text-center font-medium transition-colors border-b-2',
               isLogin
                 ? 'border-indigo-600 text-indigo-600'
-                : 'border-transparent text-gray-500'
+                : 'border-transparent text-[var(--text-tertiary)]'
             ]"
           >
             登录
@@ -36,7 +36,7 @@
               'flex-1 py-3 text-center font-medium transition-colors border-b-2',
               !isLogin
                 ? 'border-indigo-600 text-indigo-600'
-                : 'border-transparent text-gray-500'
+                : 'border-transparent text-[var(--text-tertiary)]'
             ]"
           >
             注册
@@ -46,7 +46,7 @@
         <!-- 错误提示 -->
         <div
           v-if="errorMessage"
-          class="bg-red-50 border border-red-200 rounded-lg p-3 text-sm text-red-600"
+          class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-3 text-sm text-red-600 dark:text-red-400"
         >
           {{ errorMessage }}
         </div>
@@ -54,7 +54,7 @@
         <!-- 登录表单 -->
         <form v-if="isLogin" @submit.prevent="handleLogin" class="space-y-4">
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">
+            <label class="block text-sm font-medium text-[var(--text-primary)] mb-2">
               用户名或邮箱
             </label>
             <input
@@ -62,11 +62,11 @@
               type="text"
               required
               placeholder="请输入用户名或邮箱"
-              class="w-full px-4 py-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-600 focus:border-transparent bg-white text-gray-900"
+              class="w-full px-4 py-3 border border-[var(--border-color)] rounded-lg focus:ring-2 focus:ring-indigo-600 focus:border-transparent bg-[var(--surface-color)] text-[var(--text-primary)]"
             />
           </div>
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">
+            <label class="block text-sm font-medium text-[var(--text-primary)] mb-2">
               密码
             </label>
             <input
@@ -74,7 +74,7 @@
               type="password"
               required
               placeholder="请输入密码"
-              class="w-full px-4 py-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-600 focus:border-transparent bg-white text-gray-900"
+              class="w-full px-4 py-3 border border-[var(--border-color)] rounded-lg focus:ring-2 focus:ring-indigo-600 focus:border-transparent bg-[var(--surface-color)] text-[var(--text-primary)]"
             />
           </div>
           <button
@@ -89,7 +89,7 @@
         <!-- 注册表单 -->
         <form v-else @submit.prevent="handleRegister" class="space-y-4">
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">
+            <label class="block text-sm font-medium text-[var(--text-primary)] mb-2">
               用户名
             </label>
             <input
@@ -98,11 +98,11 @@
               required
               minlength="3"
               placeholder="请输入用户名（至少3个字符）"
-              class="w-full px-4 py-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-600 focus:border-transparent bg-white text-gray-900"
+              class="w-full px-4 py-3 border border-[var(--border-color)] rounded-lg focus:ring-2 focus:ring-indigo-600 focus:border-transparent bg-[var(--surface-color)] text-[var(--text-primary)]"
             />
           </div>
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">
+            <label class="block text-sm font-medium text-[var(--text-primary)] mb-2">
               邮箱
             </label>
             <input
@@ -110,11 +110,11 @@
               type="email"
               required
               placeholder="请输入邮箱"
-              class="w-full px-4 py-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-600 focus:border-transparent bg-white text-gray-900"
+              class="w-full px-4 py-3 border border-[var(--border-color)] rounded-lg focus:ring-2 focus:ring-indigo-600 focus:border-transparent bg-[var(--surface-color)] text-[var(--text-primary)]"
             />
           </div>
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">
+            <label class="block text-sm font-medium text-[var(--text-primary)] mb-2">
               密码
             </label>
             <input
@@ -123,11 +123,11 @@
               required
               minlength="6"
               placeholder="请输入密码（至少6个字符）"
-              class="w-full px-4 py-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-600 focus:border-transparent bg-white text-gray-900"
+              class="w-full px-4 py-3 border border-[var(--border-color)] rounded-lg focus:ring-2 focus:ring-indigo-600 focus:border-transparent bg-[var(--surface-color)] text-[var(--text-primary)]"
             />
           </div>
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">
+            <label class="block text-sm font-medium text-[var(--text-primary)] mb-2">
               确认密码
             </label>
             <input
@@ -135,7 +135,7 @@
               type="password"
               required
               placeholder="请再次输入密码"
-              class="w-full px-4 py-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-600 focus:border-transparent bg-white text-gray-900"
+              class="w-full px-4 py-3 border border-[var(--border-color)] rounded-lg focus:ring-2 focus:ring-indigo-600 focus:border-transparent bg-[var(--surface-color)] text-[var(--text-primary)]"
             />
           </div>
           <button
@@ -148,10 +148,10 @@
         </form>
 
         <!-- 快速体验（跳过登录） -->
-        <div class="pt-4 border-t border-slate-200">
+        <div class="pt-4 border-t border-[var(--border-color)]">
           <button
             @click="skipLogin"
-            class="w-full text-center text-sm text-gray-500 hover:text-indigo-600 transition-colors"
+            class="w-full text-center text-sm text-[var(--text-tertiary)] hover:text-indigo-600 transition-colors"
           >
             先体验，稍后登录
           </button>

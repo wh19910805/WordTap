@@ -143,7 +143,7 @@ ol {
 @layer components {
   /* 卡片样式 */
   .card {
-    @apply bg-white border-2 border-slate-200 rounded-3xl p-4 transition-all duration-200 mb-6 w-full;
+    @apply bg-[var(--surface-color)] border-2 border-[var(--border-color)] rounded-3xl p-4 transition-all duration-200 mb-6 w-full;
   }
 
   .card-hover {
@@ -219,6 +219,62 @@ ol {
   --border-color: #e2e8f0;
   --error-color: #f43f5e;
   --success-color: #22c55e;
+  --text-primary: #1e293b;
+  --text-secondary: #64748b;
+  --text-tertiary: #94a3b8;
+  --hover-color: #f1f5f9;
+}
+
+/* Gen Z Flat 深色主题 */
+:root.dark {
+  --primary-color: #6366f1;
+  --accent-color: #bef264;
+  --background-color: #0f172a;
+  --surface-color: #1e293b;
+  --border-color: #334155;
+  --error-color: #fca5a5;
+  --success-color: #4ade80;
+  --text-primary: #f8fafc;
+  --text-secondary: #cbd5e1;
+  --text-tertiary: #94a3b8;
+  --hover-color: #334155;
+}
+
+/* 全局深色主题样式 */
+.dark {
+  background-color: var(--background-color);
+  color: var(--text-primary);
+}
+
+.dark #app {
+  background-color: var(--background-color);
+}
+
+/* 深色主题下的卡片样式 */
+.dark .card {
+  background-color: var(--surface-color);
+  border-color: var(--border-color);
+}
+
+/* 深色主题下的输入框 */
+.dark .input-field {
+  background-color: var(--border-color);
+  color: var(--text-primary);
+  border-color: var(--border-color);
+}
+
+.dark .input-field:focus {
+  background-color: var(--surface-color);
+  border-color: var(--primary-color);
+}
+
+/* 深色主题下的滚动条 */
+.dark ::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
 }
 
 /* 移除所有默认阴影 */

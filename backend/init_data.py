@@ -103,65 +103,11 @@ WORD_COURSE_CONFIG = {
     }
 }
 
-# 情景课程配置映射
+# 情景课程配置映射 - 修改为一个课程
 XINGRONG_COURSE_CONFIG = {
-    "01": {
-        "title": "基础情景对话1",
-        "description": "日常基础情景对话，适合初学者",
-        "level": "beginner",
-        "category": "conversation"
-    },
-    "02": {
-        "title": "基础情景对话2",
-        "description": "日常基础情景对话，适合初学者",
-        "level": "beginner",
-        "category": "conversation"
-    },
-    "03": {
-        "title": "基础情景对话3",
-        "description": "日常基础情景对话，适合初学者",
-        "level": "beginner",
-        "category": "conversation"
-    },
-    "04": {
-        "title": "基础情景对话4",
-        "description": "日常基础情景对话，适合初学者",
-        "level": "beginner",
-        "category": "conversation"
-    },
-    "05": {
-        "title": "基础情景对话5",
-        "description": "日常基础情景对话，适合初学者",
-        "level": "beginner",
-        "category": "conversation"
-    },
-    "06": {
-        "title": "基础情景对话6",
-        "description": "日常基础情景对话，适合初学者",
-        "level": "beginner",
-        "category": "conversation"
-    },
-    "07": {
-        "title": "基础情景对话7",
-        "description": "日常基础情景对话，适合初学者",
-        "level": "beginner",
-        "category": "conversation"
-    },
-    "08": {
-        "title": "基础情景对话8",
-        "description": "日常基础情景对话，适合初学者",
-        "level": "beginner",
-        "category": "conversation"
-    },
-    "09": {
-        "title": "基础情景对话9",
-        "description": "日常基础情景对话，适合初学者",
-        "level": "beginner",
-        "category": "conversation"
-    },
-    "10": {
-        "title": "基础情景对话10",
-        "description": "日常基础情景对话，适合初学者",
+    "xingrong": {
+        "title": "基础情景对话",
+        "description": "日常基础情景对话，适合初学者，共55个课时",
         "level": "beginner",
         "category": "conversation"
     }
@@ -471,6 +417,126 @@ def init_courses(db: Session):
         # 初始化课时数据
         init_lessons(db, course, os.path.join(DATA_DIR["article"], file_name), lesson_type="article")
 
+def delete_xingrong_courses(db: Session):
+    """删除所有XINGRONG相关的课程和课时"""
+    print("开始删除现有的XINGRONG课程和课时...")
+    
+    # 查找所有category为conversation的课程（假设XINGRONG课程使用这个category）
+    xingrong_courses = db.query(Course).filter(Course.category == "conversation").all()
+    
+    # 也查找title包含"基础情景对话"的课程
+    title_courses = db.query(Course).filter(Course.title.contains("基础情景对话")).all()
+    
+    # 合并并去重
+    all_courses = list(set(xingrong_courses + title_courses))
+    
+    if not all_courses:
+        print("没有找到需要删除的XINGRONG课程")
+        return
+    
+    print(f"找到 {len(all_courses)} 个XINGRONG相关课程，开始删除...")
+    
+    for course in all_courses:
+        # 删除课程相关的所有课时
+        lesson_count = db.query(Lesson).filter(Lesson.course_id == course.id).delete()
+        print(f"  删除课程 '{course.title}' 的 {lesson_count} 个课时")
+        
+        # 删除课程
+        db.delete(course)
+        print(f"  删除课程: {course.title}")
+    
+    db.commit()
+    print(f"成功删除 {len(all_courses)} 个XINGRONG课程")
+
+
+def init_xingrong_courses(db: Session):
+    """初始化情景课程数据，创建一个课程包含55个课时"""
+    print("开始初始化情景课程数据...")
+    
+    # 检查数据目录是否存在
+    if not os.path.exists(DATA_DIR["xingrong"]):
+        print(f"错误: 情景课程数据目录不存在: {DATA_DIR['xingrong']}")
+        return
+    
+    # 获取所有情景课程数据文件，按文件名排序（确保课时顺序正确）
+    data_files = sorted([f for f in os.listdir(DATA_DIR["xingrong"]) if f.endswith(".json")])
+    
+    if not data_files:
+        print("没有找到情景课程数据文件")
+        return
+    
+    # 使用统一的课程配置
+    config = XINGRONG_COURSE_CONFIG["xingrong"]
+    
+    # 检查课程是否已存在（避免重复创建）
+    existing_course = db.query(Course).filter(Course.title == config["title"]).first()
+    if existing_course:
+        print(f"情景课程已存在: {config['title']}")
+        return
+    
+    # 创建一个课程
+    course_id = f"course_{datetime.now().strftime('%Y%m%d%H%M%S')}_{uuid.uuid4().hex[:8]}"
+    course = Course(
+        id=course_id,
+        title=config["title"],
+        description=config["description"],
+        level=config["level"],
+        category=config["category"],
+        is_active=True
+    )
+    
+    db.add(course)
+    db.commit()
+    db.refresh(course)
+    
+    print(f"创建情景课程: {course.title} (ID: {course.id})")
+    
+    # 初始化课时数据，将所有文件作为一个课程的不同课时
+    total_lessons = len(data_files)
+    lesson_number = 1
+    
+    for file_name in data_files:
+        # 构建课时标题
+        lesson_title = f"第 {lesson_number} 课"
+        
+        # 读取课时数据
+        data_file = os.path.join(DATA_DIR["xingrong"], file_name)
+        with open(data_file, "r", encoding="utf-8") as f:
+            lesson_data = json.load(f)
+        
+        # 构建课时内容
+        content = {
+            "sentences": lesson_data,
+            "totalSentences": len(lesson_data)
+        }
+        
+        # 创建课时
+        lesson_id = f"lesson_{datetime.now().strftime('%Y%m%d%H%M%S')}_{uuid.uuid4().hex[:8]}"
+        lesson = Lesson(
+            id=lesson_id,
+            course_id=course.id,
+            lesson_number=lesson_number,
+            title=lesson_title,
+            content=content,
+            total_lines=len(lesson_data)  # 将句子数量作为行数
+        )
+        
+        db.add(lesson)
+        
+        # 每10个课时提交一次，避免事务过大
+        if lesson_number % 10 == 0 or lesson_number == total_lessons:
+            db.commit()
+            print(f"  已导入课时: {lesson_number}/{total_lessons}")
+        
+        lesson_number += 1
+    
+    # 更新课程的总课时数
+    course.total_lessons = total_lessons
+    db.commit()
+    
+    print(f"完成{course.title}的课时数据初始化，共导入{total_lessons}个课时")
+
+
 def main():
     """主函数"""
     print("=== 数据初始化脚本 ===")
@@ -481,13 +547,19 @@ def main():
     db = next(get_db())
     
     try:
-        # 初始化文章课程数据
+        # 1. 删除现有的XINGRONG课程和课时
+        delete_xingrong_courses(db)
+        print()
+        
+        # 2. 初始化文章课程数据
         init_courses(db)
+        print()
         
-        # 初始化单词课程数据
+        # 3. 初始化单词课程数据
         init_word_courses(db)
+        print()
         
-        # 初始化情景课程数据
+        # 4. 初始化情景课程数据（创建一个课程包含55个课时）
         init_xingrong_courses(db)
         
         print()
@@ -495,6 +567,8 @@ def main():
         
     except Exception as e:
         print(f"错误: {e}")
+        import traceback
+        traceback.print_exc()
         db.rollback()
         sys.exit(1)
     finally:

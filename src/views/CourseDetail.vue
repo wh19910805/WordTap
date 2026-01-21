@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-slate-50">
+  <div class="min-h-screen bg-[var(--background-color)]">
     <div v-if="course" class="pb-20">
       <!-- Hero Section -->
       <div class="relative h-64">
@@ -13,26 +13,26 @@
 
       <!-- 课程信息 -->
       <div class="page-container content-area">
-        <div class="card">
+        <div class="card bg-[var(--surface-color)] border-[var(--border-color)] text-[var(--text-primary)]">
           <div class="grid grid-cols-2 gap-4">
             <div>
-              <div class="text-sm text-gray-500 mb-1">总课时</div>
+              <div class="text-sm text-[var(--text-tertiary)] mb-1">总课时</div>
               <div class="text-2xl font-bold">{{ course.lessonCount }}</div>
             </div>
             <div>
-              <div class="text-sm text-gray-500 mb-1">总词汇量</div>
+              <div class="text-sm text-[var(--text-tertiary)] mb-1">总词汇量</div>
               <div class="text-2xl font-bold">{{ estimatedWords }}</div>
             </div>
           </div>
         </div>
 
         <!-- Social Proof -->
-        <div class="card flex items-center justify-between">
+        <div class="card bg-[var(--surface-color)] border-[var(--border-color)] flex items-center justify-between">
           <div class="flex items-center gap-2">
-            <svg class="w-5 h-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+            <svg class="w-5 h-5 text-[var(--text-tertiary)]" fill="currentColor" viewBox="0 0 20 20">
               <path d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" />
             </svg>
-            <span class="text-gray-600">{{ learnerCount }} 人在学</span>
+            <span class="text-[var(--text-primary)]">{{ learnerCount }} 人在学</span>
           </div>
         </div>
 

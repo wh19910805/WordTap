@@ -2,7 +2,10 @@ import axios from "axios";
 
 // 创建axios实例
 const apiClient = axios.create({
-  baseURL: "http://localhost:8000/api",
+  // 删除或注释掉原来那行
+  // baseURL: "http://localhost:8000/api",
+  // ✅ 改成这样（读取环境变量）：
+  baseURL: import.meta.env.VITE_API_BASE_URL,
   timeout: 10000,
   headers: {
     "Content-Type": "application/json",
@@ -21,7 +24,7 @@ apiClient.interceptors.request.use(
   },
   (error) => {
     return Promise.reject(error);
-  }
+  },
 );
 
 // 响应拦截器
@@ -45,9 +48,11 @@ apiClient.interceptors.response.use(
     if (error.response) {
       // 服务器返回错误状态码
       // 过滤掉正常情况的错误
-      if (error.response.data && 
-          (error.response.data.detail === '没有找到学习进度' || 
-           error.response.data.detail === '无效的认证凭据')) {
+      if (
+        error.response.data &&
+        (error.response.data.detail === "没有找到学习进度" ||
+          error.response.data.detail === "无效的认证凭据")
+      ) {
         // 不记录这些正常情况的错误，直接返回错误数据
         return Promise.reject(error.response.data);
       }
@@ -62,7 +67,7 @@ apiClient.interceptors.response.use(
       console.error("Request Error:", error.message);
       return Promise.reject({ message: "请求错误，请稍后重试" });
     }
-  }
+  },
 );
 
 // 认证相关API
@@ -96,13 +101,16 @@ export const courseApi = {
   // 获取课程的所有课时
   getCourseLessons: (courseId) => apiClient.get(`/courses/${courseId}/lessons`),
   // 添加课程到我的课程
-  addToMyCourses: (courseId, tags) => apiClient.post("/courses/my-courses", { course_id: courseId, tags }),
+  addToMyCourses: (courseId, tags) =>
+    apiClient.post("/courses/my-courses", { course_id: courseId, tags }),
   // 获取我的课程列表
   getMyCourses: () => apiClient.get("/courses/my-courses"),
   // 从我的课程中移除课程
-  removeFromMyCourses: (courseId) => apiClient.delete(`/courses/my-courses/${courseId}`),
+  removeFromMyCourses: (courseId) =>
+    apiClient.delete(`/courses/my-courses/${courseId}`),
   // 更新我的课程标签
-  updateMyCourseTags: (courseId, tags) => apiClient.put(`/courses/my-courses/${courseId}`, { tags }),
+  updateMyCourseTags: (courseId, tags) =>
+    apiClient.put(`/courses/my-courses/${courseId}`, { tags }),
 };
 
 // 课时相关API
@@ -116,9 +124,31 @@ export const progressApi = {
   // 更新学习进度
   updateProgress: (data) => apiClient.post("/courses/progress", data),
   // 获取课程学习进度
-  getCourseProgress: (courseId) => apiClient.get(`/courses/progress/course/${courseId}`),
+  getCourseProgress: (courseId) =>
+    apiClient.get(`/courses/progress/course/${courseId}`),
   // 获取最新学习进度
   getLatestProgress: () => apiClient.get("/courses/progress/latest"),
+};
+
+// 用户统计相关API
+export const userApi = {
+  // 获取用户统计数据
+  getStats: () => apiClient.get("/users/stats"),
+  // 更新用户统计数据
+  updateStats: (data) => apiClient.put("/users/stats", data),
+  // 每日打卡
+  checkIn: () => apiClient.post("/users/check-in"),
+  // 获取学习热力图数据
+  getHeatmap: (months = 6) => apiClient.get(`/users/heatmap?months=${months}`),
+  // 获取最近学习记录
+  getRecentStudies: (limit = 10, offset = 0) =>
+    apiClient.get(`/users/recent-studies?limit=${limit}&offset=${offset}`),
+  // 获取当前用户信息（包含统计数据）
+  getCurrentUserWithStats: () => apiClient.get("/users/me/stats"),
+  // 获取用户设置
+  getSettings: () => apiClient.get("/users/settings"),
+  // 更新用户设置
+  updateSettings: (data) => apiClient.put("/users/settings", data),
 };
 
 export default apiClient;

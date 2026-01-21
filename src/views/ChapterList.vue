@@ -1,38 +1,38 @@
 <template>
-  <div class="min-h-screen bg-slate-50 pb-20">
+  <div class="min-h-screen bg-[var(--background-color)] pb-20">
     <!-- 顶部导航栏 -->
-    <div class="sticky top-0 z-10 bg-white border-b border-slate-200">
-      <div class="flex items-center gap-3 p-4">
-        <button
-          @click="goBack"
-          class="p-2 -ml-2 hover:bg-slate-100 rounded-full transition-colors"
-        >
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-          </svg>
-        </button>
-        <div class="flex-1">
-          <h1 class="text-lg font-semibold text-gray-900">
-            {{ course?.name || '课时列表' }}
-          </h1>
-        </div>
+  <div class="sticky top-0 z-10 bg-[var(--surface-color)] border-b border-[var(--border-color)]">
+    <div class="flex items-center gap-3 p-4">
+      <button
+        @click="goBack"
+        class="p-2 -ml-2 hover:bg-[var(--hover-color)] rounded-full transition-colors"
+      >
+        <svg class="w-6 h-6 text-[var(--text-primary)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+      </button>
+      <div class="flex-1">
+        <h1 class="text-lg font-semibold text-[var(--text-primary)]">
+          {{ course?.name || '课时列表' }}
+        </h1>
       </div>
     </div>
+  </div>
 
     <div v-if="course" class="page-container content-area">
       <div
         v-for="(lesson, index) in course.lessons"
         :key="lesson.id"
         @click="goToLearning(lesson.id)"
-        class="card hover:border-indigo-300 transition-all duration-300 cursor-pointer"
+        class="card hover:border-indigo-300 transition-all duration-300 cursor-pointer bg-[var(--surface-color)] border-[var(--border-color)] text-[var(--text-primary)]"
       >
         <div class="flex items-start justify-between">
           <div class="flex-1">
             <div class="flex items-center gap-2 mb-2">
-              <span class="text-sm text-gray-500">Lesson {{ lesson.order }}</span>
+              <span class="text-sm text-[var(--text-tertiary)]">Lesson {{ lesson.order }}</span>
               <span class="text-lg font-semibold">{{ lesson.title }}</span>
             </div>
-            <div class="flex items-center gap-4 text-sm text-gray-500">
+            <div class="flex items-center gap-4 text-sm text-[var(--text-tertiary)]">
               <span v-if="lesson.completed" class="text-lime-400">✅ 已完成</span>
               <span v-else-if="lesson.lastStudyTime">
                 {{ formatRelativeTime(lesson.lastStudyTime) }}

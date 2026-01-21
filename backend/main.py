@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.routers import auth, course
+from app.routers import auth, course, user
 from app.core.config import settings
 from app.core.database import engine, Base
 
@@ -28,6 +28,7 @@ app.add_middleware(
 # 包含路由
 app.include_router(auth.router, prefix="/api/auth", tags=["认证"])
 app.include_router(course.router, prefix="/api/courses", tags=["课程"])
+app.include_router(user.router, prefix="/api/users", tags=["用户"])
 
 # 健康检查
 @app.get("/health", tags=["健康检查"])

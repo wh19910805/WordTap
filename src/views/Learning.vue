@@ -1,16 +1,16 @@
 <template>
   <div
     ref="containerRef"
-    class="learning-container fixed inset-0 w-full h-full overflow-hidden bg-slate-50 text-gray-900 flex flex-col"
+    class="learning-container fixed inset-0 w-full h-full overflow-hidden bg-[var(--background-color)] text-[var(--text-primary)] flex flex-col"
     :style="containerStyle"
   >
     <!-- 顶部导航区 -->
     <div
-      class="flex items-center justify-between p-4 bg-white border-b-2 border-slate-200 z-20"
+      class="flex items-center justify-between p-4 bg-[var(--surface-color)] border-b-2 border-[var(--border-color)] z-20"
     >
       <button
         @click="goBack"
-        class="p-2 hover:bg-slate-100 rounded-full transition-colors"
+        class="p-2 hover:bg-[var(--hover-color)] rounded-full transition-colors"
       >
         <svg
           class="w-6 h-6 text-indigo-600"
@@ -36,7 +36,7 @@
             'px-4 py-2 rounded-full text-xs font-bold transition-all duration-200 active:scale-95',
             learningStore.showEnglish
               ? 'bg-indigo-600 text-white'
-              : 'bg-slate-200 text-gray-700 hover:bg-slate-300',
+              : 'bg-[var(--border-color)] text-[var(--text-secondary)] hover:bg-[var(--hover-color)]',
           ]"
         >
           {{ learningStore.showEnglish ? "隐藏英文" : "显示英文" }}
@@ -52,29 +52,11 @@
         >
           {{ learningStore.showChinese ? "隐藏中文" : "显示中文" }}
         </button>
-        <button
-          @click="showSettings = true"
-          class="p-2 hover:bg-slate-100 rounded-full transition-colors"
-        >
-          <svg
-            class="w-6 h-6 text-indigo-600"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"
-            />
-          </svg>
-        </button>
       </div>
     </div>
 
     <!-- 数据与控制栏 -->
-    <div class="px-4 py-4 bg-white border-b-2 border-slate-200">
+    <div class="px-4 py-4 bg-[var(--surface-color)] border-b-2 border-[var(--border-color)]">
       <div class="flex items-center justify-between text-sm mb-4 font-bold">
         <div class="text-indigo-600">第 {{ attemptCount }} 次</div>
         <div class="text-indigo-600">
@@ -87,7 +69,7 @@
 
       <!-- 音频控制 -->
       <div class="flex items-center gap-3">
-        <div class="flex-1 h-2 bg-slate-200 rounded-full overflow-hidden">
+        <div class="flex-1 h-2 bg-[var(--border-color)] rounded-full overflow-hidden">
           <div
             class="h-full bg-indigo-600 transition-all duration-500"
             :style="{ width: audioProgress + '%' }"
@@ -99,14 +81,14 @@
         >
           <component
             :is="!learningStore.isPlaying ? PlayIcon : PauseIcon"
-            class="w-5 h-5"
+            class="w-3 h-3"
           />
         </button>
         <button
           @click="toggleMute"
-          class="p-3 bg-slate-200 text-gray-700 rounded-full hover:bg-slate-300 active:scale-95 transition-all duration-200"
+          class="p-3 bg-[var(--border-color)] text-[var(--text-primary)] rounded-full hover:bg-[var(--hover-color)] active:scale-95 transition-all duration-200"
         >
-          <component :is="!settingsStore.mute ? VolumeIcon : MuteIcon" class="w-5 h-5" />
+          <component :is="!settingsStore.mute ? VolumeIcon : MuteIcon" class="w-3 h-3" />
         </button>
       </div>
     </div>
@@ -132,14 +114,14 @@
           :class="[
             'mb-10 transition-all duration-300 py-6 px-5 rounded-3xl',
             index === learningStore.currentSentenceIndex
-              ? 'opacity-100 bg-white border-2 border-indigo-600'
-              : 'opacity-50 bg-white border-2 border-slate-200',
+              ? 'opacity-100 bg-[var(--surface-color)] border-2 border-indigo-600'
+              : 'opacity-50 bg-[var(--surface-color)] border-2 border-[var(--border-color)]',
           ]"
         >
           <!-- 中文释义 -->
           <div
             v-if="learningStore.showChinese && sentence.translate"
-            class="text-gray-600 mb-4 text-lg font-medium"
+            class="text-[var(--text-secondary)] mb-4 text-lg font-medium"
             :style="{ fontSize: settingsStore.fontSize - 2 + 'px' }"
           >
             {{ sentence.translate }}
@@ -148,7 +130,7 @@
           <!-- 英文原文 -->
           <div
             v-if="learningStore.showEnglish"
-            class="text-2xl mb-4 leading-relaxed tracking-wide"
+            class="text-2xl mb-4 leading-relaxed tracking-wide text-[var(--text-primary)]"
             :style="{ fontSize: settingsStore.fontSize + 'px' }"
           >
             <template
@@ -167,14 +149,14 @@
                     : index === learningStore.currentSentenceIndex &&
                       getPartCharIndex(sentence.text, partIndex) ===
                         learningStore.currentCharIndex
-                    ? 'bg-primary-500 text-white px-1.5 py-0.5 rounded-lg transform scale-105'
-                    : 'text-gray-300',
+                    ? 'bg-indigo-600 text-white px-1.5 py-0.5 rounded-lg transform scale-105'
+                    : 'text-[var(--text-tertiary)]',
                 ]"
               >
                 <!-- 点击播放提示 -->
                 <div
                   v-if="index === learningStore.currentSentenceIndex"
-                  class="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-gray-700 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none"
+                  class="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-[var(--surface-color)] text-[var(--text-primary)] text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none border border-[var(--border-color)]"
                 >
                   播放
                 </div>
@@ -216,33 +198,64 @@
           <!-- 隐藏模式显示 -->
           <div
             v-else
-            class="text-2xl mb-4 leading-relaxed tracking-wide"
+            class="text-2xl mb-4 leading-relaxed tracking-wide text-[var(--text-primary)]"
             :style="{ fontSize: settingsStore.fontSize + 'px' }"
           >
-            <span
-              v-for="(char, charIndex) in sentence.text"
-              :key="charIndex"
-              :class="[
-                getCharClass(index, charIndex, char),
-                'transition-all duration-200 hover:scale-110',
-              ]"
+            <template
+              v-for="(word, wordIndex) in splitIntoWords(sentence.text)"
+              :key="wordIndex"
             >
-              {{ getCharDisplay(index, charIndex, char) }}
-            </span>
+              <span
+                v-if="word.trim()"
+                class="inline-block cursor-pointer hover:text-fuchsia-500 transition-all duration-200 hover:scale-110 relative group"
+                @click="handleWordClick(sentence, index, word.trim(), wordIndex)"
+              >
+                <!-- 点击播放提示 -->
+                <div
+                  v-if="index === learningStore.currentSentenceIndex"
+                  class="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-[var(--surface-color)] text-[var(--text-primary)] text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none border border-[var(--border-color)]"
+                >
+                  显示并播放
+                </div>
+                <template v-for="(char, charIndex) in word" :key="charIndex">
+                  <span
+                    :class="[
+                      getCharClass(
+                        index,
+                        getWordCharIndex(sentence.text, wordIndex, charIndex),
+                        char
+                      ),
+                      'inline-block transition-all duration-200',
+                    ]"
+                  >
+                    {{
+                      getCharDisplay(
+                        index,
+                        getWordCharIndex(sentence.text, wordIndex, charIndex),
+                        char
+                      )
+                    }}
+                  </span>
+                </template>
+              </span>
+              <span v-else class="inline-block">
+                {{ word === " " ? "\u00A0" : word }}
+              </span>
+            </template>
           </div>
         </div>
       </div>
     </div>
 
     <!-- 底部操作区 -->
-    <div ref="bottomBarRef" class="bg-white border-t-2 border-slate-200 p-6 z-20">
+    <div ref="bottomBarRef" class="bg-[var(--surface-color)] border-t-2 border-[var(--border-color)] p-6 z-20">
       <!-- 错误提示 -->
       <div
         v-if="learningStore.validationErrors.length > 0"
-        class="mb-4 p-4 bg-rose-50 border-2 border-rose-500 rounded-3xl"
+        class="mb-4 p-4 bg-red-50 dark:bg-red-900/20 border-2 border-red-200 dark:border-red-800 rounded-3xl"
       >
-        <div class="text-rose-600 text-sm font-bold mb-1">发现以下错误：</div>
-        <div class="text-rose-500 text-sm space-y-2">
+        <div class="text-red-600 dark:text-red-400 text-sm font-bold mb-1">发现以下错误：</div>
+        <div class="text-red-500 dark:text-red-300 text-sm space-y-2">
           <div v-for="error in learningStore.validationErrors" :key="error.index">
             {{ error.message }}
           </div>
@@ -252,40 +265,40 @@
       <!-- 按钮行：左侧提示、重播、重新学习；右侧跳过、提交 -->
       <div class="flex items-center justify-between gap-3">
         <!-- 左侧按钮组 -->
-        <div class="flex items-center gap-3">
+        <div class="flex items-center gap-2">
           <button
             @click="toggleHint"
-            class="px-5 py-3 bg-slate-200 text-gray-800 rounded-full text-xs font-bold active:scale-95 transition-all flex items-center gap-2"
+            class="p-3 bg-[var(--border-color)] text-[var(--text-primary)] rounded-full text-xs font-bold active:scale-95 transition-all flex items-center justify-center"
+            title="提示"
           >
             <component :is="LightbulbIcon" class="w-5 h-5 text-indigo-600" />
-            提示
           </button>
           <button
             @click="replayAudio"
-            class="px-5 py-3 bg-slate-200 text-gray-800 rounded-full text-xs font-bold active:scale-95 transition-all flex items-center gap-2"
+            class="p-3 bg-[var(--border-color)] text-[var(--text-primary)] rounded-full text-xs font-bold active:scale-95 transition-all flex items-center justify-center"
+            title="重播"
           >
-            <component :is="RefreshIcon" class="w-5 h-5 text-indigo-600" />
-            重播
+            <component :is="ReplayIcon" class="w-5 h-5 text-indigo-600" />
           </button>
           <button
             @click="handleRestart"
             :disabled="isSubmitting"
-            class="px-5 py-3 rounded-full text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+            class="p-3 rounded-full text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+            title="重新学习"
           >
             <component :is="RefreshIcon" class="w-5 h-5" />
-            重新学习
           </button>
         </div>
 
         <!-- 右侧按钮组 -->
-        <div class="flex items-center gap-3">
+        <div class="flex items-center gap-2">
           <button
             @click="handleSkipLesson"
             :disabled="isSubmitting"
-            class="px-5 py-3 bg-slate-200 text-gray-800 rounded-full text-xs font-bold hover:bg-slate-300 active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+            class="p-3 bg-[var(--border-color)] text-[var(--text-primary)] rounded-full text-xs font-bold hover:bg-[var(--hover-color)] active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+            title="跳过"
           >
             <component :is="ForwardIcon" class="w-5 h-5 text-indigo-600" />
-            跳过
           </button>
           <button
             @click="handleSubmit"
@@ -295,16 +308,16 @@
                 learningStore.validationErrors.length > 0)
             "
             :class="[
-              'px-8 py-3 rounded-full text-xs font-bold text-white transition-all flex items-center gap-2',
+              'p-3 rounded-full text-xs font-bold transition-all flex items-center justify-center',
               isSubmitting ||
               (learningStore.isLessonCompleted &&
                 learningStore.validationErrors.length > 0)
-                ? 'bg-gray-400 cursor-not-allowed opacity-50'
+                ? 'bg-gray-400 cursor-not-allowed opacity-50 text-white'
                 : 'bg-lime-400 text-black hover:bg-lime-500 active:scale-95',
             ]"
+            :title="isSubmitting ? '提交中...' : '提交'"
           >
             <component :is="CheckCircleIcon" class="w-5 h-5" />
-            {{ isSubmitting ? "提交中..." : "提交" }}
           </button>
         </div>
       </div>
@@ -324,7 +337,6 @@
     />
 
     <!-- 设置弹窗 -->
-    <SettingsModal v-if="showSettings" @close="showSettings = false" />
   </div>
 </template>
 
@@ -335,7 +347,6 @@ import { useLearningStore } from "@/stores/learning";
 import { useCourseStore } from "@/stores/course";
 import { useSettingsStore } from "@/stores/settings";
 import { useAuthStore } from "@/stores/auth";
-import SettingsModal from "@/components/SettingsModal.vue";
 import { usePlayWordSound } from "@/composables/audio";
 import {
   ArrowLeftIcon,
@@ -346,6 +357,7 @@ import {
   SettingsIcon,
   LightbulbIcon,
   RefreshIcon,
+  ReplayIcon,
   ForwardIcon,
   CheckCircleIcon,
 } from "@/components/icons/index.js";
@@ -360,7 +372,6 @@ const containerRef = ref(null);
 const contentRef = ref(null);
 const bottomBarRef = ref(null);
 const hiddenInputRef = ref(null);
-const showSettings = ref(false);
 const attemptCount = ref(1);
 const audioProgress = ref(0);
 const viewportHeight = ref(window.innerHeight);
@@ -386,6 +397,41 @@ function getPartCharIndex(text, partIndex) {
     index += parts[i].length;
   }
   return index;
+}
+
+// 获取单词中字符在整个句子中的索引
+function getWordCharIndex(text, wordIndex, charIndex) {
+  const parts = splitIntoWords(text);
+  let index = 0;
+  for (let i = 0; i < wordIndex; i++) {
+    index += parts[i].length;
+  }
+  return index + charIndex;
+}
+
+// 处理单词点击事件
+function handleWordClick(sentence, sentenceIndex, word, wordIndex) {
+  // 播放单词发音
+  handlePlayWordSound(word);
+
+  // 如果是隐藏英文模式，显示这个单词
+  if (!learningStore.showEnglish) {
+    // 找到当前单词在句子中的起始和结束位置
+    const text = sentence.text;
+    const parts = splitIntoWords(text);
+
+    // 计算单词在句子中的起始索引
+    let wordStart = 0;
+    for (let i = 0; i < wordIndex; i++) {
+      wordStart += parts[i].length;
+    }
+
+    // 计算单词在句子中的结束索引
+    const wordEnd = wordStart + parts[wordIndex].length;
+
+    // 标记这个单词为提示状态（显示单词）
+    learningStore.addHintedWord(sentenceIndex, wordStart, wordEnd);
+  }
 }
 
 // 容器样式 - 使用 VisualViewport 高度
@@ -541,41 +587,22 @@ function getCharDisplay(sentenceIndex, charIndex, char) {
 }
 
 function handleInput(event) {
-  const input = event.target.value;
-  const currentText = learningStore.inputText;
-
-  // 如果输入长度没有增加，说明是删除操作，忽略
-  if (input.length <= currentText.length) {
-    event.target.value = currentText;
-    return;
-  }
-
-  // 优先使用 event.data 获取新输入的字符（更准确，特别是单个字符输入）
+  // 直接使用 event.data 获取输入的字符，这是最准确的方式
   let newChar = event.data;
-
-  // 如果 event.data 不存在，则通过比较 input 和 currentText 找出新输入的字符
+  
+  // 如果 event.data 不存在，说明可能是特殊键或自动填充，忽略
   if (!newChar) {
-    // 找出 input 中比 currentText 多出的部分
-    if (input.startsWith(currentText)) {
-      // 如果 input 以 currentText 开头，说明新字符在末尾
-      newChar = input[currentText.length];
-    } else {
-      // 如果 input 不以 currentText 开头，说明可能有其他问题，尝试从末尾获取
-      newChar = input[input.length - 1];
-    }
+    // 同步输入框值与学习存储中的输入文本
+    event.target.value = learningStore.inputText;
+    return;
   }
 
   if (newChar) {
     // 处理输入
     const success = learningStore.handleInput(newChar);
 
-    // 如果输入成功，更新输入框值；如果失败，恢复原值
-    if (success) {
-      event.target.value = learningStore.inputText;
-    } else {
-      // 输入错误，恢复之前的值
-      event.target.value = learningStore.inputText;
-    }
+    // 无论输入成功与否，都确保输入框值与学习存储中的输入文本同步
+    event.target.value = learningStore.inputText;
   }
 }
 
@@ -828,6 +855,8 @@ function goBack() {
 function focusInput() {
   nextTick(() => {
     if (hiddenInputRef.value) {
+      // 确保输入框的值与学习存储中的输入文本同步
+      hiddenInputRef.value.value = learningStore.inputText;
       hiddenInputRef.value.focus();
     }
   });
@@ -876,6 +905,18 @@ watch(
       // 重新初始化学习页面
       await initLearningPage();
     }
+  }
+);
+
+// 监听学习存储中的输入文本变化，同步更新隐藏输入框
+watch(
+  () => learningStore.inputText,
+  (newText) => {
+    nextTick(() => {
+      if (hiddenInputRef.value) {
+        hiddenInputRef.value.value = newText;
+      }
+    });
   }
 );
 
