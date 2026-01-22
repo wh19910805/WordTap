@@ -71,18 +71,21 @@ export function usePronunciation() {
  * 直接导出 getPronunciationUrl 函数，方便在其他模块中使用
  */
 export function getPronunciationUrl(text: string | undefined): string {
-  if (!text) return ''
+  if (!text) return "";
   
   // 从 localStorage 获取发音类型，默认美音
-  const pronunciationType = localStorage.getItem('wordtap-pronunciation-type')
-  const type = pronunciationType ? parseInt(pronunciationType) : 2 // 默认美音
+  const pronunciationType = localStorage.getItem("wordtap-pronunciation-type");
+  const type = pronunciationType ? parseInt(pronunciationType) : 2; // 默认美音
+  
+  // 直接使用传入的完整文本，支持单词、句子、段落、文章
+  const textToPlay = text.trim();
   
   // 编码文本
-  const encodedText = encodeURIComponent(text.trim())
+  const encodedText = encodeURIComponent(textToPlay);
   
   // 有道词典 API
   // type=1: 英音
   // type=2: 美音
-  return `https://dict.youdao.com/dictvoice?type=${type}&audio=${encodedText}`
+  return `https://dict.youdao.com/dictvoice?type=${type}&audio=${encodedText}`;
 }
 

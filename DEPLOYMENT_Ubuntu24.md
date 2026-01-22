@@ -104,8 +104,9 @@ ufw status
 ```
 
 **注意**：
-- 8000端口（后端API）将通过 Nginx 反向代理访问，无需直接对外暴露
-- 3306端口（MySQL）仅用于本地连接，无需对外暴露
+
+- 8000 端口（后端 API）将通过 Nginx 反向代理访问，无需直接对外暴露
+- 3306 端口（MySQL）仅用于本地连接，无需对外暴露
 
 ## 2. 后端部署
 
@@ -389,6 +390,7 @@ certbot renew --dry-run
 ### 7.1 日志管理
 
 #### 查看后端日志
+
 ```bash
 systemctl status wordtap-backend -f
 # 或查看完整日志
@@ -396,6 +398,7 @@ journalctl -u wordtap-backend -f
 ```
 
 #### 查看 Nginx 日志
+
 ```bash
 # 访问日志
 tail -f /var/log/nginx/wordtap_access.log
@@ -500,21 +503,21 @@ systemctl reload nginx
 ```nginx
 http {
     # ... 其他配置 ...
-    
+
     # 启用 Gzip 压缩
     gzip on;
     gzip_vary on;
     gzip_proxied any;
     gzip_comp_level 6;
     gzip_types text/plain text/css text/xml application/json application/javascript text/javascript;
-    
+
     # 启用 HTTP/2
     http2 on;
-    
+
     # 调整 worker 进程数
     worker_processes auto;
     worker_connections 1024;
-    
+
     # ... 其他配置 ...
 }
 ```
@@ -544,7 +547,7 @@ http {
 如果您希望使用 Docker 部署 WordTap，可以创建以下 `docker-compose.yml` 文件：
 
 ```yaml
-version: '3.8'
+version: "3.8"
 
 services:
   backend:

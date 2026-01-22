@@ -1,0 +1,101 @@
+import { defineStore } from "pinia";
+import { ref, computed, nextTick, watch } from "vue";
+import { Howl } from "howler";
+import { useCourseStore } from "./course";
+import { useUserStore } from "./user";
+import { useSettingsStore } from "./settings";
+import { getPronunciationUrl } from "@/composables/pronunciation";
+import {
+  updateSource,
+  play,
+  stop as stopAudioPlay,
+  getIsPlaying,
+} from "@/composables/audio";
+
+export const useLearningStore = defineStore("learning", () => {
+  // ... 其他代码保持不变 ...
+
+  // 自动填充人名
+  function autoFillNames(lessonData) {
+    // 添加调试日志，方便查看问题
+    console.log("[DEBUG] autoFillNames called:", {
+      defaultShowName: settingsStore.defaultShowName,
+      hasLessonData: !!lessonData,
+      hasNameList: !!lessonData?.nameList,
+      nameList: lessonData?.nameList,
+      hasSentences: !!lessonData?.sentences,
+    });
+
+    // 放宽条件，即使没有 nameList 也尝试自动填充
+    if (!settingsStore.defaultShowName || !lessonData?.sentences) {
+      return;
+    }
+
+    // 遍历所有句子，自动填充句首的人名
+    lessonData.sentences.forEach((sentence, sentenceIndex) => {
+      const sentenceText = sentence.text.trim();
+      if (!sentenceText) return;
+
+      let filledText = "";
+      let charIndex = 0;
+      let matchFound = false;
+
+      // 智能人名匹配：只匹配明确的人名格式
+      // 支持格式：
+      // 1. 称呼+空格+名字：Mr. Smith, Mrs. Brown
+      // 2. 称呼+名字：Mr.Smith, Mrs.Brown
+      // 3. 名字+冒号：LOUISE:, Anna:, LUCY:What
+      // 4. 称呼+名字+所有格：Mr. Smith's, Mrs. Brown's
+      
+      // 组合正则：匹配多种格式的人名
+      const nameRegex = /^((Mr\.|Mrs\.|Miss|Ms\.|Dr\.|Prof\.)\s?([A-Z][a-zA-Z]+)(?:'s)?)|([A-Z][a-zA-Z]+):/i;
+      const match = sentenceText.match(nameRegex);
+      
+      if (match) {
+        matchFound = true;
+        const matchedText = match[0];
+        filledText = matchedText;
+        charIndex = matchedText.length;
+        
+        // 特殊处理：如果是名字+冒号格式，检查冒号后是否有空格
+        if (match[4]) {
+          // 保留冒号后的空格
+          while (charIndex < sentenceText.length) {
+            const nextChar = sentenceText[charIndex];
+            if (isSpace(nextChar)) {
+              filledText += nextChar;
+              charIndex++;
+            } else {
+              break;
+            }
+          }
+        }
+      }
+      
+      // 如果找到匹配，更新进度
+      if (matchFound) {
+        console.log('[DEBUG] 智能匹配到人名:', filledText, 'in sentence:', sentenceText);
+        
+        // 更新进度
+        if (!sentenceProgress.value[sentenceIndex]) {
+          sentenceProgress.value[sentenceIndex] = {
+            completed: false,
+            charIndex: 0,
+            inputText: "",
+          };
+        }
+        sentenceProgress.value[sentenceIndex].inputText = filledText;
+        sentenceProgress.value[sentenceIndex].charIndex = charIndex;
+        
+        // 同时更新当前输入状态（如果是当前行）
+        if (sentenceIndex === currentSentenceIndex.value) {
+          inputText.value = filledText;
+          currentCharIndex.value = charIndex;
+          console.log('[DEBUG] Updated current input state:', { inputText: filledText, charIndex });
+        }
+      }
+    });
+  }
+
+  // ... 其他代码保持不变 ...
+});

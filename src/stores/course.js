@@ -15,7 +15,7 @@ export const useCourseStore = defineStore("course", () => {
   async function loadCourses() {
     // 如果课程已经加载过，不再重复加载
     if (coursesLoaded.value) {
-      console.log('[course.js] 课程已经加载过，跳过重复加载');
+      console.log("[course.js] 课程已经加载过，跳过重复加载");
       return;
     }
     try {
@@ -44,7 +44,9 @@ export const useCourseStore = defineStore("course", () => {
             // 对于其他未识别的课程类型，使用默认的URL格式
             url = `${code}.json`;
             type = "article"; // 默认类型
-            console.warn(`未识别的课程类型: ${course.category}，使用默认格式处理`);
+            console.warn(
+              `未识别的课程类型: ${course.category}，使用默认格式处理`,
+            );
           }
 
           return {
@@ -59,6 +61,7 @@ export const useCourseStore = defineStore("course", () => {
             url: url,
             tags: [], // 后端没有提供tags字段，使用空数组
             image: course.cover_image || "", // 使用cover_image代替image
+            previewImage: course.cover_image || "", // 添加previewImage字段，与image字段相同
             duration: 0, // 后端没有提供duration字段，使用默认值
             lessonCount: course.total_lessons, // 使用total_lessons代替lesson_count
           };
@@ -82,7 +85,7 @@ export const useCourseStore = defineStore("course", () => {
                 cachedAt: new Date().toISOString(),
                 id: course.id, // 使用课程ID作为缓存键
               });
-            })
+            }),
           );
         });
       } catch (apiError) {
@@ -96,18 +99,26 @@ export const useCourseStore = defineStore("course", () => {
         } else {
           // 4. 缓存也失败时，使用静态文件作为最后降级方案
           // 同时加载 article、word 和 xingrong 类型的课程
-          const [articleResponse, wordResponse, xingrongResponse] = await Promise.all([
-            fetch("/list/article.json").catch(() => null),
-            fetch("/list/word.json").catch(() => null),
-            fetch("/list/xingrong.json").catch(() => null),
-          ]);
+          const [articleResponse, wordResponse, xingrongResponse] =
+            await Promise.all([
+              fetch("/list/article.json").catch(() => null),
+              fetch("/list/word.json").catch(() => null),
+              fetch("/list/xingrong.json").catch(() => null),
+            ]);
 
-          const articleData = articleResponse ? await articleResponse.json() : [];
+          const articleData = articleResponse
+            ? await articleResponse.json()
+            : [];
           const wordData = wordResponse ? await wordResponse.json() : [];
-          const xingrongData = xingrongResponse ? await xingrongResponse.json() : [];
+          const xingrongData = xingrongResponse
+            ? await xingrongResponse.json()
+            : [];
 
           // 为 article 类型添加 type 字段
-          const articleCourses = articleData.map((c) => ({ ...c, type: "article" }));
+          const articleCourses = articleData.map((c) => ({
+            ...c,
+            type: "article",
+          }));
           // 为 word 类型添加 type 字段
           const wordCourses = wordData.map((c) => ({ ...c, type: "word" }));
           // xingrong 类型已经有 type 字段，直接使用
@@ -117,7 +128,11 @@ export const useCourseStore = defineStore("course", () => {
           }));
 
           // 合并所有课程
-          courses.value = [...articleCourses, ...wordCourses, ...xingrongCourses];
+          courses.value = [
+            ...articleCourses,
+            ...wordCourses,
+            ...xingrongCourses,
+          ];
           // 设置课程加载完成标志
           coursesLoaded.value = true;
         }
@@ -133,7 +148,10 @@ export const useCourseStore = defineStore("course", () => {
             name: userCourse.course.title,
             title: userCourse.course.title,
             description: userCourse.course.description,
-            type: userCourse.course.category === "classic" ? "article" : userCourse.course.category,
+            type:
+              userCourse.course.category === "classic"
+                ? "article"
+                : userCourse.course.category,
             category: userCourse.course.category,
             level: userCourse.course.level,
             code: userCourse.course.id.split("_").pop() || "default",
@@ -149,7 +167,7 @@ export const useCourseStore = defineStore("course", () => {
         console.error("加载我的课程失败:", error);
         // 出错时使用空数组
         myCourses.value = [];
-      };
+      }
     } catch (error) {
       console.error("[course.js] 加载课程列表失败:", error);
       console.error("[course.js] 错误详情:", {
@@ -182,8 +200,9 @@ export const useCourseStore = defineStore("course", () => {
 
       // 使用后端API添加课程到我的课程
       await courseApi.addToMyCourses(courseId);
-      
+
       // 重新加载课程列表，更新myCourses
+      coursesLoaded.value = false; // 重置加载标志，确保重新加载数据
       await loadCourses();
       return true;
     } catch (error) {
@@ -203,6 +222,7 @@ export const useCourseStore = defineStore("course", () => {
       await courseApi.removeFromMyCourses(courseId);
 
       // 重新加载课程列表
+      coursesLoaded.value = false; // 重置加载标志，确保重新加载数据
       await loadCourses();
       return true;
     } catch (error) {
@@ -264,7 +284,9 @@ export const useCourseStore = defineStore("course", () => {
 
             if (
               !response.ok ||
-              !response.headers.get("content-type")?.includes("application/json")
+              !response.headers
+                .get("content-type")
+                ?.includes("application/json")
             ) {
               lessons = [];
               return;
@@ -280,7 +302,8 @@ export const useCourseStore = defineStore("course", () => {
             } else {
               lessons = data.map((lesson) => ({
                 id: lesson.id,
-                title: lesson.title || lesson.name || `Lesson ${lesson.order || 0}`,
+                title:
+                  lesson.title || lesson.name || `Lesson ${lesson.order || 0}`,
               }));
             }
           } catch (fileError) {
@@ -291,7 +314,10 @@ export const useCourseStore = defineStore("course", () => {
       }
 
       // 加载学习进度
-      const progress = await db.lessons.where("courseId").equals(courseId).toArray();
+      const progress = await db.lessons
+        .where("courseId")
+        .equals(courseId)
+        .toArray();
 
       const lessonsWithProgress = lessons.map((lesson, index) => {
         const prog = progress.find((p) => p.id === lesson.id);
@@ -308,6 +334,8 @@ export const useCourseStore = defineStore("course", () => {
       currentCourse.value = {
         ...course,
         lessons: lessonsWithProgress,
+        // 确保返回的课程对象包含 previewImage 字段
+        previewImage: course.previewImage || course.image || "",
       };
 
       return currentCourse.value;
@@ -366,7 +394,9 @@ export const useCourseStore = defineStore("course", () => {
               try {
                 const res = await fetch(lessonUrl);
                 if (!res.ok) {
-                  console.warn(`课时 ${lessonNum} 文件不存在或加载失败 (${res.status})`);
+                  console.warn(
+                    `课时 ${lessonNum} 文件不存在或加载失败 (${res.status})`,
+                  );
                   return null;
                 }
                 const data = await res.json();
@@ -397,7 +427,10 @@ export const useCourseStore = defineStore("course", () => {
               await new Promise((resolve) => setTimeout(resolve, 100));
             }
           } catch (error) {
-            console.error(`加载第 ${batchStart}-${batchEnd} 批课时失败:`, error);
+            console.error(
+              `加载第 ${batchStart}-${batchEnd} 批课时失败:`,
+              error,
+            );
           }
         }
 
@@ -405,7 +438,9 @@ export const useCourseStore = defineStore("course", () => {
 
         // 如果加载的课时数量少于预期，输出警告
         if (lessons.length < 55) {
-          console.warn(`星荣课程加载不完整：预期55个课时，实际加载${lessons.length}个`);
+          console.warn(
+            `星荣课程加载不完整：预期55个课时，实际加载${lessons.length}个`,
+          );
         }
       } else {
         // 加载课程数据
@@ -416,13 +451,13 @@ export const useCourseStore = defineStore("course", () => {
           const contentType = response.headers.get("content-type");
           if (!contentType || !contentType.includes("application/json")) {
             console.warn(
-              `课程文件不存在或格式错误，将显示空课时列表: ${basePath}/${course.url}`
+              `课程文件不存在或格式错误，将显示空课时列表: ${basePath}/${course.url}`,
             );
             // 文件不存在或非JSON响应，返回空课时列表
             lessons = [];
           } else if (!response.ok) {
             console.error(
-              `课程文件加载失败: ${basePath}/${course.url} (状态码: ${response.status})`
+              `课程文件加载失败: ${basePath}/${course.url} (状态码: ${response.status})`,
             );
             // 文件加载失败，返回空课时列表
             lessons = [];
@@ -458,7 +493,10 @@ export const useCourseStore = defineStore("course", () => {
       }
 
       // 加载学习进度
-      const progress = await db.lessons.where("courseId").equals(courseId).toArray();
+      const progress = await db.lessons
+        .where("courseId")
+        .equals(courseId)
+        .toArray();
 
       const lessonsWithProgress = lessons.map((lesson, index) => {
         const prog = progress.find((p) => p.id === lesson.id);
@@ -475,6 +513,8 @@ export const useCourseStore = defineStore("course", () => {
       currentCourse.value = {
         ...course,
         lessons: lessonsWithProgress,
+        // 确保返回的课程对象包含 previewImage 字段
+        previewImage: course.previewImage || course.image || "",
       };
 
       return currentCourse.value;
@@ -499,26 +539,36 @@ export const useCourseStore = defineStore("course", () => {
         // 并行获取课时详情和学习进度
         const [lessonDetail, progressData] = await Promise.all([
           lessonApi.getLessonDetail(lessonId),
-          progressApi.getCourseProgress(courseId).catch(error => {
-            console.log('获取学习进度失败，将使用默认进度:', error);
+          progressApi.getCourseProgress(courseId).catch((error) => {
+            console.log("获取学习进度失败，将使用默认进度:", error);
             return [];
-          })
+          }),
         ]);
 
         // 查找当前课时的进度
-        lessonProgress = progressData.find(p => p.lesson_id === lessonId);
-        console.log('获取到的学习进度:', lessonProgress);
-        console.log('获取到的课时详情:', lessonDetail);
+        lessonProgress = progressData.find((p) => p.lesson_id === lessonId);
+        console.log("获取到的学习进度:", lessonProgress);
+        console.log("获取到的课时详情:", lessonDetail);
 
         // 处理lessonDetail对象，确保它包含正确的数据结构
         if (!lessonDetail) {
-          console.error('课时详情数据为空:', lessonDetail);
-          lesson = createBaseLessonObject(lessonId, "课时详情获取失败", courseId, lessonProgress);
+          console.error("课时详情数据为空:", lessonDetail);
+          lesson = createBaseLessonObject(
+            lessonId,
+            "课时详情获取失败",
+            courseId,
+            lessonProgress,
+          );
         } else {
           // 检查lessonDetail.content是否存在
           if (!lessonDetail.content) {
-            console.error('课时详情content字段不存在:', lessonDetail);
-            lesson = createBaseLessonObject(lessonId, lessonDetail.title || "未命名课时", courseId, lessonProgress);
+            console.error("课时详情content字段不存在:", lessonDetail);
+            lesson = createBaseLessonObject(
+              lessonId,
+              lessonDetail.title || "未命名课时",
+              courseId,
+              lessonProgress,
+            );
           } else {
             // 检查不同的数据结构
             let sentences = [];
@@ -526,9 +576,9 @@ export const useCourseStore = defineStore("course", () => {
             let translate = "";
             let title = lessonDetail.title || "未命名课时";
             let nameList = [];
-            
+
             // 处理不同类型的content数据结构
-            if (typeof lessonDetail.content === 'string') {
+            if (typeof lessonDetail.content === "string") {
               // 如果content是字符串，直接作为text
               console.log(`检测到content为字符串格式`);
               text = lessonDetail.content;
@@ -552,17 +602,22 @@ export const useCourseStore = defineStore("course", () => {
             } else if (Array.isArray(lessonDetail.content.sentences)) {
               // content包含sentences数组
               console.log(`检测到content包含sentences数组`);
-              sentences = lessonDetail.content.sentences.map((sentence, index) => ({
-                id: `sentence-${index}`,
-                text: sentence.text || sentence.english || "",
-                translate: sentence.translate || sentence.chinese || "",
-                words: (sentence.text || sentence.english || "").split(/\s+/).filter((w) => w),
-                audioSrc: sentence.audioSrc || null,
-                audioTime: sentence.audioTime || null,
-                lineIndex: index
-              }));
-              text = sentences.map(s => s.text).join("\n");
-              translate = sentences.map(s => s.translate).join("\n");
+              sentences = lessonDetail.content.sentences.map(
+                (sentence, index) => ({
+                  id: `sentence-${index}`,
+                  text: sentence.text || sentence.english || "",
+                  translate: sentence.translate || sentence.chinese || "",
+                  soundmark: sentence.soundmark || "",
+                  words: (sentence.text || sentence.english || "")
+                    .split(/\s+/)
+                    .filter((w) => w),
+                  audioSrc: sentence.audioSrc || null,
+                  audioTime: sentence.audioTime || null,
+                  lineIndex: index,
+                }),
+              );
+              text = sentences.map((s) => s.text).join("\n");
+              translate = sentences.map((s) => s.translate).join("\n");
             } else if (Array.isArray(lessonDetail.content.words)) {
               // content包含words数组
               console.log(`检测到content包含words数组`);
@@ -570,14 +625,17 @@ export const useCourseStore = defineStore("course", () => {
                 id: `sentence-${index}`,
                 text: word.text || word.word || "",
                 translate: word.translate || word.chinese || "",
-                words: (word.text || word.word || "").split(/\s+/).filter((w) => w),
+                soundmark: word.soundmark || "",
+                words: (word.text || word.word || "")
+                  .split(/\s+/)
+                  .filter((w) => w),
                 audioSrc: null,
                 audioTime: null,
-                lineIndex: index
+                lineIndex: index,
               }));
-              text = sentences.map(s => s.text).join("\n");
-              translate = sentences.map(s => s.translate).join("\n");
-            } else if (typeof lessonDetail.content.text === 'string') {
+              text = sentences.map((s) => s.text).join("\n");
+              translate = sentences.map((s) => s.translate).join("\n");
+            } else if (typeof lessonDetail.content.text === "string") {
               // content包含text字段
               console.log(`检测到content包含text字段`);
               text = lessonDetail.content.text || "";
@@ -586,7 +644,7 @@ export const useCourseStore = defineStore("course", () => {
                 text,
                 translate,
                 lessonDetail.content.lrcPosition || [],
-                lessonDetail.content.audioSrc || null
+                lessonDetail.content.audioSrc || null,
               );
               nameList = lessonDetail.content.nameList || [];
             } else if (Array.isArray(lessonDetail.content)) {
@@ -594,18 +652,28 @@ export const useCourseStore = defineStore("course", () => {
               console.log(`检测到content本身是数组`);
               sentences = lessonDetail.content.map((item, index) => ({
                 id: `sentence-${index}`,
-                text: item.text || item.english || item.word || JSON.stringify(item),
+                text:
+                  item.text ||
+                  item.english ||
+                  item.word ||
+                  JSON.stringify(item),
                 translate: item.translate || item.chinese || "",
-                words: (item.text || item.english || item.word || "").split(/\s+/).filter((w) => w),
+                soundmark: item.soundmark || "",
+                words: (item.text || item.english || item.word || "")
+                  .split(/\s+/)
+                  .filter((w) => w),
                 audioSrc: item.audioSrc || null,
                 audioTime: item.audioTime || null,
-                lineIndex: index
+                lineIndex: index,
               }));
-              text = sentences.map(s => s.text).join("\n");
-              translate = sentences.map(s => s.translate).join("\n");
+              text = sentences.map((s) => s.text).join("\n");
+              translate = sentences.map((s) => s.translate).join("\n");
             } else {
               // 处理未知的数据结构
-              console.warn(`检测到未知数据结构，将创建基本内容`, lessonDetail.content);
+              console.warn(
+                `检测到未知数据结构，将创建基本内容`,
+                lessonDetail.content,
+              );
               let contentText = "";
               if (lessonDetail.content) {
                 try {
@@ -614,34 +682,38 @@ export const useCourseStore = defineStore("course", () => {
                   contentText = String(lessonDetail.content);
                 }
               }
-              sentences = [{
-                id: "sentence-0",
-                text: contentText,
-                translate: "",
-                words: contentText.split(/\s+/).filter((w) => w),
-                audioSrc: null,
-                audioTime: null,
-                lineIndex: 0
-              }];
+              sentences = [
+                {
+                  id: "sentence-0",
+                  text: contentText,
+                  translate: "",
+                  words: contentText.split(/\s+/).filter((w) => w),
+                  audioSrc: null,
+                  audioTime: null,
+                  lineIndex: 0,
+                },
+              ];
               text = sentences[0].text;
               translate = "";
             }
-            
+
             // 确保sentences数组不为空
             if (sentences.length === 0) {
-              sentences = [{
-                id: "sentence-0",
-                text: "暂无内容",
-                translate: "",
-                words: ["暂无内容"],
-                audioSrc: null,
-                audioTime: null,
-                lineIndex: 0
-              }];
+              sentences = [
+                {
+                  id: "sentence-0",
+                  text: "暂无内容",
+                  translate: "",
+                  words: ["暂无内容"],
+                  audioSrc: null,
+                  audioTime: null,
+                  lineIndex: 0,
+                },
+              ];
               text = sentences[0].text;
               translate = "";
             }
-            
+
             // 创建lesson对象
             lesson = {
               id: lessonDetail.id || lessonId,
@@ -651,23 +723,36 @@ export const useCourseStore = defineStore("course", () => {
               sentences: sentences,
               nameList: nameList,
               progress: {
-                current_line: lessonProgress?.current_line || 0
-              }
+                current_line: lessonProgress?.current_line || 0,
+              },
             };
           }
         }
-        
-        console.log(`成功从后端API获取课时 ${lessonId} 的详细数据，创建的lesson对象:`, lesson);
+
+        console.log(
+          `成功从后端API获取课时 ${lessonId} 的详细数据，创建的lesson对象:`,
+          lesson,
+        );
       } catch (apiError) {
         console.error(`从后端API获取课时详情失败: ${apiError.message}`);
         // API调用失败，创建一个基本的lesson对象
-        lesson = createBaseLessonObject(lessonId, "API请求失败", courseId, lessonProgress);
+        lesson = createBaseLessonObject(
+          lessonId,
+          "API请求失败",
+          courseId,
+          lessonProgress,
+        );
       }
 
       // 确保lesson对象存在
       if (!lesson) {
-        console.error('课时数据处理失败，创建默认课时对象');
-        lesson = createBaseLessonObject(lessonId, "数据处理失败", courseId, lessonProgress);
+        console.error("课时数据处理失败，创建默认课时对象");
+        lesson = createBaseLessonObject(
+          lessonId,
+          "数据处理失败",
+          courseId,
+          lessonProgress,
+        );
       }
 
       currentLesson.value = {
@@ -691,25 +776,32 @@ export const useCourseStore = defineStore("course", () => {
       title: title,
       text: "",
       textTranslate: "",
-      sentences: [{
-        id: "sentence-0",
-        text: "暂无内容",
-        translate: "",
-        words: ["暂无内容"],
-        audioSrc: null,
-        audioTime: null,
-        lineIndex: 0
-      }],
+      sentences: [
+        {
+          id: "sentence-0",
+          text: "暂无内容",
+          translate: "",
+          words: ["暂无内容"],
+          audioSrc: null,
+          audioTime: null,
+          lineIndex: 0,
+        },
+      ],
       nameList: [],
       courseId,
       progress: {
-        current_line: lessonProgress?.current_line || 0
-      }
+        current_line: lessonProgress?.current_line || 0,
+      },
     };
   }
 
   // 将文本分割成句子
-  function splitIntoSentences(text, translate, lrcPosition = [], audioSrc = null) {
+  function splitIntoSentences(
+    text,
+    translate,
+    lrcPosition = [],
+    audioSrc = null,
+  ) {
     if (!text) return [];
 
     // 按换行符分割，过滤空行
@@ -721,7 +813,8 @@ export const useCourseStore = defineStore("course", () => {
     return textLines.map((line, index) => {
       const cleanText = line.trim();
       // 获取该行对应的音频时间位置（如果有）
-      const audioTime = lrcPosition && lrcPosition[index] ? lrcPosition[index] : null;
+      const audioTime =
+        lrcPosition && lrcPosition[index] ? lrcPosition[index] : null;
 
       return {
         id: `sentence-${index}`,
@@ -736,7 +829,14 @@ export const useCourseStore = defineStore("course", () => {
   }
 
   // 更新课时进度
-  async function updateLessonProgress(lessonId, courseId, bestTime, completed, currentLine = 0, studyTime = 0) {
+  async function updateLessonProgress(
+    lessonId,
+    courseId,
+    bestTime,
+    completed,
+    currentLine = 0,
+    studyTime = 0,
+  ) {
     try {
       // 1. 更新本地数据库
       const existing = await db.lessons.get(lessonId);
@@ -805,7 +905,7 @@ export const useCourseStore = defineStore("course", () => {
           });
         }
       }
-      
+
       // 2. 更新后端API
       try {
         await progressApi.updateProgress({
@@ -813,11 +913,11 @@ export const useCourseStore = defineStore("course", () => {
           lesson_id: lessonId,
           current_line: currentLine,
           study_time: studyTime,
-          is_completed: completed
+          is_completed: completed,
         });
-        console.log('成功更新学习进度到后端');
+        console.log("成功更新学习进度到后端");
       } catch (apiError) {
-        console.error('更新学习进度到后端失败:', apiError);
+        console.error("更新学习进度到后端失败:", apiError);
       }
     } catch (error) {
       console.error("更新课时进度失败:", error);

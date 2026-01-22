@@ -36,80 +36,68 @@ async def get_user_stats(
         db.commit()
         db.refresh(user_stats)
     
-    # 检查统计数据是否为0，如果是则自动重新计算
-    if user_stats.study_time_total == 0:
-        print(f"用户 {user_id} 的统计数据为0，自动重新计算")
+    # 获取用户的所有学习进度记录
+    progress_records = db.query(UserLearningProgress).filter(
+        UserLearningProgress.user_id == user_id
+    ).all()
+    
+    if progress_records:
+        # 获取当前时间参考点
+        now = datetime.now()
+        today = now.date()
+        today_start = datetime.combine(today, datetime.min.time())
         
-        # 获取用户的所有学习进度记录
-        progress_records = db.query(UserLearningProgress).filter(
-            UserLearningProgress.user_id == user_id
-        ).all()
+        week_start = today - timedelta(days=today.weekday())
+        week_start_datetime = datetime.combine(week_start, datetime.min.time())
         
-        if progress_records:
-            # 重置统计数据
-            user_stats.study_time_total = 0
-            user_stats.study_time_today = 0
-            user_stats.study_time_week = 0
-            user_stats.study_time_month = 0
-            user_stats.study_time_year = 0
-            user_stats.completed_lessons = 0
+        month_start = datetime(now.year, now.month, 1)
+        year_start = datetime(now.year, 1, 1)
+        
+        # 统计已完成的课时ID
+        completed_lesson_ids = set()
+        
+        # 遍历所有学习记录，仅更新时间相关统计
+        for record in progress_records:
+            # 统计已完成的课时
+            if record.is_completed:
+                completed_lesson_ids.add(record.lesson_id)
+        
+        # 更新已完成课时数
+        user_stats.completed_lessons = len(completed_lesson_ids)
+        
+        # 更新最后学习日期
+        latest_record = max(progress_records, key=lambda x: x.last_studied_at or datetime.min)
+        user_stats.last_study_date = latest_record.last_studied_at
+        
+        # 计算连续学习天数和累计打卡
+        # 计算实际学习天数
+        study_dates = set(record.last_studied_at.date() for record in progress_records if record.last_studied_at)
+        user_stats.total_check_in = len(study_dates)
+        
+        # 计算连续学习天数
+        if study_dates:
+            # 获取排序后的学习日期列表，从新到旧
+            sorted_dates = sorted(study_dates, reverse=True)
+            streak = 1
             
-            # 获取当前时间参考点
-            now = datetime.now()
-            today = now.date()
-            today_start = datetime.combine(today, datetime.min.time())
-            
-            week_start = today - timedelta(days=today.weekday())
-            week_start_datetime = datetime.combine(week_start, datetime.min.time())
-            
-            month_start = datetime(now.year, now.month, 1)
-            year_start = datetime(now.year, 1, 1)
-            
-            # 统计已完成的课时ID
-            completed_lesson_ids = set()
-            
-            # 遍历所有学习记录
-            for record in progress_records:
-                # 累加总学习时长
-                user_stats.study_time_total += record.study_time
+            # 从最新日期开始计算连续天数
+            for i in range(1, len(sorted_dates)):
+                prev_date = sorted_dates[i-1]
+                curr_date = sorted_dates[i]
+                days_between = (prev_date - curr_date).days
                 
-                # 按时间范围累加学习时长
-                if record.last_studied_at and record.last_studied_at >= today_start:
-                    user_stats.study_time_today += record.study_time
-                
-                if record.last_studied_at and record.last_studied_at >= week_start_datetime:
-                    user_stats.study_time_week += record.study_time
-                
-                if record.last_studied_at and record.last_studied_at >= month_start:
-                    user_stats.study_time_month += record.study_time
-                
-                if record.last_studied_at and record.last_studied_at >= year_start:
-                    user_stats.study_time_year += record.study_time
-                
-                # 统计已完成的课时
-                if record.is_completed:
-                    completed_lesson_ids.add(record.lesson_id)
+                if days_between == 1:
+                    streak += 1
+                else:
+                    break
             
-            # 更新已完成课时数
-            user_stats.completed_lessons = len(completed_lesson_ids)
-            
-            # 更新最后学习日期
-            if progress_records:
-                # 获取最新的学习记录
-                latest_record = max(progress_records, key=lambda x: x.last_studied_at or datetime.min)
-                user_stats.last_study_date = latest_record.last_studied_at
-            
-            # 计算连续学习天数和累计打卡
-            if user_stats.last_study_date:
-                # 计算实际学习天数
-                study_dates = set(record.last_studied_at.date() for record in progress_records if record.last_studied_at)
-                user_stats.total_check_in = len(study_dates)
-                
-                # 简化处理连续学习天数，实际应用中需要更复杂的逻辑
-                user_stats.streak = 1
-            
-            db.commit()
-            db.refresh(user_stats)
+            user_stats.streak = streak
+        else:
+            user_stats.streak = 0
+            user_stats.total_check_in = 0
+        
+        db.commit()
+        db.refresh(user_stats)
     
     return user_stats
 
@@ -229,13 +217,31 @@ async def recalculate_user_stats(
     
     # 计算连续学习天数和累计打卡
     if user_stats.last_study_date:
-        # 这里简化处理，将累计打卡设为学习天数
-        # 实际应用中可能需要更复杂的逻辑
-        user_stats.total_check_in = len(set(record.last_studied_at.date() for record in progress_records if record.last_studied_at))
+        # 计算实际学习天数
+        study_dates = set(record.last_studied_at.date() for record in progress_records if record.last_studied_at)
+        user_stats.total_check_in = len(study_dates)
         
-        # 简化处理连续学习天数，实际应用中需要更复杂的逻辑
-        # 这里我们假设只要有学习记录，连续学习天数至少为1
-        user_stats.streak = 1
+        # 计算连续学习天数
+        if study_dates:
+            # 获取排序后的学习日期列表，从新到旧
+            sorted_dates = sorted(study_dates, reverse=True)
+            streak = 1
+            
+            # 从最新日期开始计算连续天数
+            for i in range(1, len(sorted_dates)):
+                prev_date = sorted_dates[i-1]
+                curr_date = sorted_dates[i]
+                days_between = (prev_date - curr_date).days
+                
+                if days_between == 1:
+                    streak += 1
+                else:
+                    break
+            
+            user_stats.streak = streak
+        else:
+            user_stats.streak = 0
+            user_stats.total_check_in = 0
     
     db.commit()
     db.refresh(user_stats)

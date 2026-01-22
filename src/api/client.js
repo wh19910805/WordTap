@@ -24,7 +24,7 @@ apiClient.interceptors.request.use(
   },
   (error) => {
     return Promise.reject(error);
-  },
+  }
 );
 
 // 响应拦截器
@@ -67,7 +67,7 @@ apiClient.interceptors.response.use(
       console.error("Request Error:", error.message);
       return Promise.reject({ message: "请求错误，请稍后重试" });
     }
-  },
+  }
 );
 
 // 认证相关API
@@ -106,8 +106,7 @@ export const courseApi = {
   // 获取我的课程列表
   getMyCourses: () => apiClient.get("/courses/my-courses"),
   // 从我的课程中移除课程
-  removeFromMyCourses: (courseId) =>
-    apiClient.delete(`/courses/my-courses/${courseId}`),
+  removeFromMyCourses: (courseId) => apiClient.delete(`/courses/my-courses/${courseId}`),
   // 更新我的课程标签
   updateMyCourseTags: (courseId, tags) =>
     apiClient.put(`/courses/my-courses/${courseId}`, { tags }),
@@ -124,8 +123,7 @@ export const progressApi = {
   // 更新学习进度
   updateProgress: (data) => apiClient.post("/courses/progress", data),
   // 获取课程学习进度
-  getCourseProgress: (courseId) =>
-    apiClient.get(`/courses/progress/course/${courseId}`),
+  getCourseProgress: (courseId) => apiClient.get(`/courses/progress/course/${courseId}`),
   // 获取最新学习进度
   getLatestProgress: () => apiClient.get("/courses/progress/latest"),
 };
@@ -150,5 +148,22 @@ export const userApi = {
   // 更新用户设置
   updateSettings: (data) => apiClient.put("/users/settings", data),
 };
+
+// 错题本相关API
+export const wrongWordApi = {
+  // 添加错词
+  addWrongWord: (data) => apiClient.post("/word-books/wrong-words", data),
+  // 获取错词列表
+  getWrongWords: (params) => apiClient.get("/word-books/wrong-words", { params }),
+  // 删除错词
+  deleteWrongWord: (wrongWordId) =>
+    apiClient.delete(`/word-books/wrong-words/${wrongWordId}`),
+  // 更新错词复习状态
+  updateWrongWordReview: (wrongWordId, data) =>
+    apiClient.put(`/word-books/wrong-words/${wrongWordId}/review`, data),
+};
+
+// 导出单个API方法，方便直接使用
+export const addWrongWord = (data) => wrongWordApi.addWrongWord(data);
 
 export default apiClient;

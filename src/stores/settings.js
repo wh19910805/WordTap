@@ -92,7 +92,7 @@ export const useSettingsStore = defineStore("settings", () => {
   async function saveToLocalDB() {
     try {
       await db.settings.put({
-        id: "main",
+        key: "main",
         theme: theme.value,
         fontFamily: fontFamily.value,
         phoneticSize: phoneticSize.value,
