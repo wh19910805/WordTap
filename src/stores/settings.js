@@ -225,10 +225,14 @@ export const useSettingsStore = defineStore("settings", () => {
     error.value = null;
     try {
       console.log("[settings.js] 开始从后端API加载用户设置");
+      // 先从本地数据库加载设置，保留用户的本地设置
+      await loadFromLocalDB();
+      
       const response = await userApi.getSettings();
       console.log("[settings.js] API查询完成，settings:", response);
 
       if (response) {
+        // 只更新后端返回的设置，不覆盖本地已有但后端未返回的设置
         nestedToFlatten(response);
         applyTheme();
         await saveToLocalDB();
