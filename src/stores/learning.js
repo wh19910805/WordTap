@@ -748,14 +748,14 @@ export const useLearningStore = defineStore("learning", () => {
         sentence.style.paddingBottom = "";
       });
 
-      // 计算滚动偏移量：将句子滚动到容器上1/3处，避免被键盘遮挡
+      // 计算滚动偏移量：将句子滚动到容器上1/4处（更靠上的位置），避免被键盘遮挡
       // 使用getBoundingClientRect()来计算相对于视口的位置，然后转换为滚动容器内的偏移量
-      // 普通行向上滚动距离增大35像素（增加20px），让内容位置更靠上
+      // 普通行向上滚动距离增大60像素，让内容位置更靠上，效果更明显
       let scrollTop =
         contentEl.scrollTop +
         (sentenceRect.top - containerRect.top) -
-        containerRect.height * 0.3 -
-        35;
+        containerRect.height * 0.25 -
+        60;
 
       // 对于最后一行，滚动到更高的位置，确保不被键盘完全遮挡
       if (currentSentenceIndex.value === totalSentences.value - 1) {
@@ -763,7 +763,7 @@ export const useLearningStore = defineStore("learning", () => {
           contentEl.scrollTop +
           (sentenceRect.top - containerRect.top) -
           containerRect.height * 0.2 -
-          20;
+          40;
       }
 
       // 确保滚动位置不小于0
@@ -784,15 +784,15 @@ export const useLearningStore = defineStore("learning", () => {
         const finalSentenceRect = sentenceEl.getBoundingClientRect();
         const finalContainerRect = contentEl.getBoundingClientRect();
 
-        // 重新计算滚动位置，同样使用增大的滚动高度（增加20px）
+        // 重新计算滚动位置，使用与主滚动相同的计算方式
         const finalScrollTop =
           contentEl.scrollTop +
           (finalSentenceRect.top - finalContainerRect.top) -
-          finalContainerRect.height * 0.3 -
-          35;
+          finalContainerRect.height * 0.25 -
+          60;
 
         // 如果元素位置不在理想位置，再次调整滚动位置
-        if (finalSentenceRect.top < finalContainerRect.height * 0.3) {
+        if (finalSentenceRect.top < finalContainerRect.height * 0.25) {
           contentEl.scrollTo({
             top: Math.max(finalScrollTop, 0),
             behavior: "smooth",
