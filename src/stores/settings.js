@@ -34,6 +34,11 @@ export const useSettingsStore = defineStore("settings", () => {
   const loading = ref(false);
   const error = ref(null);
 
+  // 初始化时自动加载本地设置
+  (async () => {
+    await loadFromLocalDB();
+  })();
+
   // 应用主题（兼容现有代码）
   function applyTheme() {
     document.documentElement.classList.remove("light", "dark");
@@ -227,7 +232,7 @@ export const useSettingsStore = defineStore("settings", () => {
       console.log("[settings.js] 开始从后端API加载用户设置");
       // 先从本地数据库加载设置，保留用户的本地设置
       await loadFromLocalDB();
-      
+
       const response = await userApi.getSettings();
       console.log("[settings.js] API查询完成，settings:", response);
 

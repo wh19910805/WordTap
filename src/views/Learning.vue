@@ -975,8 +975,25 @@ const initLearningPage = async () => {
   // 初始化学习状态
   learningStore.initLearning(lessonData);
 
-  // 聚焦输入框
-  focusInput();
+  // 聚焦输入框 - 使用nextTick确保DOM更新完成，再添加延迟确保键盘能被正确调起
+  nextTick(() => {
+    setTimeout(() => {
+      focusInput();
+      // 对于移动设备，额外的触摸事件触发可能有助于浏览器调起键盘
+      if (hiddenInputRef.value) {
+        // 创建并触发一个触摸事件，模拟用户点击
+        const touchEvent = new TouchEvent('touchstart', {
+          bubbles: true,
+          cancelable: true,
+          view: window,
+          touches: [{ clientX: 0, clientY: 0 }],
+          targetTouches: [{ clientX: 0, clientY: 0 }],
+          changedTouches: [{ clientX: 0, clientY: 0 }]
+        });
+        hiddenInputRef.value.dispatchEvent(touchEvent);
+      }
+    }, 200);
+  });
 };
 
 // 监听路由参数变化，重新初始化学习页面
