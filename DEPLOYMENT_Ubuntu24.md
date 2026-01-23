@@ -61,8 +61,10 @@ systemctl status mariadb
 
 ```bash
 # 初始化数据库安全设置
+# 如果您刚安装好 MySQL，还没有运行推荐的安全配置脚本，这是官方的方法。
 mysql_secure_installation
-
+1、ould you like to setup VALIDATE PASSWORD component?
+Press y|Y for Yes, any other key for No:
 
 # 登录 MySQL
 mysql -u root -p

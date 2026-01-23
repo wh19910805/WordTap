@@ -106,7 +106,10 @@
     <!-- 底部操作区 -->
     <div
       ref="bottomBarRef"
-      class="bg-[var(--surface-color)] border-t-2 border-[var(--border-color)] p-6 z-20"
+      :class="[
+        'bg-[var(--surface-color)] border-t-2 border-[var(--border-color)] p-6 z-20 transition-opacity duration-300',
+        isKeyboardVisible ? 'opacity-0 pointer-events-none' : 'opacity-100 pointer-events-auto'
+      ]"
     >
       <!-- 错误提示 -->
       <div
@@ -273,6 +276,16 @@ const validationErrors = ref([]);
  * 内容区样式 - 用于动态调整内容区样式
  */
 const contentStyle = ref({});
+
+/**
+ * 键盘可见性状态 - 用于控制底部按钮栏的显示和隐藏
+ */
+const isKeyboardVisible = ref(false);
+
+/**
+ * 初始视口高度 - 用于检测键盘弹出/收起
+ */
+const initialViewportHeight = ref(window.innerHeight);
 
 // ========================== 计算属性 ==========================
 /**
@@ -929,9 +942,16 @@ const initLearningPage = async () => {
 };
 
 /**
- * 处理键盘高度变化，调整滚动位置
+ * 处理键盘高度变化，调整滚动位置和底部栏显示
  */
 const handleKeyboardResize = () => {
+  // 计算当前视口高度变化
+  const currentHeight = window.innerHeight;
+  const heightDifference = initialViewportHeight.value - currentHeight;
+  
+  // 判定键盘是否可见（高度差超过100px认为键盘弹出）
+  isKeyboardVisible.value = heightDifference > 100;
+  
   // 延迟执行，确保键盘完全弹出
   setTimeout(() => {
     learningStore.scrollToCurrentSentence();
