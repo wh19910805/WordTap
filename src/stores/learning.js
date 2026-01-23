@@ -765,43 +765,39 @@ export const useLearningStore = defineStore("learning", () => {
           containerRect.height * 0.2;
       }
 
-      // 获取窗口信息
-      const windowHeight = window.innerHeight;
+      // 确保滚动位置不小于0
+      scrollTop = Math.max(scrollTop, 0);
 
-      // 获取元素位置和尺寸
-      const rect = sentenceEl.getBoundingClientRect();
-      const elementTop = rect.top;
-      const elementHeight = rect.height;
-
-      // 计算滚动位置
-      let scrollY = window.pageYOffset;
-      let targetScrollY = scrollY + elementTop - 50;
-
-      // 确保元素顶部距离视口顶部有50px的边距
-      window.scrollTo({
-        top: targetScrollY,
-        behavior: "instant",
+      // 滚动内容容器，而不是窗口
+      contentEl.scrollTo({
+        top: scrollTop,
+        behavior: "smooth",
       });
 
-      // 只有在学习到最后两行时，才添加底部内边距
-      if (currentSentenceIndex.value >= totalSentences.value - 2) {
-        // 添加固定的底部内边距，确保最后两行有足够的滚动空间
-        contentEl.style.paddingBottom = "320px";
+      // 为所有行添加足够的底部内边距，确保有足够的滚动空间
+      // 特别是在手机键盘弹出时，需要更多的滚动空间
+      contentEl.style.paddingBottom = "320px";
 
-        // 确保当前句子在添加内边距后仍然可见
-        setTimeout(() => {
-          const finalRect = sentenceEl.getBoundingClientRect();
-          const finalElementTop = finalRect.top;
+      // 确保当前句子在添加内边距后仍然可见
+      setTimeout(() => {
+        const finalSentenceRect = sentenceEl.getBoundingClientRect();
+        const finalContainerRect = contentEl.getBoundingClientRect();
 
-          // 如果元素顶部距离视口顶部小于50px，再次调整滚动位置
-          if (finalElementTop < 50) {
-            window.scrollTo({
-              top: window.pageYOffset + finalElementTop - 50,
-              behavior: "instant",
-            });
-          }
-        }, 100);
-      }
+        // 重新计算滚动位置
+        const finalScrollTop =
+          contentEl.scrollTop +
+          (finalSentenceRect.top - finalContainerRect.top) -
+          finalContainerRect.height * 0.3 -
+          15;
+
+        // 如果元素位置不在理想位置，再次调整滚动位置
+        if (finalSentenceRect.top < finalContainerRect.height * 0.3) {
+          contentEl.scrollTo({
+            top: Math.max(finalScrollTop, 0),
+            behavior: "smooth",
+          });
+        }
+      }, 100);
     }
   }
 
