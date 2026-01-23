@@ -101,6 +101,9 @@
           音标：{{ sentence.soundmark }}
         </div>
       </div>
+      
+      <!-- 底部空白占位，解决键盘遮挡最后两行内容问题 -->
+      <div class="h-40 md:h-60"></div>
     </div>
 
     <!-- 底部操作区 -->
