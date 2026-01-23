@@ -236,7 +236,7 @@
       autocorrect="off"
       autocapitalize="off"
       spellcheck="false"
-      class="fixed opacity-0 pointer-events-none"
+      class="fixed opacity-0 w-1 h-1 focus:outline-none"
       @input="handleInput"
       @keydown="handleKeyDown"
     />
@@ -666,6 +666,9 @@ const handleWordClick = (sentenceIndex, wordIndex, word) => {
   const sentence = courseStore.lessonData?.sentences[sentenceIndex];
   if (!sentence) return;
 
+  // 聚焦输入框，确保键盘能被调起
+  focusInput();
+
   // 播放单词语音
   handlePlayWordSound(word);
 
@@ -1020,7 +1023,50 @@ const goBack = () => {
 const focusInput = () => {
   nextTick(() => {
     if (hiddenInputRef.value) {
-      hiddenInputRef.value.focus();
+      try {
+        // 先移除所有事件监听器，避免重复触发
+        hiddenInputRef.value.removeEventListener('touchstart', focusInput);
+        
+        // 聚焦输入框
+        hiddenInputRef.value.focus();
+        
+        // 对于移动设备，额外触发点击事件可能有助于调起键盘
+        const clickEvent = new MouseEvent('click', {
+          bubbles: true,
+          cancelable: true,
+          view: window
+        });
+        hiddenInputRef.value.dispatchEvent(clickEvent);
+        
+        // 对于iOS设备，可能需要额外的处理
+        if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
+          // 创建并触发一个触摸事件
+          const touchEvent = new TouchEvent('touchstart', {
+            bubbles: true,
+            cancelable: true,
+            view: window,
+            touches: [{ clientX: 0, clientY: 0 }],
+            targetTouches: [{ clientX: 0, clientY: 0 }],
+            changedTouches: [{ clientX: 0, clientY: 0 }]
+          });
+          hiddenInputRef.value.dispatchEvent(touchEvent);
+          
+          // 延迟触发touchend事件
+          setTimeout(() => {
+            const touchEndEvent = new TouchEvent('touchend', {
+              bubbles: true,
+              cancelable: true,
+              view: window,
+              touches: [],
+              targetTouches: [],
+              changedTouches: [{ clientX: 0, clientY: 0 }]
+            });
+            hiddenInputRef.value.dispatchEvent(touchEndEvent);
+          }, 100);
+        }
+      } catch (error) {
+        console.error('聚焦输入框失败:', error);
+      }
     }
   });
 };
