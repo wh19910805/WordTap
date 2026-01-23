@@ -34,10 +34,7 @@
     </div>
 
     <!-- 内容交互区 -->
-    <div
-      ref="contentRef"
-      class="flex-1 overflow-y-auto scrollbar-hide px-6 py-4"
-    >
+    <div ref="contentRef" class="flex-1 overflow-y-auto scrollbar-hide px-6 py-4">
       <!-- 句子列表 -->
       <div
         v-for="(sentence, index) in courseStore.lessonData?.sentences"
@@ -60,10 +57,13 @@
 
         <!-- 英文原文显示和输入区域 -->
         <div class="text-2xl mb-4 leading-relaxed tracking-wide">
-          <template v-for="(word, wordIndex) in splitSentenceToParts(sentence.text)" :key="wordIndex">
+          <template
+            v-for="(word, wordIndex) in splitSentenceToParts(sentence.text)"
+            :key="wordIndex"
+          >
             <!-- 空格处理 -->
             <template v-if="isSpace(word)">
-              <span 
+              <span
                 :class="getSpaceClass(index, getWordCharIndex(sentence.text, wordIndex))"
               >
                 {{ getSpaceDisplay(index, getWordCharIndex(sentence.text, wordIndex)) }}
@@ -71,10 +71,14 @@
             </template>
             <!-- 标点符号处理 -->
             <template v-else-if="isPunctuation(word)">
-              <span 
-                :class="getPunctuationClass(index, getWordCharIndex(sentence.text, wordIndex))"
+              <span
+                :class="
+                  getPunctuationClass(index, getWordCharIndex(sentence.text, wordIndex))
+                "
               >
-                {{ getPunctuationDisplay(index, getWordCharIndex(sentence.text, wordIndex)) }}
+                {{
+                  getPunctuationDisplay(index, getWordCharIndex(sentence.text, wordIndex))
+                }}
               </span>
             </template>
             <!-- 单词处理：可点击播放语音和显示 -->
@@ -86,9 +90,21 @@
                 <!-- 单词中的每个字符 -->
                 <template v-for="(char, charIndex) in word" :key="charIndex">
                   <span
-                    :class="getCharClass(index, getWordCharIndex(sentence.text, wordIndex) + charIndex, char)"
+                    :class="
+                      getCharClass(
+                        index,
+                        getWordCharIndex(sentence.text, wordIndex) + charIndex,
+                        char
+                      )
+                    "
                   >
-                    {{ getCharDisplay(index, getWordCharIndex(sentence.text, wordIndex) + charIndex, char) }}
+                    {{
+                      getCharDisplay(
+                        index,
+                        getWordCharIndex(sentence.text, wordIndex) + charIndex,
+                        char
+                      )
+                    }}
                   </span>
                 </template>
               </span>
@@ -101,6 +117,9 @@
           音标：{{ sentence.soundmark }}
         </div>
       </div>
+
+      <!-- 底部空白占位，解决键盘遮挡最后两行内容问题 -->
+      <div class="h-60 md:h-60"></div>
     </div>
 
     <!-- 底部操作区 -->
@@ -132,8 +151,18 @@
             class="p-3 bg-[var(--border-color)] text-[var(--text-primary)] rounded-full text-xs font-bold active:scale-95 transition-all flex items-center justify-center"
             title="重播当前行"
           >
-            <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+            <svg
+              class="w-6 h-6 text-indigo-600"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+              />
             </svg>
           </button>
           <button
@@ -143,7 +172,12 @@
             title="重新学习"
           >
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+              />
             </svg>
           </button>
         </div>
@@ -156,19 +190,38 @@
             class="p-3 bg-[var(--border-color)] text-[var(--text-primary)] rounded-full text-xs font-bold hover:bg-[var(--hover-color)] active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
             title="跳过当前课时"
           >
-            <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+            <svg
+              class="w-5 h-5 text-indigo-600"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M17 8l4 4m0 0l-4 4m4-4H3"
+              />
             </svg>
           </button>
           <button
             @click="handleSubmit"
             :disabled="isSubmitting"
             class="p-3 rounded-full text-xs font-bold transition-all flex items-center justify-center"
-            :class="isSubmitting ? 'bg-gray-400 cursor-not-allowed opacity-50 text-white' : 'bg-lime-400 text-black hover:bg-lime-500 active:scale-95'"
+            :class="
+              isSubmitting
+                ? 'bg-gray-400 cursor-not-allowed opacity-50 text-white'
+                : 'bg-lime-400 text-black hover:bg-lime-500 active:scale-95'
+            "
             title="提交当前课时"
           >
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M5 13l4 4L19 7"
+              />
             </svg>
           </button>
         </div>
@@ -332,9 +385,10 @@ const isSpace = (char) => spaceRegex.test(char);
  */
 const splitSentenceToParts = (sentence) => {
   if (!sentence) return [];
-  
+
   // 使用正则表达式分割句子，保留单词、空格和标点符号
-  const parts = sentence.match(/\w+|[\s,.!?;:'"()\[\]{}\-—–…。，！？；：""''（）【】《》]/g) || [];
+  const parts =
+    sentence.match(/\w+|[\s,.!?;:'"()\[\]{}\-—–…。，！？；：""''（）【】《》]/g) || [];
   return parts;
 };
 
@@ -347,11 +401,11 @@ const splitSentenceToParts = (sentence) => {
 const getWordCharIndex = (sentence, wordIndex) => {
   const parts = splitSentenceToParts(sentence);
   let charIndex = 0;
-  
+
   for (let i = 0; i < wordIndex; i++) {
     charIndex += parts[i]?.length || 0;
   }
-  
+
   return charIndex;
 };
 
@@ -365,20 +419,23 @@ const getWordCharIndex = (sentence, wordIndex) => {
  */
 const getCharClass = (sentenceIndex, charIndex, correctChar) => {
   // 获取当前句子的进度信息
-  const progress = learningStore.sentenceProgress[sentenceIndex] || { userInput: "", charIndex: -1 };
+  const progress = learningStore.sentenceProgress[sentenceIndex] || {
+    userInput: "",
+    charIndex: -1,
+  };
   const { userInput, completed } = progress;
 
   // 判断字符状态
   const isCurrentSentence = sentenceIndex === learningStore.currentSentenceIndex;
   const isPreviousSentence = sentenceIndex < learningStore.currentSentenceIndex;
   const isSentenceCompleted = completed || isPreviousSentence;
-  
+
   // 检查是否显示英文
   const isShowEnglish = learningStore.showEnglish;
-  
+
   // 检查字符是否被提示
   const isHinted = learningStore.isCharHinted(sentenceIndex, charIndex);
-  
+
   // 检查字符是否已输入：直接检查userInput中对应位置是否有字符
   const userChar = userInput[charIndex];
   const isCharEntered = userChar !== undefined;
@@ -387,8 +444,8 @@ const getCharClass = (sentenceIndex, charIndex, correctChar) => {
   if (isSentenceCompleted || isCharEntered) {
     // 应用忽略大小写设置
     const shouldIgnoreCase = settingsStore.ignoreCase;
-    const isCorrect = shouldIgnoreCase 
-      ? userChar.toLowerCase() === correctChar.toLowerCase() 
+    const isCorrect = shouldIgnoreCase
+      ? userChar.toLowerCase() === correctChar.toLowerCase()
       : userChar === correctChar;
     return isCorrect ? "text-green-400" : "text-red-500";
   }
@@ -411,7 +468,10 @@ const getCharClass = (sentenceIndex, charIndex, correctChar) => {
  */
 const getCharDisplay = (sentenceIndex, charIndex, correctChar) => {
   // 获取当前句子的进度信息
-  const progress = learningStore.sentenceProgress[sentenceIndex] || { userInput: "", charIndex: -1 };
+  const progress = learningStore.sentenceProgress[sentenceIndex] || {
+    userInput: "",
+    charIndex: -1,
+  };
   const { userInput, completed } = progress;
   const userChar = userInput[charIndex];
 
@@ -419,13 +479,13 @@ const getCharDisplay = (sentenceIndex, charIndex, correctChar) => {
   const isCurrentSentence = sentenceIndex === learningStore.currentSentenceIndex;
   const isPreviousSentence = sentenceIndex < learningStore.currentSentenceIndex;
   const isSentenceCompleted = completed || isPreviousSentence;
-  
+
   // 检查是否显示英文
   const isShowEnglish = learningStore.showEnglish;
-  
+
   // 检查字符是否被提示
   const isHinted = learningStore.isCharHinted(sentenceIndex, charIndex);
-  
+
   // 检查字符是否已输入：直接检查userInput中对应位置是否有字符
   const isCharEntered = userChar !== undefined;
 
@@ -459,11 +519,15 @@ const getCharDisplay = (sentenceIndex, charIndex, correctChar) => {
  */
 const getSpaceClass = (sentenceIndex, charIndex) => {
   // 获取当前句子的进度信息
-  const progress = learningStore.sentenceProgress[sentenceIndex] || { userInput: "", charIndex: -1 };
+  const progress = learningStore.sentenceProgress[sentenceIndex] || {
+    userInput: "",
+    charIndex: -1,
+  };
   const { charIndex: currentCharIndex } = progress;
 
   // 判断字符状态
-  const isEntered = charIndex <= currentCharIndex || sentenceIndex < learningStore.currentSentenceIndex;
+  const isEntered =
+    charIndex <= currentCharIndex || sentenceIndex < learningStore.currentSentenceIndex;
 
   // 根据设置决定是否需要输入空格
   if (settingsStore.requireSpace) {
@@ -483,11 +547,15 @@ const getSpaceClass = (sentenceIndex, charIndex) => {
  */
 const getSpaceDisplay = (sentenceIndex, charIndex) => {
   // 获取当前句子的进度信息
-  const progress = learningStore.sentenceProgress[sentenceIndex] || { userInput: "", charIndex: -1 };
+  const progress = learningStore.sentenceProgress[sentenceIndex] || {
+    userInput: "",
+    charIndex: -1,
+  };
   const { charIndex: currentCharIndex } = progress;
 
   // 判断字符状态
-  const isEntered = charIndex <= currentCharIndex || sentenceIndex < learningStore.currentSentenceIndex;
+  const isEntered =
+    charIndex <= currentCharIndex || sentenceIndex < learningStore.currentSentenceIndex;
 
   // 无论设置如何，都显示空格，用户仍然需要根据设置输入
   return "\u00A0";
@@ -504,20 +572,23 @@ const getPunctuationClass = (sentenceIndex, charIndex) => {
   const sentence = courseStore.lessonData?.sentences[sentenceIndex];
   if (!sentence) return "text-gray-400";
   const correctChar = sentence.text[charIndex];
-  
+
   // 获取当前句子的进度信息
-  const progress = learningStore.sentenceProgress[sentenceIndex] || { userInput: "", charIndex: -1 };
+  const progress = learningStore.sentenceProgress[sentenceIndex] || {
+    userInput: "",
+    charIndex: -1,
+  };
   const { userInput, completed } = progress;
-  
+
   // 判断字符状态
   const isCurrentSentence = sentenceIndex === learningStore.currentSentenceIndex;
   const isPreviousSentence = sentenceIndex < learningStore.currentSentenceIndex;
   const isSentenceCompleted = completed || isPreviousSentence;
-  
+
   // 检查字符是否已输入：直接检查userInput中对应位置是否有字符
   const userChar = userInput[charIndex];
   const isCharEntered = userChar !== undefined;
-  
+
   // 如果句子已完成，直接显示正确/错误颜色
   if (isSentenceCompleted) {
     if (userChar === correctChar) {
@@ -526,7 +597,7 @@ const getPunctuationClass = (sentenceIndex, charIndex) => {
       return "text-red-500";
     }
   }
-  
+
   // 如果是当前句子，且字符已输入，检查是否正确
   if (isCurrentSentence && isCharEntered) {
     if (userChar === correctChar) {
@@ -535,7 +606,7 @@ const getPunctuationClass = (sentenceIndex, charIndex) => {
       return "text-red-500";
     }
   }
-  
+
   // 其他情况显示灰色
   return "text-gray-600";
 };
@@ -550,30 +621,34 @@ const getPunctuationDisplay = (sentenceIndex, charIndex) => {
   // 获取当前句子
   const sentence = courseStore.lessonData?.sentences[sentenceIndex];
   if (!sentence) return "";
-  
+
   // 获取正确的标点符号
   const correctChar = sentence.text[charIndex];
-  
+
   // 获取当前句子的进度信息
-  const progress = learningStore.sentenceProgress[sentenceIndex] || { userInput: "", charIndex: -1 };
+  const progress = learningStore.sentenceProgress[sentenceIndex] || {
+    userInput: "",
+    charIndex: -1,
+  };
   const { userInput, charIndex: currentCharIndex, completed } = progress;
   const userChar = userInput[charIndex];
-  
+
   // 判断字符状态
   const isCurrentSentence = sentenceIndex === learningStore.currentSentenceIndex;
   const isPreviousSentence = sentenceIndex < learningStore.currentSentenceIndex;
   const isSentenceCompleted = completed || isPreviousSentence;
-  
+
   // 判断字符是否已输入
-  const isEntered = isSentenceCompleted || (isCurrentSentence && charIndex <= currentCharIndex);
-  
+  const isEntered =
+    isSentenceCompleted || (isCurrentSentence && charIndex <= currentCharIndex);
+
   // 已输入字符：显示用户实际输入的内容或正确字符
   if (isEntered && userChar) {
     return userChar;
   } else if (isEntered) {
     return correctChar;
   }
-  
+
   // 未输入字符：自动显示标点符号
   // 无论设置如何，都显示标点符号，用户仍然需要根据设置输入
   return correctChar;
@@ -603,7 +678,7 @@ const handleWordClick = (sentenceIndex, wordIndex, word) => {
       startIndex += parts[i]?.length || 0;
     }
     const endIndex = startIndex + word.length;
-    
+
     // 标记单词为已提示（显示）
     learningStore.addHintedWord(sentenceIndex, startIndex, endIndex);
   }
@@ -618,12 +693,13 @@ const handleInput = (event) => {
   if (!inputChar) return;
 
   // 获取当前句子
-  const currentSentence = courseStore.lessonData?.sentences[learningStore.currentSentenceIndex];
+  const currentSentence =
+    courseStore.lessonData?.sentences[learningStore.currentSentenceIndex];
   if (!currentSentence) return;
 
   // 处理用户输入的字符，直到输入的字符被处理完毕
   let remainingInput = inputChar;
-  
+
   while (remainingInput) {
     // 获取当前位置的正确字符
     const correctChar = currentSentence.text[learningStore.currentCharIndex];
@@ -667,7 +743,7 @@ const handleInput = (event) => {
       remainingInput = remainingInput.slice(1);
     }
   }
-  
+
   // 同步输入框值
   event.target.value = learningStore.inputText;
 };
@@ -705,7 +781,7 @@ const replayAudio = () => {
  */
 const handleRestart = () => {
   if (isSubmitting.value) return;
-  
+
   if (confirm("确定要重新学习当前课时吗？当前进度将被重置。")) {
     // 重置学习状态，恢复到第一行
     learningStore.reset();
@@ -719,7 +795,7 @@ const handleRestart = () => {
  */
 const handleSkip = async () => {
   if (isSubmitting.value) return;
-  
+
   try {
     isSubmitting.value = true;
     await navigateToNextLesson();
@@ -735,13 +811,13 @@ const handleSkip = async () => {
  */
 const handleSubmit = async () => {
   if (isSubmitting.value) return;
-  
+
   try {
     isSubmitting.value = true;
-    
+
     // 1. 调用学习状态管理的提交函数，它会处理错误单词保存和进度更新
     await learningStore.submitLesson();
-    
+
     // 2. 跳转到下一课时
     await navigateToNextLesson();
   } catch (error) {
@@ -759,37 +835,41 @@ const handleSubmit = async () => {
 const collectErrorWords = () => {
   const errorWords = [];
   const sentences = courseStore.lessonData?.sentences || [];
-  
+
   // 遍历所有句子
   sentences.forEach((sentence, sentenceIndex) => {
     const progress = learningStore.sentenceProgress[sentenceIndex] || {};
     const userInput = progress.userInput || "";
-    
+
     // 分割句子为单词
-    const correctWords = sentence.text.split(/\s+/).filter(word => word.trim());
-    const userWords = userInput.split(/\s+/).filter(word => word.trim());
-    
+    const correctWords = sentence.text.split(/\s+/).filter((word) => word.trim());
+    const userWords = userInput.split(/\s+/).filter((word) => word.trim());
+
     // 比较每个单词，只比较用户实际输入的单词
-    for (let wordIndex = 0; wordIndex < Math.min(correctWords.length, userWords.length); wordIndex++) {
+    for (
+      let wordIndex = 0;
+      wordIndex < Math.min(correctWords.length, userWords.length);
+      wordIndex++
+    ) {
       const correctWord = correctWords[wordIndex];
       const userWord = userWords[wordIndex] || "";
-      
+
       // 应用忽略大小写设置
       const shouldIgnoreCase = settingsStore.ignoreCase;
-      const isCorrect = shouldIgnoreCase 
-        ? userWord.toLowerCase() === correctWord.toLowerCase() 
+      const isCorrect = shouldIgnoreCase
+        ? userWord.toLowerCase() === correctWord.toLowerCase()
         : userWord === correctWord;
-      
+
       // 如果单词错误，并且用户实际输入了内容，添加到错误单词列表
       if (!isCorrect && correctWord.trim() && userWord) {
         errorWords.push({
           correctWord,
-          userWord
+          userWord,
         });
       }
     }
   });
-  
+
   return errorWords;
 };
 
@@ -800,21 +880,21 @@ const collectErrorWords = () => {
 const saveErrorWords = async (errorWords) => {
   try {
     const { courseId, lessonId } = route.params;
-    
+
     // 导入API客户端
-    const { wrongWordApi } = await import('@/api/client');
-    
+    const { wrongWordApi } = await import("@/api/client");
+
     // 去重，避免重复提交同一个单词，使用correctWord作为去重键
     const uniqueErrorWords = [];
     const seenCorrectWords = new Set();
-    
+
     for (const errorWord of errorWords) {
       if (!seenCorrectWords.has(errorWord.correctWord)) {
         seenCorrectWords.add(errorWord.correctWord);
         uniqueErrorWords.push(errorWord);
       }
     }
-    
+
     // 遍历所有错误单词，逐个保存
     for (const errorWord of uniqueErrorWords) {
       await wrongWordApi.addWrongWord({
@@ -824,10 +904,10 @@ const saveErrorWords = async (errorWords) => {
         lesson_id: lessonId,
         user_answer: errorWord.userWord, // 使用用户的实际输入作为错误答案
         correct_answer: errorWord.correctWord,
-        explanation: `来自课程 ${courseId} 的课时 ${lessonId}`
+        explanation: `来自课程 ${courseId} 的课时 ${lessonId}`,
       });
     }
-    
+
     console.log(`成功保存 ${uniqueErrorWords.length} 个错误单词到错词表`);
   } catch (error) {
     console.error("保存错误单词失败:", error);
@@ -841,18 +921,18 @@ const saveErrorWords = async (errorWords) => {
  */
 const navigateToNextLesson = async () => {
   const { courseId, lessonId } = route.params;
-  
+
   // 获取当前课程和课时信息
   const currentCourse = courseStore.currentCourse;
   if (!currentCourse || !currentCourse.lessons) {
     return;
   }
-  
+
   // 查找当前课时索引
   const currentLessonIndex = currentCourse.lessons.findIndex(
     (lesson) => lesson.id === lessonId
   );
-  
+
   // 确定下一课时
   let nextLesson;
   if (currentLessonIndex < currentCourse.lessons.length - 1) {
@@ -862,7 +942,7 @@ const navigateToNextLesson = async () => {
     // 没有下一课时，返回第一课时
     nextLesson = currentCourse.lessons[0];
   }
-  
+
   // 跳转到下一课时
   await router.replace({
     name: "Learning",
@@ -908,22 +988,22 @@ const focusInput = () => {
  */
 const initLearningPage = async () => {
   const { courseId, lessonId } = route.params;
-  
+
   // 初始化认证状态
   if (!authStore.isAuthenticated) {
     await authStore.init();
   }
-  
+
   // 加载课时数据
   const lessonData = await courseStore.loadLessonData(courseId, lessonId);
   if (!lessonData) {
     router.back();
     return;
   }
-  
+
   // 初始化学习状态
   learningStore.initLearning(lessonData);
-  
+
   // 聚焦输入框
   focusInput();
 };
@@ -944,7 +1024,7 @@ const handleKeyboardResize = () => {
 onMounted(async () => {
   // 初始化学习页面
   await initLearningPage();
-  
+
   // 点击内容区聚焦输入框
   contentRef.value.addEventListener("click", focusInput);
   contentRef.value.addEventListener("touchstart", focusInput);
@@ -965,13 +1045,7 @@ onUnmounted(() => {
     contentRef.value.removeEventListener("click", focusInput);
     contentRef.value.removeEventListener("touchstart", focusInput);
   }
-  
-  // 移除窗口大小变化监听
-  window.removeEventListener("resize", handleKeyboardResize);
-  
-  // 移除输入事件监听
-  hiddenInputRef.value?.removeEventListener("input", handleKeyboardResize);
-  
+
   // 重置学习状态
   learningStore.reset();
 });

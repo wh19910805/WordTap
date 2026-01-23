@@ -744,9 +744,21 @@ export const useLearningStore = defineStore("learning", () => {
         sentence.style.paddingBottom = "";
       });
 
-      // 对于非最后两行，确保没有底部内边距
-      if (currentSentenceIndex.value < totalSentences.value - 2) {
-        contentEl.style.paddingBottom = "";
+      // 计算滚动偏移量：将句子滚动到容器上1/3处，避免被键盘遮挡
+      // 使用getBoundingClientRect()来计算相对于视口的位置，然后转换为滚动容器内的偏移量
+      // 普通行向上滚动距离增大15像素，让内容位置更靠上
+      let scrollTop =
+        contentEl.scrollTop +
+        (sentenceRect.top - containerRect.top) -
+        containerRect.height * 0.3 -
+        15;
+
+      // 对于最后一行，滚动到更高的位置，确保不被键盘完全遮挡
+      if (currentSentenceIndex.value === totalSentences.value - 1) {
+        scrollTop =
+          contentEl.scrollTop +
+          (sentenceRect.top - containerRect.top) -
+          containerRect.height * 0.2;
       }
 
       // 获取窗口信息
