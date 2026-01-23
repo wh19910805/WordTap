@@ -65,14 +65,46 @@ systemctl status mariadb
 mysql_secure_installation
 1、ould you like to setup VALIDATE PASSWORD component?
 Press y|Y for Yes, any other key for No:
+推荐回答：Y
+There are three levels of password validation policy:
+LOW    Length >= 8
+MEDIUM Length >= 8, numeric, mixed case, and special characters
+STRONG Length >= 8, numeric, mixed case, special characters and dictionary file
+Please enter 0 = LOW, 1 = MEDIUM, 2 = STRONG:
+推荐回答：1（MEDIUM），如果你只是本地开发，且确定不用复杂密码，可选 n 跳过。
+2、设置 root 密码？
+Please set the password for root here.
+New password:
+Re-enter new password:
+3、是否删除匿名用户？
+风险：匿名用户可无密码登录，严重安全隐患！
+推荐回答：y（是）✅
+4、是否禁止 root 远程登录？
+关键安全选项！
+推荐回答：y（是）✅
+即使你配置了远程用户，也不要让 root 能从外网登录。
+替代方案：用普通用户 + sudo 或专用数据库用户。
+5、是否删除 test 数据库？
+By default, MySQL comes with a database named 'test' that anyone can access.
+Would you like to remove it? (y/N)
+推荐回答：y（是）✅
+6、是否重新加载权限表？
+Reloading the privilege tables will ensure that all changes made so far
+will take effect immediately.
+Reload privilege tables now? (y/N)
+推荐回答：y（是）✅
 
-# 登录 MySQL
+# 创建允许远程登录的用户
 mysql -u root -p
 
 # 创建数据库和用户
-CREATE DATABASE wordtap CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-CREATE USER 'wordtap_user'@'localhost' IDENTIFIED BY 'your_secure_password';
-GRANT ALL PRIVILEGES ON wordtap.* TO 'wordtap_user'@'localhost';
+-- 1. 创建用户（允许从任何IP连接用 '%'，如果只允许特定IP，可将 '%' 换成 '192.168.1.100'）
+CREATE USER 'remote_user'@'%' IDENTIFIED BY '你的强密码';
+
+-- 2. 授予所有数据库的权限（生产环境建议只授予特定库权限）
+GRANT ALL PRIVILEGES ON *.* TO 'remote_user'@'%' WITH GRANT OPTION;
+
+-- 3. 刷新权限
 FLUSH PRIVILEGES;
 EXIT;
 ```

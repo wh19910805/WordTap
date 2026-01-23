@@ -734,36 +734,74 @@ export const useLearningStore = defineStore("learning", () => {
       `[data-sentence-index="${currentSentenceIndex.value}"]`,
     );
     if (sentenceEl) {
-      // 重置之前添加的样式
-      sentenceEl.style.paddingBottom = "";
-
       // 获取内容容器
       const contentEl = document.querySelector(".flex-1.overflow-y-auto");
       if (!contentEl) return;
 
-      // 直接使用window.scrollTo将元素滚动到视口顶部
-      // 这是最直接有效的方法，确保元素不会被键盘遮挡
-      window.scrollTo({
-        top: sentenceEl.offsetTop - 50, // 滚动到元素顶部上方50px
-        behavior: "instant", // 直接滚动，无动画延迟
-      });
+      // 获取窗口信息
+      const windowHeight = window.innerHeight;
+      const documentHeight = document.documentElement.scrollHeight;
+
+      // 计算键盘高度（通过比较文档高度和窗口高度差值）
+      const keyboardHeight =
+        documentHeight > windowHeight * 1.1
+          ? Math.max(0, documentHeight - windowHeight)
+          : 0;
+
+      // 获取元素位置和尺寸
+      const rect = sentenceEl.getBoundingClientRect();
+      const elementTop = rect.top;
+      const elementHeight = rect.height;
+
+      // 计算理想的滚动位置
+      let scrollY = window.pageYOffset;
+      let targetScrollY = scrollY + elementTop - 50; // 滚动到元素顶部上方50px
+
+      // 检查元素是否会被键盘遮挡
+      const elementBottom = elementTop + elementHeight;
+      const visibleHeight = windowHeight - (keyboardHeight || 0);
+
+      // 如果元素底部超出可见区域，调整滚动位置
+      if (elementBottom > visibleHeight - 50) {
+        // 确保元素完全可见，考虑键盘高度
+        targetScrollY = scrollY + elementBottom - visibleHeight + 50;
+      }
 
       // 对于接近末尾的行（包括最后两行），额外处理
       if (currentSentenceIndex.value >= totalSentences.value - 2) {
-        // 为内容容器添加底部内边距，确保末尾几行有足够空间
-        contentEl.style.paddingBottom = "200px"; // 添加200px底部内边距
+        // 根据键盘高度动态调整底部内边距
+        const paddingBottom = keyboardHeight > 0 ? keyboardHeight + 100 : 200;
+        contentEl.style.paddingBottom = `${paddingBottom}px`;
 
-        // 再次滚动，确保内边距生效后元素仍然可见
+        // 确保内容容器底部有足够空间
         setTimeout(() => {
-          window.scrollTo({
-            top: sentenceEl.offsetTop - 50,
-            behavior: "instant",
-          });
-        }, 100);
+          // 重新计算元素位置，确保键盘完全弹出后滚动
+          const finalRect = sentenceEl.getBoundingClientRect();
+          const finalElementBottom = finalRect.top + finalRect.height;
+          const finalVisibleHeight = window.innerHeight - (keyboardHeight || 0);
+
+          if (finalElementBottom > finalVisibleHeight - 50) {
+            // 最终调整，确保元素完全可见
+            window.scrollTo({
+              top:
+                window.pageYOffset +
+                finalElementBottom -
+                finalVisibleHeight +
+                50,
+              behavior: "instant",
+            });
+          }
+        }, 200);
       } else {
         // 普通行，重置底部内边距
         contentEl.style.paddingBottom = "";
       }
+
+      // 执行滚动
+      window.scrollTo({
+        top: targetScrollY,
+        behavior: "instant",
+      });
     }
   }
 
