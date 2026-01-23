@@ -591,212 +591,181 @@ export const useLearningStore = defineStore("learning", () => {
         }, 100);
       }
     }
-  }
 
-  // 初始化键盘音效
-  function initKeySounds() {
-    // 如果已经初始化过，直接返回
-    if (keySoundInstances.value.length > 0) return;
+    // 初始化键盘音效
+    function initKeySounds() {
+      // 如果已经初始化过，直接返回
+      if (keySoundInstances.value.length > 0) return;
 
-    const sounds = [
-      "/sound/key-sounds/机械键盘1.mp3",
-      "/sound/key-sounds/机械键盘2.mp3",
-    ];
+      const sounds = [
+        "/sound/key-sounds/机械键盘1.mp3",
+        "/sound/key-sounds/机械键盘2.mp3",
+      ];
 
-    // 为每种音效创建3个实例，用于循环播放
-    sounds.forEach((soundSrc) => {
-      for (let i = 0; i < 3; i++) {
-        const sound = new Howl({
-          src: [soundSrc],
-          volume: 0.3,
-          html5: true,
-          preload: true,
-        });
-        keySoundInstances.value.push(sound);
-      }
-    });
-  }
-
-  // 播放键盘音效
-  function playKeySound() {
-    if (settingsStore.mute) return;
-
-    // 如果未初始化，先初始化
-    if (keySoundInstances.value.length === 0) {
-      initKeySounds();
+      // 为每种音效创建3个实例，用于循环播放
+      sounds.forEach((soundSrc) => {
+        for (let i = 0; i < 3; i++) {
+          const sound = new Howl({
+            src: [soundSrc],
+            volume: 0.3,
+            html5: true,
+            preload: true,
+          });
+          keySoundInstances.value.push(sound);
+        }
+      });
     }
 
-    if (keySoundInstances.value.length > 0) {
-      // 循环使用不同的音效实例
-      const sound = keySoundInstances.value[currentKeySoundIndex.value];
-      currentKeySoundIndex.value =
-        (currentKeySoundIndex.value + 1) % keySoundInstances.value.length;
+    // 播放键盘音效
+    function playKeySound() {
+      if (settingsStore.mute) return;
 
-      // 如果音效正在播放，先停止
-      if (sound.playing()) {
-        sound.stop();
-      }
-      sound.play();
-    }
-  }
-
-  let shakeContainerElement = null;
-
-  // 触发震动效果
-  function triggerShake() {
-    // 获取震动容器元素
-    if (!shakeContainerElement) {
-      shakeContainerElement = document.querySelector(".learning-container");
-    }
-    // 添加震动动画
-    if (shakeContainerElement) {
-      shakeContainerElement.classList.add("shake");
-      setTimeout(() => {
-        shakeContainerElement.classList.remove("shake");
-      }, 300);
-    }
-
-    // 触发设备震动（如果支持）
-    if (navigator.vibrate) {
-      navigator.vibrate(50);
-    }
-  }
-
-  // 下一句
-  function nextSentence() {
-    if (currentSentenceIndex.value < totalSentences.value - 1) {
-      // 标记当前句为已完成
-      const currentProgress =
-        sentenceProgress.value[currentSentenceIndex.value];
-      if (currentProgress) {
-        currentProgress.completed = true;
+      // 如果未初始化，先初始化
+      if (keySoundInstances.value.length === 0) {
+        initKeySounds();
       }
 
-      // 移动到下一句
-      currentSentenceIndex.value++;
+      if (keySoundInstances.value.length > 0) {
+        // 循环使用不同的音效实例
+        const sound = keySoundInstances.value[currentKeySoundIndex.value];
+        currentKeySoundIndex.value =
+          (currentKeySoundIndex.value + 1) % keySoundInstances.value.length;
 
-      // 初始化下一句进度
-      if (!sentenceProgress.value[currentSentenceIndex.value]) {
-        sentenceProgress.value[currentSentenceIndex.value] = {
-          completed: false,
-          charIndex: 0,
-          inputText: "",
-          userInput: "",
-        };
+        // 如果音效正在播放，先停止
+        if (sound.playing()) {
+          sound.stop();
+        }
+        sound.play();
       }
+    }
 
-      // 恢复下一句的输入状态
-      const progress = sentenceProgress.value[currentSentenceIndex.value];
-      if (progress.inputText && progress.charIndex > 0) {
-        inputText.value = progress.inputText;
-        currentCharIndex.value = progress.charIndex;
-      } else {
-        inputText.value = "";
-        currentCharIndex.value = 0;
+    let shakeContainerElement = null;
+
+    // 触发震动效果
+    function triggerShake() {
+      // 获取震动容器元素
+      if (!shakeContainerElement) {
+        shakeContainerElement = document.querySelector(".learning-container");
       }
-
-      isCorrect.value = true;
-
-      // 滚动到当前句
-      setTimeout(() => {
-        scrollToCurrentSentence();
-      }, 100);
-
-      // 自动播放音频
-      if (settingsStore.autoPlayAudio) {
+      // 添加震动动画
+      if (shakeContainerElement) {
+        shakeContainerElement.classList.add("shake");
         setTimeout(() => {
-          playCurrentLineAudio();
+          shakeContainerElement.classList.remove("shake");
         }, 300);
       }
-    } else {
-      // 已到最后一句，标记课程完成
-      const currentProgress =
-        sentenceProgress.value[currentSentenceIndex.value];
-      if (currentProgress) {
-        currentProgress.completed = true;
-        // 确保最后一句的输入被正确保存
-        currentProgress.inputText = inputText.value;
-        currentProgress.userInput = inputText.value;
+
+      // 触发设备震动（如果支持）
+      if (navigator.vibrate) {
+        navigator.vibrate(50);
       }
-      isLessonCompleted.value = true;
-      stopTimer();
     }
-  }
 
-  // 跳过当前句
-  function skipSentence() {
-    nextSentence();
-  }
+    // 下一句
+    function nextSentence() {
+      if (currentSentenceIndex.value < totalSentences.value - 1) {
+        // 标记当前句为已完成
+        const currentProgress =
+          sentenceProgress.value[currentSentenceIndex.value];
+        if (currentProgress) {
+          currentProgress.completed = true;
+        }
 
-  // 滚动到当前句
-  function scrollToCurrentSentence() {
-    const sentenceEl = document.querySelector(
-      `[data-sentence-index="${currentSentenceIndex.value}"]`,
-    );
-    if (sentenceEl) {
-      // 获取内容容器
-      const contentEl = document.querySelector(".flex-1.overflow-y-auto");
-      if (!contentEl) return;
+        // 移动到下一句
+        currentSentenceIndex.value++;
 
-      // 重置所有句子的样式
-      const allSentences = document.querySelectorAll("[data-sentence-index]");
-      allSentences.forEach((sentence) => {
-        sentence.style.paddingBottom = "";
-      });
+        // 初始化下一句进度
+        if (!sentenceProgress.value[currentSentenceIndex.value]) {
+          sentenceProgress.value[currentSentenceIndex.value] = {
+            completed: false,
+            charIndex: 0,
+            inputText: "",
+            userInput: "",
+          };
+        }
 
-      // 计算滚动偏移量：将句子滚动到容器上1/3处，避免被键盘遮挡
-      // 使用getBoundingClientRect()来计算相对于视口的位置，然后转换为滚动容器内的偏移量
-      // 普通行向上滚动距离增大15像素，让内容位置更靠上
-      let scrollTop =
-        contentEl.scrollTop +
-        (sentenceRect.top - containerRect.top) -
-        containerRect.height * 0.3 -
-        15;
+        // 恢复下一句的输入状态
+        const progress = sentenceProgress.value[currentSentenceIndex.value];
+        if (progress.inputText && progress.charIndex > 0) {
+          inputText.value = progress.inputText;
+          currentCharIndex.value = progress.charIndex;
+        } else {
+          inputText.value = "";
+          currentCharIndex.value = 0;
+        }
 
-      // 对于最后一行，滚动到更高的位置，确保不被键盘完全遮挡
-      if (currentSentenceIndex.value === totalSentences.value - 1) {
-        scrollTop =
+        isCorrect.value = true;
+
+        // 滚动到当前句
+        setTimeout(() => {
+          scrollToCurrentSentence();
+        }, 100);
+
+        // 自动播放音频
+        if (settingsStore.autoPlayAudio) {
+          setTimeout(() => {
+            playCurrentLineAudio();
+          }, 300);
+        }
+      } else {
+        // 已到最后一句，标记课程完成
+        const currentProgress =
+          sentenceProgress.value[currentSentenceIndex.value];
+        if (currentProgress) {
+          currentProgress.completed = true;
+          // 确保最后一句的输入被正确保存
+          currentProgress.inputText = inputText.value;
+          currentProgress.userInput = inputText.value;
+        }
+        isLessonCompleted.value = true;
+        stopTimer();
+      }
+    }
+
+    // 跳过当前句
+    function skipSentence() {
+      nextSentence();
+    }
+
+    // 滚动到当前句
+    function scrollToCurrentSentence() {
+      const sentenceEl = document.querySelector(
+        `[data-sentence-index="${currentSentenceIndex.value}"]`,
+      );
+      if (sentenceEl) {
+        // 获取内容容器
+        const contentEl = document.querySelector(".flex-1.overflow-y-auto");
+        if (!contentEl) return;
+
+        // 获取元素位置和尺寸
+        const sentenceRect = sentenceEl.getBoundingClientRect();
+        const containerRect = contentEl.getBoundingClientRect();
+
+        // 计算滚动偏移量：将句子滚动到容器上1/3处，避免被键盘遮挡
+        // 使用getBoundingClientRect()来计算相对于视口的位置，然后转换为滚动容器内的偏移量
+        // 普通行向上滚动距离增大15像素，让内容位置更靠上
+        let scrollTop =
           contentEl.scrollTop +
           (sentenceRect.top - containerRect.top) -
-          containerRect.height * 0.2;
-      }
+          containerRect.height * 0.3 -
+          15;
 
-      // 获取窗口信息
-      const windowHeight = window.innerHeight;
+        // 对于最后一行，滚动到更高的位置，确保不被键盘完全遮挡
+        if (currentSentenceIndex.value === totalSentences.value - 1) {
+          scrollTop =
+            contentEl.scrollTop +
+            (sentenceRect.top - containerRect.top) -
+            containerRect.height * 0.2;
+        }
 
-      // 获取元素位置和尺寸
-      const rect = sentenceEl.getBoundingClientRect();
-      const elementTop = rect.top;
-      const elementHeight = rect.height;
+        // 确保滚动位置不小于0
+        scrollTop = Math.max(0, scrollTop);
 
-      // 计算滚动位置
-      let scrollY = window.pageYOffset;
-      let targetScrollY = scrollY + elementTop - 50;
-
-      // 确保元素顶部距离视口顶部有50px的边距
-      window.scrollTo({
-        top: targetScrollY,
-        behavior: "instant",
-      });
-
-      // 只有在学习到最后两行时，才添加底部内边距
-      if (currentSentenceIndex.value >= totalSentences.value - 2) {
-        // 添加固定的底部内边距，确保最后两行有足够的滚动空间
-        contentEl.style.paddingBottom = "300px";
-
-        // 确保当前句子在添加内边距后仍然可见
-        setTimeout(() => {
-          const finalRect = sentenceEl.getBoundingClientRect();
-          const finalElementTop = finalRect.top;
-
-          // 如果元素顶部距离视口顶部小于50px，再次调整滚动位置
-          if (finalElementTop < 50) {
-            window.scrollTo({
-              top: window.pageYOffset + finalElementTop - 50,
-              behavior: "instant",
-            });
-          }
-        }, 100);
+        // 平滑滚动到计算位置
+        contentEl.scrollTo({
+          top: scrollTop,
+          behavior: "smooth",
+        });
       }
     }
   }
