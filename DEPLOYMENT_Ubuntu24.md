@@ -63,6 +63,7 @@ systemctl status mariadb
 # 初始化数据库安全设置
 mysql_secure_installation
 
+
 # 登录 MySQL
 mysql -u root -p
 

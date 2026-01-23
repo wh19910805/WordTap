@@ -734,43 +734,35 @@ export const useLearningStore = defineStore("learning", () => {
       `[data-sentence-index="${currentSentenceIndex.value}"]`,
     );
     if (sentenceEl) {
-      // 获取滚动容器
+      // 重置之前添加的样式
+      sentenceEl.style.paddingBottom = "";
+
+      // 获取内容容器
       const contentEl = document.querySelector(".flex-1.overflow-y-auto");
       if (!contentEl) return;
 
-      // 对于最后一行，使用特殊的滚动策略
-      if (currentSentenceIndex.value === totalSentences.value - 1) {
-        // 1. 直接将元素滚动到可视区域顶部
-        sentenceEl.scrollIntoView({
-          behavior: "instant",
-          block: "start", // 滚动到顶部
-        });
+      // 直接使用window.scrollTo将元素滚动到视口顶部
+      // 这是最直接有效的方法，确保元素不会被键盘遮挡
+      window.scrollTo({
+        top: sentenceEl.offsetTop - 50, // 滚动到元素顶部上方50px
+        behavior: "instant", // 直接滚动，无动画延迟
+      });
 
-        // 2. 额外添加一个大的底部内边距到最后一个句子，确保它不会被键盘遮挡
-        // 动态添加样式，确保最后一行有足够的空间
-        sentenceEl.style.paddingBottom = "150px"; // 添加150px的底部内边距
+      // 对于接近末尾的行（包括最后两行），额外处理
+      if (currentSentenceIndex.value >= totalSentences.value - 2) {
+        // 为内容容器添加底部内边距，确保末尾几行有足够空间
+        contentEl.style.paddingBottom = "200px"; // 添加200px底部内边距
 
-        // 3. 再次滚动，确保底部内边距生效后元素仍然可见
+        // 再次滚动，确保内边距生效后元素仍然可见
         setTimeout(() => {
-          sentenceEl.scrollIntoView({
+          window.scrollTo({
+            top: sentenceEl.offsetTop - 50,
             behavior: "instant",
-            block: "start",
           });
-        }, 50);
+        }, 100);
       } else {
-        // 普通行，使用原来的滚动策略
-        const containerHeight = contentEl.clientHeight;
-        const sentenceOffsetTop = sentenceEl.offsetTop;
-
-        let scrollPosition = sentenceOffsetTop - containerHeight * 0.25;
-        scrollPosition = Math.max(0, scrollPosition);
-        const maxScroll = contentEl.scrollHeight - containerHeight;
-        scrollPosition = Math.min(maxScroll, scrollPosition);
-
-        contentEl.scrollTop = scrollPosition;
-
-        // 确保普通行没有额外的底部内边距
-        sentenceEl.style.paddingBottom = ""; // 重置底部内边距
+        // 普通行，重置底部内边距
+        contentEl.style.paddingBottom = "";
       }
     }
   }
