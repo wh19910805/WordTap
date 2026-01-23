@@ -953,35 +953,6 @@ const navigateToNextLesson = async () => {
   });
 };
 
-// 监听路由参数变化，重新初始化学习页面
-watch(
-  () => [route.params.courseId, route.params.lessonId],
-  async ([newCourseId, newLessonId]) => {
-    if (newCourseId && newLessonId) {
-      await initLearningPage();
-    }
-  },
-  { immediate: true }
-);
-
-/**
- * 返回上一页
- */
-const goBack = () => {
-  router.back();
-};
-
-/**
- * 聚焦隐藏输入框
- */
-const focusInput = () => {
-  nextTick(() => {
-    if (hiddenInputRef.value) {
-      hiddenInputRef.value.focus();
-    }
-  });
-};
-
 // ========================== 初始化与生命周期 ==========================
 /**
  * 初始化学习页面
@@ -1008,6 +979,35 @@ const initLearningPage = async () => {
   focusInput();
 };
 
+// 监听路由参数变化，重新初始化学习页面
+watch(
+  () => [route.params.courseId, route.params.lessonId],
+  async ([newCourseId, newLessonId]) => {
+    if (newCourseId && newLessonId) {
+      await initLearningPage();
+    }
+  },
+  { immediate: false }
+);
+
+/**
+ * 返回上一页
+ */
+const goBack = () => {
+  router.back();
+};
+
+/**
+ * 聚焦隐藏输入框
+ */
+const focusInput = () => {
+  nextTick(() => {
+    if (hiddenInputRef.value) {
+      hiddenInputRef.value.focus();
+    }
+  });
+};
+
 /**
  * 处理键盘高度变化，调整滚动位置
  */
@@ -1028,10 +1028,10 @@ onMounted(async () => {
   // 点击内容区聚焦输入框
   contentRef.value.addEventListener("click", focusInput);
   contentRef.value.addEventListener("touchstart", focusInput);
-  
+
   // 添加窗口大小变化监听，用于处理键盘弹出/收起
   window.addEventListener("resize", handleKeyboardResize);
-  
+
   // 监听输入事件，在用户输入时调整滚动位置
   hiddenInputRef.value?.addEventListener("input", handleKeyboardResize);
 });

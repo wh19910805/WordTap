@@ -19,6 +19,7 @@ const DefaultPlayOptions: PlayOptions = {
 const audio = new Audio()
 let isPlaying = false
 let playTimer: number | null = null
+let playPromise: Promise<void> | null = null
 
 /**
  * 更新音频源
@@ -33,8 +34,14 @@ export function updateSource(src: string) {
  * @param playOptions 播放选项
  */
 export function play(playOptions?: PlayOptions): Promise<void> {
-  return new Promise((resolve, reject) => {
+  // 如果已经有播放Promise，先等待它完成
+  if (playPromise) {
+    return playPromise
+  }
+
+  playPromise = new Promise((resolve, reject) => {
     if (!audio.src) {
+      playPromise = null
       reject(new Error('音频源未设置'))
       return
     }
@@ -47,10 +54,12 @@ export function play(playOptions?: PlayOptions): Promise<void> {
     audio.playbackRate = rate
 
     let playCount = 0
+    let isStopped = false
 
     const playNext = () => {
-      if (playCount >= times) {
+      if (playCount >= times || isStopped) {
         isPlaying = false
+        playPromise = null
         resolve()
         return
       }
@@ -58,32 +67,47 @@ export function play(playOptions?: PlayOptions): Promise<void> {
       isPlaying = true
       playCount++
 
-      audio.play().catch((error) => {
-        isPlaying = false
-        reject(error)
-      })
+      const audioPlayPromise = audio.play()
+      
+      // 处理现代浏览器返回的Promise
+      if (audioPlayPromise && audioPlayPromise.catch) {
+        audioPlayPromise.catch((error) => {
+          // 如果是因为stop()调用导致的中断，不应该reject
+          if (!isStopped) {
+            isPlaying = false
+            playPromise = null
+            reject(error)
+          }
+        })
+      }
 
       audio.onended = () => {
-        if (playCount < times && interval > 0) {
+        if (playCount < times && interval > 0 && !isStopped) {
           playTimer = window.setTimeout(() => {
             playNext()
           }, interval)
-        } else if (playCount < times) {
+        } else if (playCount < times && !isStopped) {
           playNext()
         } else {
           isPlaying = false
+          playPromise = null
           resolve()
         }
       }
 
       audio.onerror = () => {
-        isPlaying = false
-        reject(new Error('音频播放失败'))
+        if (!isStopped) {
+          isPlaying = false
+          playPromise = null
+          reject(new Error('音频播放失败'))
+        }
       }
     }
 
     playNext()
   })
+  
+  return playPromise
 }
 
 /**
@@ -94,9 +118,16 @@ export function stop() {
     clearTimeout(playTimer)
     playTimer = null
   }
+  
+  // 标记为已停止，避免play() Promise reject
+  isPlaying = false
+  
+  // 暂停音频
   audio.pause()
   audio.currentTime = 0
-  isPlaying = false
+  
+  // 清除playPromise
+  playPromise = null
 }
 
 /**
