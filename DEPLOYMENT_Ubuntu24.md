@@ -14,28 +14,30 @@
 
 #### 1.2.1 安装基础工具
 
-```bash
 # 更新系统包索引
-apt update -y
 
-# 升级系统包
-apt upgrade -y
+apt update -y && apt upgrade -y
 
 # 安装基础工具
+
 apt install -y git wget curl vim gcc g++ make unzip
 
-# 安装 Python 3.12 开发包（系统默认已安装 Python 3.12）
+# 安装 Python 3.12 开发包
+
 apt install -y python3.12-dev python3-pip python3.12-venv
 
 # 安装 Node.js 18
+
 curl -fsSL https://deb.nodesource.com/setup_18.x | bash -
 apt install -y nodejs
 
 # 验证安装版本
-python3 --version  # 应显示 Python 3.12.x
-node --version     # 应显示 v18.x.x
-npm --version      # 应显示相应版本
-```
+
+python3 --version # 应显示 Python 3.12.x
+node --version # 应显示 v18.x.x
+npm --version # 应显示相应版本
+
+````
 
 #### 1.2.2 安装数据库
 
@@ -53,7 +55,7 @@ systemctl enable mariadb
 
 # 验证服务状态
 systemctl status mariadb
-```
+````
 
 ##### 配置数据库
 

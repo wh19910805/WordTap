@@ -929,6 +929,16 @@ const initLearningPage = async () => {
 };
 
 /**
+ * 处理键盘高度变化，调整滚动位置
+ */
+const handleKeyboardResize = () => {
+  // 延迟执行，确保键盘完全弹出
+  setTimeout(() => {
+    learningStore.scrollToCurrentSentence();
+  }, 100);
+};
+
+/**
  * 组件挂载生命周期钩子
  */
 onMounted(async () => {
@@ -938,6 +948,12 @@ onMounted(async () => {
   // 点击内容区聚焦输入框
   contentRef.value.addEventListener("click", focusInput);
   contentRef.value.addEventListener("touchstart", focusInput);
+  
+  // 添加窗口大小变化监听，用于处理键盘弹出/收起
+  window.addEventListener("resize", handleKeyboardResize);
+  
+  // 监听输入事件，在用户输入时调整滚动位置
+  hiddenInputRef.value?.addEventListener("input", handleKeyboardResize);
 });
 
 /**
@@ -949,6 +965,12 @@ onUnmounted(() => {
     contentRef.value.removeEventListener("click", focusInput);
     contentRef.value.removeEventListener("touchstart", focusInput);
   }
+  
+  // 移除窗口大小变化监听
+  window.removeEventListener("resize", handleKeyboardResize);
+  
+  // 移除输入事件监听
+  hiddenInputRef.value?.removeEventListener("input", handleKeyboardResize);
   
   // 重置学习状态
   learningStore.reset();

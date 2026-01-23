@@ -734,39 +734,34 @@ export const useLearningStore = defineStore("learning", () => {
       `[data-sentence-index="${currentSentenceIndex.value}"]`,
     );
     if (sentenceEl) {
-      // 获取实际的滚动容器：内容区域的div
-      const contentEl = document.querySelector(
-        ".learning-container .flex-1.overflow-y-auto",
-      );
+      // 简化选择器，直接获取滚动容器
+      const contentEl = document.querySelector(".flex-1.overflow-y-auto");
       if (!contentEl) return;
 
-      // 获取元素位置和尺寸
-      const sentenceRect = sentenceEl.getBoundingClientRect();
-      const containerRect = contentEl.getBoundingClientRect();
+      // 获取容器和元素的基本尺寸
+      const containerHeight = contentEl.clientHeight;
+      const sentenceOffsetTop = sentenceEl.offsetTop;
+      const sentenceHeight = sentenceEl.clientHeight;
 
-      // 计算滚动偏移量：将句子滚动到容器上1/3处，避免被键盘遮挡
-      // 使用getBoundingClientRect()来计算相对于视口的位置，然后转换为滚动容器内的偏移量
-      let scrollTop =
-        contentEl.scrollTop +
-        (sentenceRect.top - containerRect.top) -
-        containerRect.height * 0.3;
-
-      // 对于最后一行，滚动到更高的位置，确保不被键盘完全遮挡
+      // 计算滚动位置
+      // 对于普通行，滚动到容器上25%的位置
+      // 对于最后一行，滚动到容器上20%的位置，确保有更多可视空间
+      let scrollPosition;
       if (currentSentenceIndex.value === totalSentences.value - 1) {
-        scrollTop =
-          contentEl.scrollTop +
-          (sentenceRect.top - containerRect.top) -
-          containerRect.height * 0.2;
+        // 最后一行，滚动到更高位置，确保不被键盘完全遮挡
+        scrollPosition = sentenceOffsetTop - containerHeight * 0.2;
+      } else {
+        // 普通行，滚动到容器上1/4处
+        scrollPosition = sentenceOffsetTop - containerHeight * 0.25;
       }
 
-      // 确保滚动位置不小于0
-      scrollTop = Math.max(0, scrollTop);
+      // 确保滚动位置在合理范围内
+      scrollPosition = Math.max(0, scrollPosition);
+      const maxScroll = contentEl.scrollHeight - containerHeight;
+      scrollPosition = Math.min(maxScroll, scrollPosition);
 
-      // 平滑滚动到计算位置
-      contentEl.scrollTo({
-        top: scrollTop,
-        behavior: "smooth",
-      });
+      // 使用直接滚动而非平滑滚动，避免键盘弹出时的延迟问题
+      contentEl.scrollTop = scrollPosition;
     }
   }
 
