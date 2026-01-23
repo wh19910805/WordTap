@@ -52,7 +52,11 @@ export const useLearningStore = defineStore("learning", () => {
   const remainingWords = computed(() => {
     if (!courseStore.lessonData?.sentences) return 0;
     let count = 0;
-    for (let i = currentSentenceIndex.value; i < courseStore.lessonData.sentences.length; i++) {
+    for (
+      let i = currentSentenceIndex.value;
+      i < courseStore.lessonData.sentences.length;
+      i++
+    ) {
       count += courseStore.lessonData.sentences[i].words.length;
     }
     return count;
@@ -94,15 +98,16 @@ export const useLearningStore = defineStore("learning", () => {
       let matchFound = false;
 
       // 匹配人名的正则表达式：匹配尊称+姓名（如Mr. Smith）或直接人名+冒号（如John:）
-      const nameRegex = /^((Mr\.|Mrs\.|Miss|Ms\.|Dr\.|Prof\.)\s?([A-Z][a-zA-Z]+)(?:'s)?)|([A-Z][a-zA-Z]+):/i;
+      const nameRegex =
+        /^((Mr\.|Mrs\.|Miss|Ms\.|Dr\.|Prof\.)\s?([A-Z][a-zA-Z]+)(?:'s)?)|([A-Z][a-zA-Z]+):/i;
       const match = sentenceText.match(nameRegex);
-      
+
       if (match) {
         matchFound = true;
         const matchedText = match[0];
         filledText = matchedText;
         charIndex = matchedText.length;
-        
+
         // 如果是人名+冒号格式，处理后续空格
         if (match[4]) {
           while (charIndex < sentenceText.length) {
@@ -116,11 +121,16 @@ export const useLearningStore = defineStore("learning", () => {
           }
         }
       }
-      
+
       // 如果匹配到人名，更新进度
       if (matchFound) {
-        console.log('[DEBUG] 智能匹配到人名:', filledText, 'in sentence:', sentenceText);
-        
+        console.log(
+          "[DEBUG] 智能匹配到人名:",
+          filledText,
+          "in sentence:",
+          sentenceText,
+        );
+
         // 初始化句子进度
         if (!sentenceProgress.value[sentenceIndex]) {
           sentenceProgress.value[sentenceIndex] = {
@@ -138,12 +148,15 @@ export const useLearningStore = defineStore("learning", () => {
         sentenceProgress.value[sentenceIndex].userInput = filledText;
         sentenceProgress.value[sentenceIndex].charIndex = charIndex;
         sentenceProgress.value[sentenceIndex].autoFilledLength = charIndex;
-        
+
         // 如果是当前句子，更新当前输入状态
         if (sentenceIndex === currentSentenceIndex.value) {
           inputText.value = filledText;
           currentCharIndex.value = charIndex;
-          console.log('[DEBUG] Updated current input state:', { inputText: filledText, charIndex });
+          console.log("[DEBUG] Updated current input state:", {
+            inputText: filledText,
+            charIndex,
+          });
         }
       }
     });
@@ -171,12 +184,12 @@ export const useLearningStore = defineStore("learning", () => {
             }
           });
         }
-        
+
         // 如果新设置为显示人名，重新填充人名
         if (newVal) {
           autoFillNames(courseStore.lessonData);
         }
-        
+
         // 更新当前输入状态
         const progress = sentenceProgress.value[currentSentenceIndex.value];
         if (progress) {
@@ -216,7 +229,7 @@ export const useLearningStore = defineStore("learning", () => {
     isLessonCompleted.value = false;
     validationErrors.value = [];
     hintedWords.value = {};
-    
+
     // 初始化句子进度
     if (lessonData?.sentences) {
       lessonData.sentences.forEach((sentence, index) => {
@@ -285,13 +298,17 @@ export const useLearningStore = defineStore("learning", () => {
     }
     // 每30秒自动保存一次进度
     autoSaveInterval.value = setInterval(() => {
-      if (courseStore.currentLesson?.id && courseStore.currentLesson?.courseId) {
+      if (
+        courseStore.currentLesson?.id &&
+        courseStore.currentLesson?.courseId
+      ) {
         console.log("自动保存学习进度...");
         // 获取当前句子的索引和字符索引
         const currentIndex = currentSentenceIndex.value;
         const currentProgress = sentenceProgress.value[currentIndex];
-        const currentCharIdx = currentProgress?.charIndex || currentCharIndex.value;
-        
+        const currentCharIdx =
+          currentProgress?.charIndex || currentCharIndex.value;
+
         courseStore.updateLessonProgress(
           courseStore.currentLesson.id,
           courseStore.currentLesson.courseId,
@@ -354,13 +371,17 @@ export const useLearningStore = defineStore("learning", () => {
 
   // 播放当前行音频
   async function playCurrentLineAudio() {
-    // 如果没有当前句子或静音，直接返回
-    if (!currentSentence.value) return;
+    // 如果静音，直接返回
     if (settingsStore.mute) return;
 
-    const sentenceText = currentSentence.value.text;
+    // 获取当前句子
+    const sentence =
+      courseStore.lessonData?.sentences[currentSentenceIndex.value];
+    if (!sentence) return;
+
+    const sentenceText = sentence.text;
     if (!sentenceText) return;
-    
+
     await playAudio(sentenceText);
   }
 
@@ -419,8 +440,12 @@ export const useLearningStore = defineStore("learning", () => {
     }
 
     // 检查输入是否正确，应用忽略大小写设置
-    const normalizedInput = settingsStore.ignoreCase ? char.toLowerCase() : char;
-    const normalizedExpected = settingsStore.ignoreCase ? expectedChar.toLowerCase() : expectedChar;
+    const normalizedInput = settingsStore.ignoreCase
+      ? char.toLowerCase()
+      : char;
+    const normalizedExpected = settingsStore.ignoreCase
+      ? expectedChar.toLowerCase()
+      : expectedChar;
     const isMatch = normalizedInput === normalizedExpected;
     isCorrect.value = isMatch;
 
@@ -439,17 +464,17 @@ export const useLearningStore = defineStore("learning", () => {
 
     // 获取当前句子的进度
     const currentProgress = sentenceProgress.value[currentSentenceIndex.value];
-    
+
     // 只将字符追加到当前句子的输入中，而不是全局inputText
     currentProgress.userInput += char;
-    
+
     // 更新全局inputText，用于输入框显示
     inputText.value = currentProgress.userInput;
-    
+
     // 无论输入是否正确，都更新当前字符索引，允许用户继续输入
     currentCharIndex.value++;
     currentProgress.charIndex = currentCharIndex.value;
-    
+
     // 如果输入正确，更新inputText为正确字符，否则保留错误字符
     if (isMatch) {
       currentProgress.inputText += char;
@@ -485,16 +510,20 @@ export const useLearningStore = defineStore("learning", () => {
 
     // 获取当前句子的进度
     const currentProgress = sentenceProgress.value[currentSentenceIndex.value];
-    
+
     // 如果当前句子还有字符可以删除
-    if (currentProgress && currentProgress.inputText.length > 0 && currentCharIndex.value > 0) {
+    if (
+      currentProgress &&
+      currentProgress.inputText.length > 0 &&
+      currentCharIndex.value > 0
+    ) {
       // 删除当前句子输入的最后一个字符
       currentProgress.inputText = currentProgress.inputText.slice(0, -1);
       currentProgress.userInput = currentProgress.userInput.slice(0, -1);
-      
+
       // 更新全局inputText，用于输入框显示
       inputText.value = currentProgress.inputText;
-      
+
       // 更新当前字符索引
       currentCharIndex.value--;
       currentProgress.charIndex = currentCharIndex.value;
@@ -506,7 +535,8 @@ export const useLearningStore = defineStore("learning", () => {
 
       // 重新检查当前输入是否正确
       if (currentCharIndex.value > 0) {
-        const expectedChar = currentSentence.value.text[currentCharIndex.value - 1];
+        const expectedChar =
+          currentSentence.value.text[currentCharIndex.value - 1];
         const inputChar = currentProgress.inputText[currentCharIndex.value - 1];
         if (expectedChar && inputChar) {
           const normalizedInput = inputChar.toLowerCase();
@@ -516,7 +546,7 @@ export const useLearningStore = defineStore("learning", () => {
       } else {
         isCorrect.value = true;
       }
-    } 
+    }
     // 如果当前句子没有字符可以删除，退回到上一个句子
     else if (currentSentenceIndex.value > 0) {
       // 保存当前句子的进度
@@ -529,10 +559,11 @@ export const useLearningStore = defineStore("learning", () => {
       currentSentenceIndex.value--;
 
       // 恢复上一个句子的进度
-      const prevSentence = courseStore.lessonData?.sentences[currentSentenceIndex.value];
+      const prevSentence =
+        courseStore.lessonData?.sentences[currentSentenceIndex.value];
       if (prevSentence) {
         currentSentence.value = prevSentence;
-        
+
         // 获取上一个句子的进度
         const prevProgress = sentenceProgress.value[currentSentenceIndex.value];
         if (prevProgress && prevProgress.inputText) {
@@ -553,7 +584,7 @@ export const useLearningStore = defineStore("learning", () => {
             userInput: "",
           };
         }
-        
+
         // 滚动到上一个句子
         setTimeout(() => {
           scrollToCurrentSentence();
@@ -598,7 +629,8 @@ export const useLearningStore = defineStore("learning", () => {
     if (keySoundInstances.value.length > 0) {
       // 循环使用不同的音效实例
       const sound = keySoundInstances.value[currentKeySoundIndex.value];
-      currentKeySoundIndex.value = (currentKeySoundIndex.value + 1) % keySoundInstances.value.length;
+      currentKeySoundIndex.value =
+        (currentKeySoundIndex.value + 1) % keySoundInstances.value.length;
 
       // 如果音效正在播放，先停止
       if (sound.playing()) {
@@ -634,7 +666,8 @@ export const useLearningStore = defineStore("learning", () => {
   function nextSentence() {
     if (currentSentenceIndex.value < totalSentences.value - 1) {
       // 标记当前句为已完成
-      const currentProgress = sentenceProgress.value[currentSentenceIndex.value];
+      const currentProgress =
+        sentenceProgress.value[currentSentenceIndex.value];
       if (currentProgress) {
         currentProgress.completed = true;
       }
@@ -677,7 +710,8 @@ export const useLearningStore = defineStore("learning", () => {
       }
     } else {
       // 已到最后一句，标记课程完成
-      const currentProgress = sentenceProgress.value[currentSentenceIndex.value];
+      const currentProgress =
+        sentenceProgress.value[currentSentenceIndex.value];
       if (currentProgress) {
         currentProgress.completed = true;
         // 确保最后一句的输入被正确保存
@@ -696,9 +730,43 @@ export const useLearningStore = defineStore("learning", () => {
 
   // 滚动到当前句
   function scrollToCurrentSentence() {
-    const sentenceEl = document.querySelector(`[data-sentence-index="${currentSentenceIndex.value}"]`);
+    const sentenceEl = document.querySelector(
+      `[data-sentence-index="${currentSentenceIndex.value}"]`,
+    );
     if (sentenceEl) {
-      sentenceEl.scrollIntoView({ behavior: "smooth", block: "center" });
+      // 获取实际的滚动容器：内容区域的div
+      const contentEl = document.querySelector(
+        ".learning-container .flex-1.overflow-y-auto",
+      );
+      if (!contentEl) return;
+
+      // 获取元素位置和尺寸
+      const sentenceRect = sentenceEl.getBoundingClientRect();
+      const containerRect = contentEl.getBoundingClientRect();
+
+      // 计算滚动偏移量：将句子滚动到容器上1/3处，避免被键盘遮挡
+      // 使用getBoundingClientRect()来计算相对于视口的位置，然后转换为滚动容器内的偏移量
+      let scrollTop =
+        contentEl.scrollTop +
+        (sentenceRect.top - containerRect.top) -
+        containerRect.height * 0.3;
+
+      // 对于最后一行，滚动到更高的位置，确保不被键盘完全遮挡
+      if (currentSentenceIndex.value === totalSentences.value - 1) {
+        scrollTop =
+          contentEl.scrollTop +
+          (sentenceRect.top - containerRect.top) -
+          containerRect.height * 0.2;
+      }
+
+      // 确保滚动位置不小于0
+      scrollTop = Math.max(0, scrollTop);
+
+      // 平滑滚动到计算位置
+      contentEl.scrollTo({
+        top: scrollTop,
+        behavior: "smooth",
+      });
     }
   }
 
@@ -724,8 +792,12 @@ export const useLearningStore = defineStore("learning", () => {
 
       const expectedText = sentence.text;
       const actualText = progress.inputText || "";
-      const expectedWords = expectedText.split(/\s+/).filter(word => word.length > 0);
-      const actualWords = actualText.split(/\s+/).filter(word => word.length > 0);
+      const expectedWords = expectedText
+        .split(/\s+/)
+        .filter((word) => word.length > 0);
+      const actualWords = actualText
+        .split(/\s+/)
+        .filter((word) => word.length > 0);
 
       // 检查输入长度
       if (actualText.length < expectedText.length) {
@@ -734,24 +806,38 @@ export const useLearningStore = defineStore("learning", () => {
         return;
       }
 
-      // 检查每个单词
-      for (let i = 0; i < expectedWords.length; i++) {
-        const expectedWord = expectedWords[i].toLowerCase().replace(/[^a-zA-Z]/g, '');
-        const actualWord = actualWords[i]?.toLowerCase().replace(/[^a-zA-Z]/g, '') || '';
+      // 检查每个单词，只比较用户实际输入的单词
+      for (
+        let i = 0;
+        i < Math.min(expectedWords.length, actualWords.length);
+        i++
+      ) {
+        const expectedWord = expectedWords[i]
+          .toLowerCase()
+          .replace(/[^a-zA-Z]/g, "");
+        const actualWord =
+          actualWords[i]?.toLowerCase().replace(/[^a-zA-Z]/g, "") || "";
+        const userAnswer = actualWords[i] || "";
 
-        if (expectedWord && actualWord !== expectedWord) {
-          // 收集错词
+        if (expectedWord && actualWord !== expectedWord && userAnswer) {
+          // 只收集用户实际输入了的错误单词，避免user_answer为空
           wrongWords.push({
             word: expectedWord,
-            userAnswer: actualWords[i] || '',
+            userAnswer: userAnswer,
             correctAnswer: expectedWords[i],
             sentenceIndex: index,
-            sentence: sentence.text
+            sentence: sentence.text,
           });
-          
+
           // 不再添加错误信息到validationErrors，只标记hasError
           hasError = true;
         }
+      }
+
+      // 检查是否有遗漏的单词（用户没有输入的单词）
+      if (actualWords.length < expectedWords.length) {
+        // 有遗漏的单词，标记为错误
+        hasError = true;
       }
     });
 
@@ -773,7 +859,8 @@ export const useLearningStore = defineStore("learning", () => {
       // 获取当前句子的索引和字符索引
       const currentIndex = currentSentenceIndex.value;
       const currentProgress = sentenceProgress.value[currentIndex];
-      const currentCharIdx = currentProgress?.charIndex || currentCharIndex.value;
+      const currentCharIdx =
+        currentProgress?.charIndex || currentCharIndex.value;
 
       // 更新课程进度
       await courseStore.updateLessonProgress(
@@ -789,13 +876,13 @@ export const useLearningStore = defineStore("learning", () => {
       await userStore.updateStreak();
       await userStore.addWordCount(totalWords.value);
       await userStore.addStudyTime(minutes, "today");
-      
+
       // 如果有错误，将错词添加到错题本
       if (wrongWords.length > 0) {
         await addWrongWordsToWordBook(wrongWords);
       }
     } catch (error) {
-      console.error('提交课程时发生错误:', error);
+      console.error("提交课程时发生错误:", error);
       // 不抛出错误，确保函数总是返回true
     }
 
@@ -806,21 +893,22 @@ export const useLearningStore = defineStore("learning", () => {
   async function addWrongWordsToWordBook(wrongWords) {
     try {
       // 导入API客户端，避免循环依赖
-      const { addWrongWord } = await import('@/api/client');
-      
-      const { courseId, lessonId } = courseStore.currentLesson;
-      
+      const { addWrongWord } = await import("@/api/client");
+
+      const { courseId } = courseStore.currentLesson;
+      const lessonId = courseStore.currentLesson.id;
+
       // 去重，避免重复添加同一个单词
       const uniqueWrongWords = [];
       const wordSet = new Set();
-      
+
       for (const wrongWord of wrongWords) {
         if (!wordSet.has(wrongWord.word)) {
           wordSet.add(wrongWord.word);
           uniqueWrongWords.push(wrongWord);
         }
       }
-      
+
       // 批量添加错词
       for (const wrongWord of uniqueWrongWords) {
         await addWrongWord({
@@ -830,13 +918,13 @@ export const useLearningStore = defineStore("learning", () => {
           lesson_id: lessonId,
           user_answer: wrongWord.userAnswer,
           correct_answer: wrongWord.correctAnswer,
-          explanation: `学习内容: ${wrongWord.sentence}`
+          explanation: `学习内容: ${wrongWord.sentence}`,
         });
       }
-      
+
       console.log(`成功添加 ${uniqueWrongWords.length} 个错词到错题本`);
     } catch (error) {
-      console.error('添加错词到错题本失败:', error);
+      console.error("添加错词到错题本失败:", error);
     }
   }
 
@@ -899,16 +987,19 @@ export const useLearningStore = defineStore("learning", () => {
     if (!hintedWords.value[sentenceIndex]) {
       hintedWords.value[sentenceIndex] = [];
     }
-    
+
     // 检查是否已经提示过这个单词，避免重复提示
     const isAlreadyHinted = hintedWords.value[sentenceIndex].some(
-      hint => hint.wordStart === wordStart && hint.wordEnd === wordEnd
+      (hint) => hint.wordStart === wordStart && hint.wordEnd === wordEnd,
     );
-    
+
     if (!isAlreadyHinted) {
       // 使用展开运算符创建新数组，确保 Vue 能够检测到变化
-      const updatedHints = [...hintedWords.value[sentenceIndex], { wordStart, wordEnd }];
-      
+      const updatedHints = [
+        ...hintedWords.value[sentenceIndex],
+        { wordStart, wordEnd },
+      ];
+
       // 替换整个数组，确保 Vue 能够检测到变化
       hintedWords.value[sentenceIndex] = updatedHints;
     }
@@ -932,7 +1023,9 @@ export const useLearningStore = defineStore("learning", () => {
     }
     if (sentenceProgress.value[sentenceIndex]?.completed) {
       // 已完成句子返回句子长度
-      return courseStore.lessonData?.sentences[sentenceIndex]?.text?.length || 0;
+      return (
+        courseStore.lessonData?.sentences[sentenceIndex]?.text?.length || 0
+      );
     }
     if (sentenceIndex > currentSentenceIndex.value) {
       // 未开始句子返回0
@@ -949,7 +1042,7 @@ export const useLearningStore = defineStore("learning", () => {
     const charIndex = currentCharIndex.value;
 
     let start, end;
-    
+
     if (charIndex >= text.length) {
       // 如果已到句子末尾，返回最后一个单词
       // 从末尾向前查找最后一个单词的起始位置

@@ -164,7 +164,7 @@ Gunicorn -w 4 -k uvicorn.workers.UvicornWorker -b 0.0.0.0:8000 main:app
 - 上次学习时间
 - 学习进度条
 
-### 5. 沉浸式学习页 (Learning) 🔥核心
+### 5. 沉浸式学习页 (Learning) 🔥 核心
 
 - **VisualViewport 适配**：完美解决移动端键盘遮挡问题
 - **隐藏输入框策略**：透明输入框捕获焦点，手动渲染 UI
@@ -205,8 +205,8 @@ Gunicorn -w 4 -k uvicorn.workers.UvicornWorker -b 0.0.0.0:8000 main:app
 
 ### 本地开发环境
 
-1. 启动后端服务（端口8000）
-2. 启动前端开发服务器（端口3000）
+1. 启动后端服务（端口 8000）
+2. 启动前端开发服务器（端口 3000）
 3. 在浏览器中访问 http://localhost:3000
 
 ### 生产部署
@@ -328,7 +328,7 @@ function updateViewport() {
 
 ### 输入处理优化
 
-- 输入响应在 16ms (1帧) 内完成
+- 输入响应在 16ms (1 帧) 内完成
 - 使用 ref 直接操作 DOM，避免 Vue 响应式系统造成输入卡顿
 - 支持空格、大小写、特殊字符的正确匹配
 

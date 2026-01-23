@@ -1,11 +1,11 @@
-import { useStorage } from '@vueuse/core'
+import { useStorage } from "@vueuse/core";
 
 /**
  * 发音类型枚举
  */
 export enum PronunciationType {
   British = 1, // 英音
-  American = 2 // 美音
+  American = 2, // 美音
 }
 
 /**
@@ -15,15 +15,15 @@ export enum PronunciationType {
 export function usePronunciation() {
   // 发音类型：1=英音，2=美音，默认美音
   const pronunciationType = useStorage<PronunciationType>(
-    'wordtap-pronunciation-type',
+    "wordtap-pronunciation-type",
     PronunciationType.American
-  )
+  );
 
   /**
    * 获取发音类型
    */
   function getPronunciationType(): PronunciationType {
-    return pronunciationType.value
+    return pronunciationType.value;
   }
 
   /**
@@ -31,13 +31,13 @@ export function usePronunciation() {
    */
   function togglePronunciation(type?: PronunciationType) {
     if (type) {
-      pronunciationType.value = type
+      pronunciationType.value = type;
     } else {
       // 切换：美音 <-> 英音
       pronunciationType.value =
         pronunciationType.value === PronunciationType.American
           ? PronunciationType.British
-          : PronunciationType.American
+          : PronunciationType.American;
     }
   }
 
@@ -47,24 +47,24 @@ export function usePronunciation() {
    * @returns 有道词典 API URL
    */
   function getPronunciationUrl(text: string | undefined): string {
-    if (!text) return ''
-    
+    if (!text) return "";
+
     // 编码文本
-    const encodedText = encodeURIComponent(text.trim())
-    const type = getPronunciationType()
-    
+    const encodedText = encodeURIComponent(text.trim());
+    const type = getPronunciationType();
+
     // 有道词典 API
     // type=1: 英音
     // type=2: 美音
-    return `https://dict.youdao.com/dictvoice?type=${type}&audio=${encodedText}`
+    return `https://dict.youdao.com/dictvoice?type=${type}&audio=${encodedText}`;
   }
 
   return {
     pronunciationType,
     getPronunciationType,
     togglePronunciation,
-    getPronunciationUrl
-  }
+    getPronunciationUrl,
+  };
 }
 
 /**
@@ -72,20 +72,19 @@ export function usePronunciation() {
  */
 export function getPronunciationUrl(text: string | undefined): string {
   if (!text) return "";
-  
+
   // 从 localStorage 获取发音类型，默认美音
   const pronunciationType = localStorage.getItem("wordtap-pronunciation-type");
   const type = pronunciationType ? parseInt(pronunciationType) : 2; // 默认美音
-  
+
   // 直接使用传入的完整文本，支持单词、句子、段落、文章
   const textToPlay = text.trim();
-  
+
   // 编码文本
   const encodedText = encodeURIComponent(textToPlay);
-  
+
   // 有道词典 API
   // type=1: 英音
   // type=2: 美音
   return `https://dict.youdao.com/dictvoice?type=${type}&audio=${encodedText}`;
 }
-

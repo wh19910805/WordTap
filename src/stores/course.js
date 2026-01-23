@@ -911,7 +911,8 @@ export const useCourseStore = defineStore("course", () => {
         await progressApi.updateProgress({
           course_id: courseId,
           lesson_id: lessonId,
-          current_line: currentLine,
+          // 无论是否完成，提交后都将current_line重置为0，这样重新进入课时时从第一行开始
+          current_line: 0,
           study_time: studyTime,
           is_completed: completed,
         });

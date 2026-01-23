@@ -739,15 +739,10 @@ const handleSubmit = async () => {
   try {
     isSubmitting.value = true;
     
-    // 1. 收集错误单词
-    const errorWords = collectErrorWords();
+    // 1. 调用学习状态管理的提交函数，它会处理错误单词保存和进度更新
+    await learningStore.submitLesson();
     
-    // 2. 调用后端接口保存错误单词
-    if (errorWords.length > 0) {
-      await saveErrorWords(errorWords);
-    }
-    
-    // 3. 跳转到下一课时
+    // 2. 跳转到下一课时
     await navigateToNextLesson();
   } catch (error) {
     console.error("提交失败:", error);
@@ -759,7 +754,7 @@ const handleSubmit = async () => {
 // ========================== 错误处理与数据提交 ==========================
 /**
  * 收集错误单词
- * @returns {string[]} - 错误单词列表
+ * @returns {Array<{correctWord: string, userWord: string}>} - 错误单词列表，包含正确单词和用户输入
  */
 const collectErrorWords = () => {
   const errorWords = [];
@@ -774,8 +769,9 @@ const collectErrorWords = () => {
     const correctWords = sentence.text.split(/\s+/).filter(word => word.trim());
     const userWords = userInput.split(/\s+/).filter(word => word.trim());
     
-    // 比较每个单词
-    correctWords.forEach((correctWord, wordIndex) => {
+    // 比较每个单词，只比较用户实际输入的单词
+    for (let wordIndex = 0; wordIndex < Math.min(correctWords.length, userWords.length); wordIndex++) {
+      const correctWord = correctWords[wordIndex];
       const userWord = userWords[wordIndex] || "";
       
       // 应用忽略大小写设置
@@ -784,11 +780,14 @@ const collectErrorWords = () => {
         ? userWord.toLowerCase() === correctWord.toLowerCase() 
         : userWord === correctWord;
       
-      // 如果单词错误，添加到错误单词列表
-      if (!isCorrect && correctWord.trim()) {
-        errorWords.push(correctWord);
+      // 如果单词错误，并且用户实际输入了内容，添加到错误单词列表
+      if (!isCorrect && correctWord.trim() && userWord) {
+        errorWords.push({
+          correctWord,
+          userWord
+        });
       }
-    });
+    }
   });
   
   return errorWords;
@@ -796,7 +795,7 @@ const collectErrorWords = () => {
 
 /**
  * 保存错误单词到后端
- * @param {string[]} errorWords - 错误单词列表
+ * @param {Array<{correctWord: string, userWord: string}>} errorWords - 错误单词列表，包含正确单词和用户输入
  */
 const saveErrorWords = async (errorWords) => {
   try {
@@ -805,20 +804,31 @@ const saveErrorWords = async (errorWords) => {
     // 导入API客户端
     const { wrongWordApi } = await import('@/api/client');
     
-    // 遍历所有错误单词，逐个保存
+    // 去重，避免重复提交同一个单词，使用correctWord作为去重键
+    const uniqueErrorWords = [];
+    const seenCorrectWords = new Set();
+    
     for (const errorWord of errorWords) {
+      if (!seenCorrectWords.has(errorWord.correctWord)) {
+        seenCorrectWords.add(errorWord.correctWord);
+        uniqueErrorWords.push(errorWord);
+      }
+    }
+    
+    // 遍历所有错误单词，逐个保存
+    for (const errorWord of uniqueErrorWords) {
       await wrongWordApi.addWrongWord({
-        word: errorWord,
+        word: errorWord.correctWord,
         question_type: "learning",
         course_id: courseId,
         lesson_id: lessonId,
-        user_answer: "", // 用户的错误答案，这里简化处理
-        correct_answer: errorWord,
+        user_answer: errorWord.userWord, // 使用用户的实际输入作为错误答案
+        correct_answer: errorWord.correctWord,
         explanation: `来自课程 ${courseId} 的课时 ${lessonId}`
       });
     }
     
-    console.log(`成功保存 ${errorWords.length} 个错误单词到错词表`);
+    console.log(`成功保存 ${uniqueErrorWords.length} 个错误单词到错词表`);
   } catch (error) {
     console.error("保存错误单词失败:", error);
     throw error;
@@ -853,9 +863,6 @@ const navigateToNextLesson = async () => {
     nextLesson = currentCourse.lessons[0];
   }
   
-  // 重置学习状态
-  learningStore.reset();
-  
   // 跳转到下一课时
   await router.replace({
     name: "Learning",
@@ -865,6 +872,17 @@ const navigateToNextLesson = async () => {
     },
   });
 };
+
+// 监听路由参数变化，重新初始化学习页面
+watch(
+  () => [route.params.courseId, route.params.lessonId],
+  async ([newCourseId, newLessonId]) => {
+    if (newCourseId && newLessonId) {
+      await initLearningPage();
+    }
+  },
+  { immediate: true }
+);
 
 /**
  * 返回上一页
