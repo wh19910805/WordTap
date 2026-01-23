@@ -748,23 +748,17 @@ export const useLearningStore = defineStore("learning", () => {
         sentence.style.paddingBottom = "";
       });
 
-      // 计算滚动偏移量：将句子滚动到容器上1/4处（更靠上的位置），避免被键盘遮挡
-      // 使用getBoundingClientRect()来计算相对于视口的位置，然后转换为滚动容器内的偏移量
-      // 普通行向上滚动距离增大60像素，让内容位置更靠上，效果更明显
-      let scrollTop =
-        contentEl.scrollTop +
-        (sentenceRect.top - containerRect.top) -
-        containerRect.height * 0.25 -
-        60;
+      // 计算滚动偏移量：简化滚动逻辑，确保输入完成一行后向上滑动更多
+      // 基础滚动高度为70px，输入完成一行后增加20px，总共90px
+      let baseOffset = 70;
 
-      // 对于最后一行，滚动到更高的位置，确保不被键盘完全遮挡
-      if (currentSentenceIndex.value === totalSentences.value - 1) {
-        scrollTop =
-          contentEl.scrollTop +
-          (sentenceRect.top - containerRect.top) -
-          containerRect.height * 0.2 -
-          40;
+      // 当进入新句子时，增加20px的额外滚动高度
+      if (currentSentenceIndex.value > 0) {
+        baseOffset = 90; // 70px基础高度 + 20px额外高度
       }
+
+      // 直接滚动到句子位置上方，确保下一行有足够的可见空间
+      let scrollTop = sentenceEl.offsetTop - baseOffset;
 
       // 确保滚动位置不小于0
       scrollTop = Math.max(scrollTop, 0);
@@ -776,29 +770,7 @@ export const useLearningStore = defineStore("learning", () => {
       });
 
       // 为所有行添加足够的底部内边距，确保有足够的滚动空间
-      // 特别是在手机键盘弹出时，需要更多的滚动空间
       contentEl.style.paddingBottom = "320px";
-
-      // 确保当前句子在添加内边距后仍然可见
-      setTimeout(() => {
-        const finalSentenceRect = sentenceEl.getBoundingClientRect();
-        const finalContainerRect = contentEl.getBoundingClientRect();
-
-        // 重新计算滚动位置，使用与主滚动相同的计算方式
-        const finalScrollTop =
-          contentEl.scrollTop +
-          (finalSentenceRect.top - finalContainerRect.top) -
-          finalContainerRect.height * 0.25 -
-          60;
-
-        // 如果元素位置不在理想位置，再次调整滚动位置
-        if (finalSentenceRect.top < finalContainerRect.height * 0.25) {
-          contentEl.scrollTo({
-            top: Math.max(finalScrollTop, 0),
-            behavior: "smooth",
-          });
-        }
-      }, 100);
     }
   }
 
