@@ -738,70 +738,54 @@ export const useLearningStore = defineStore("learning", () => {
       const contentEl = document.querySelector(".flex-1.overflow-y-auto");
       if (!contentEl) return;
 
+      // 重置所有句子的样式
+      const allSentences = document.querySelectorAll("[data-sentence-index]");
+      allSentences.forEach((sentence) => {
+        sentence.style.paddingBottom = "";
+      });
+
+      // 对于非最后两行，确保没有底部内边距
+      if (currentSentenceIndex.value < totalSentences.value - 2) {
+        contentEl.style.paddingBottom = "";
+      }
+
       // 获取窗口信息
       const windowHeight = window.innerHeight;
-      const documentHeight = document.documentElement.scrollHeight;
-
-      // 计算键盘高度（通过比较文档高度和窗口高度差值）
-      const keyboardHeight =
-        documentHeight > windowHeight * 1.1
-          ? Math.max(0, documentHeight - windowHeight)
-          : 0;
 
       // 获取元素位置和尺寸
       const rect = sentenceEl.getBoundingClientRect();
       const elementTop = rect.top;
       const elementHeight = rect.height;
 
-      // 计算理想的滚动位置
+      // 计算滚动位置
       let scrollY = window.pageYOffset;
-      let targetScrollY = scrollY + elementTop - 50; // 滚动到元素顶部上方50px
+      let targetScrollY = scrollY + elementTop - 50;
 
-      // 检查元素是否会被键盘遮挡
-      const elementBottom = elementTop + elementHeight;
-      const visibleHeight = windowHeight - (keyboardHeight || 0);
-
-      // 如果元素底部超出可见区域，调整滚动位置
-      if (elementBottom > visibleHeight - 50) {
-        // 确保元素完全可见，考虑键盘高度
-        targetScrollY = scrollY + elementBottom - visibleHeight + 50;
-      }
-
-      // 对于接近末尾的行（包括最后两行），额外处理
-      if (currentSentenceIndex.value >= totalSentences.value - 2) {
-        // 根据键盘高度动态调整底部内边距
-        const paddingBottom = keyboardHeight > 0 ? keyboardHeight + 100 : 200;
-        contentEl.style.paddingBottom = `${paddingBottom}px`;
-
-        // 确保内容容器底部有足够空间
-        setTimeout(() => {
-          // 重新计算元素位置，确保键盘完全弹出后滚动
-          const finalRect = sentenceEl.getBoundingClientRect();
-          const finalElementBottom = finalRect.top + finalRect.height;
-          const finalVisibleHeight = window.innerHeight - (keyboardHeight || 0);
-
-          if (finalElementBottom > finalVisibleHeight - 50) {
-            // 最终调整，确保元素完全可见
-            window.scrollTo({
-              top:
-                window.pageYOffset +
-                finalElementBottom -
-                finalVisibleHeight +
-                50,
-              behavior: "instant",
-            });
-          }
-        }, 200);
-      } else {
-        // 普通行，重置底部内边距
-        contentEl.style.paddingBottom = "";
-      }
-
-      // 执行滚动
+      // 确保元素顶部距离视口顶部有50px的边距
       window.scrollTo({
         top: targetScrollY,
         behavior: "instant",
       });
+
+      // 只有在学习到最后两行时，才添加底部内边距
+      if (currentSentenceIndex.value >= totalSentences.value - 2) {
+        // 添加固定的底部内边距，确保最后两行有足够的滚动空间
+        contentEl.style.paddingBottom = "300px";
+
+        // 确保当前句子在添加内边距后仍然可见
+        setTimeout(() => {
+          const finalRect = sentenceEl.getBoundingClientRect();
+          const finalElementTop = finalRect.top;
+
+          // 如果元素顶部距离视口顶部小于50px，再次调整滚动位置
+          if (finalElementTop < 50) {
+            window.scrollTo({
+              top: window.pageYOffset + finalElementTop - 50,
+              behavior: "instant",
+            });
+          }
+        }, 100);
+      }
     }
   }
 

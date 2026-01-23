@@ -97,7 +97,7 @@ Reload privilege tables now? (y/N)
 # 创建允许远程登录的用户
 mysql -u root -p
 
-# 创建数据库和用户
+1、创建数据库和用户
 -- 1. 创建用户（允许从任何IP连接用 '%'，如果只允许特定IP，可将 '%' 换成 '192.168.1.100'）
 CREATE USER 'remote_user'@'%' IDENTIFIED BY '你的强密码';
 
@@ -108,6 +108,22 @@ GRANT ALL PRIVILEGES ON *.* TO 'remote_user'@'%' WITH GRANT OPTION;
 FLUSH PRIVILEGES;
 EXIT;
 ```
+
+2、修改MySQL配置文件
+sudo nano /etc/mysql/mysql.conf.d/mysqld.cnf
+找到bind-address这一行：它通常写着bind-address = 127.0.0.1。
+修改为bind-address = 0.0.0.0
+保存并退出（按Ctrl+O, Enter, Ctrl+X）。
+重启MySQL服务使配置生效：
+sudo systemctl restart mysql
+3、配置防火墙
+允许外部流量访问 MySQL 的默认端口3306。
+sudo ufw allow 3306/tcp
+4、测试
+
+# -h 后面填你服务器的公网 IP
+
+mysql -u remote_user -p -h 123.456.78.90
 
 #### 1.2.3 安装 Nginx
 
@@ -134,7 +150,8 @@ ufw enable
 # 开放必要端口
 ufw allow 80/tcp      # HTTP
 ufw allow 443/tcp     # HTTPS
-ufw allow 22/tcp      # SSH（如果需要远程连接）
+ufw allow 22/tcp
+ufw allow 3306/tcp
 
 # 查看开放端口
 ufw status
