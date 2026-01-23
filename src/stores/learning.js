@@ -734,34 +734,44 @@ export const useLearningStore = defineStore("learning", () => {
       `[data-sentence-index="${currentSentenceIndex.value}"]`,
     );
     if (sentenceEl) {
-      // 简化选择器，直接获取滚动容器
+      // 获取滚动容器
       const contentEl = document.querySelector(".flex-1.overflow-y-auto");
       if (!contentEl) return;
 
-      // 获取容器和元素的基本尺寸
-      const containerHeight = contentEl.clientHeight;
-      const sentenceOffsetTop = sentenceEl.offsetTop;
-      const sentenceHeight = sentenceEl.clientHeight;
-
-      // 计算滚动位置
-      // 对于普通行，滚动到容器上25%的位置
-      // 对于最后一行，滚动到容器上20%的位置，确保有更多可视空间
-      let scrollPosition;
+      // 对于最后一行，使用特殊的滚动策略
       if (currentSentenceIndex.value === totalSentences.value - 1) {
-        // 最后一行，滚动到更高位置，确保不被键盘完全遮挡
-        scrollPosition = sentenceOffsetTop - containerHeight * 0.2;
+        // 1. 直接将元素滚动到可视区域顶部
+        sentenceEl.scrollIntoView({
+          behavior: "instant",
+          block: "start", // 滚动到顶部
+        });
+
+        // 2. 额外添加一个大的底部内边距到最后一个句子，确保它不会被键盘遮挡
+        // 动态添加样式，确保最后一行有足够的空间
+        sentenceEl.style.paddingBottom = "150px"; // 添加150px的底部内边距
+
+        // 3. 再次滚动，确保底部内边距生效后元素仍然可见
+        setTimeout(() => {
+          sentenceEl.scrollIntoView({
+            behavior: "instant",
+            block: "start",
+          });
+        }, 50);
       } else {
-        // 普通行，滚动到容器上1/4处
-        scrollPosition = sentenceOffsetTop - containerHeight * 0.25;
+        // 普通行，使用原来的滚动策略
+        const containerHeight = contentEl.clientHeight;
+        const sentenceOffsetTop = sentenceEl.offsetTop;
+
+        let scrollPosition = sentenceOffsetTop - containerHeight * 0.25;
+        scrollPosition = Math.max(0, scrollPosition);
+        const maxScroll = contentEl.scrollHeight - containerHeight;
+        scrollPosition = Math.min(maxScroll, scrollPosition);
+
+        contentEl.scrollTop = scrollPosition;
+
+        // 确保普通行没有额外的底部内边距
+        sentenceEl.style.paddingBottom = ""; // 重置底部内边距
       }
-
-      // 确保滚动位置在合理范围内
-      scrollPosition = Math.max(0, scrollPosition);
-      const maxScroll = contentEl.scrollHeight - containerHeight;
-      scrollPosition = Math.min(maxScroll, scrollPosition);
-
-      // 使用直接滚动而非平滑滚动，避免键盘弹出时的延迟问题
-      contentEl.scrollTop = scrollPosition;
     }
   }
 

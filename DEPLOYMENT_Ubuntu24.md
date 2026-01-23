@@ -41,7 +41,7 @@ npm --version # 应显示相应版本
 
 #### 1.2.2 安装数据库
 
-WordTap 后端默认使用 SQLite，无需额外安装。如果需要使用 MySQL/MariaDB，请按照以下步骤安装：
+安装使用 MySQL/MariaDB，请按照以下步骤安装：
 
 ##### 安装 MariaDB
 
