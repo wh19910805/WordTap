@@ -26,7 +26,7 @@
         :key="lesson.id"
         :ref="el => { if (lesson.id) lessonRefs[lesson.id] = el }"
         @click="goToLearning(lesson.id)"
-        class="card hover:border-indigo-300 transition-all duration-300 cursor-pointer bg-[var(--surface-color)] border-[var(--border-color)] text-[var(--text-primary)] mb-3"
+        class="card hover:border-[var(--primary-color)] transition-all duration-300 cursor-pointer bg-[var(--surface-color)] border-[var(--border-color)] text-[var(--text-primary)] mb-3"
       >
         <div class="flex items-start justify-between">
           <div class="flex-1">

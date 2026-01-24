@@ -12,7 +12,7 @@
           :class="[
             'flex-1 py-4 px-4 text-center font-medium border-b-2 transition-colors',
             activeTab === tab.key
-              ? 'border-indigo-600 text-indigo-600'
+              ? 'border-[var(--primary-color)] text-[var(--primary-color)]'
               : 'border-transparent text-[var(--text-tertiary)]',
           ]"
         >
@@ -26,7 +26,7 @@
       <div class="page-container content-area">
         <div v-if="courseStore.myCourses.length === 0" class="text-center py-12">
           <div class="text-gray-400 mb-4">还没有加入任何课程</div>
-          <button @click="activeTab = 'market'" class="text-indigo-600 font-medium">
+          <button @click="activeTab = 'market'" class="text-[var(--primary-color)] font-medium">
             去课程广场看看 →
           </button>
         </div>
@@ -38,7 +38,7 @@
               v-for="course in courseStore.myCourses"
               :key="course.id"
               :data-course-name="course.name"
-              class="bg-[var(--surface-color)] border-2 border-[var(--border-color)] rounded-3xl overflow-hidden transition-all duration-300 hover:-translate-y-1 relative group hover:border-indigo-300"
+              class="bg-[var(--surface-color)] border-2 border-[var(--border-color)] rounded-3xl overflow-hidden transition-all duration-300 hover:-translate-y-1 relative group hover:border-[var(--primary-color)]"
             >
               <!-- 移除按钮 -->
               <button
@@ -78,7 +78,7 @@
                     </div>
                     <div class="w-full h-1.5 bg-white/30 rounded-full overflow-hidden">
                       <div
-                        class="h-full bg-indigo-600 transition-all duration-1000"
+                        class="h-full bg-[var(--primary-color)] transition-all duration-1000"
                         :style="{
                           width: `${
                             (getCompletedCount(course.id) / course.length) * 100
@@ -92,7 +92,7 @@
                 <!-- 课程信息 -->
                 <div class="p-3">
                   <h3
-                    class="font-semibold text-base mb-1 line-clamp-2 text-gray-900 group-hover:text-indigo-600 transition-colors duration-300"
+                    class="font-semibold text-base mb-1 line-clamp-2 text-[var(--text-primary)] group-hover:text-[var(--primary-color)] transition-colors duration-300"
                   >
                     {{ course.name }}
                   </h3>
@@ -100,7 +100,7 @@
                     class="flex items-center justify-between text-xs text-gray-500 mt-2"
                   >
                     <span
-                      class="bg-indigo-100 text-indigo-600 px-2 py-0.5 rounded-full"
+                      class="bg-[var(--primary-color)]/10 text-[var(--primary-color)] px-2 py-0.5 rounded-full"
                       >{{ course.category || "官方" }}</span
                     >
                     <div class="flex items-center gap-1">
@@ -135,7 +135,7 @@
             :class="[
               'px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors',
               selectedCategory === null
-                ? 'bg-indigo-600 text-white'
+                ? 'bg-[var(--primary-color)] text-white'
                 : 'bg-[var(--hover-color)] text-[var(--text-primary)]',
             ]"
           >
@@ -148,7 +148,7 @@
             :class="[
               'px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors',
               selectedCategory === category
-                ? 'bg-indigo-600 text-white'
+                ? 'bg-[var(--primary-color)] text-white'
                 : 'bg-[var(--hover-color)] text-[var(--text-primary)]',
             ]"
           >
@@ -165,7 +165,7 @@
             :key="course.id"
             :data-course-name="course.name"
             @click="goToDetail(course.id)"
-            class="bg-[var(--surface-color)] border-2 border-[var(--border-color)] rounded-3xl overflow-hidden transition-all duration-300 hover:-translate-y-1 cursor-pointer group hover:border-indigo-300"
+            class="bg-[var(--surface-color)] border-2 border-[var(--border-color)] rounded-3xl overflow-hidden transition-all duration-300 hover:-translate-y-1 cursor-pointer group hover:border-[var(--primary-color)]"
           >
             <!-- 课程封面 -->
             <div class="relative w-full aspect-[4/3] overflow-hidden rounded-t-3xl">
@@ -198,7 +198,7 @@
                   class="w-12 h-12 bg-white rounded-full flex items-center justify-center transform scale-90 group-hover:scale-100 transition-transform duration-300"
                 >
                   <svg
-                    class="w-6 h-6 text-indigo-600"
+                    class="w-6 h-6 text-[var(--primary-color)]"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -223,12 +223,12 @@
             <!-- 课程信息 -->
             <div class="p-3">
               <h3
-                class="font-semibold text-base mb-1 line-clamp-2 text-gray-900 group-hover:text-indigo-600 transition-colors duration-300"
+                class="font-semibold text-base mb-1 line-clamp-2 text-[var(--text-primary)] group-hover:text-[var(--primary-color)] transition-colors duration-300"
               >
                 {{ course.name }}
               </h3>
               <div class="flex items-center justify-between text-xs text-gray-500 mt-2">
-                <span class="bg-indigo-100 text-indigo-600 px-2 py-0.5 rounded-full">{{
+                <span class="bg-[var(--primary-color)]/10 text-[var(--primary-color)] px-2 py-0.5 rounded-full">{{
                   course.category || "官方"
                 }}</span>
                 <div class="flex items-center gap-1">

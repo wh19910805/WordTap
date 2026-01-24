@@ -3,7 +3,7 @@
     <div class="page-container content-area">
       <!-- 每日打卡部分 -->
       <div
-        class="bg-[var(--surface-color)] border-2 border-[var(--border-color)] rounded-3xl p-3 transition-all duration-200 hover:border-indigo-600"
+        class="bg-[var(--surface-color)] border-2 border-[var(--border-color)] rounded-3xl p-3 transition-all duration-200 hover:border-[var(--primary-color)]"
       >
         <!-- 标题栏 -->
         <div
@@ -11,7 +11,7 @@
         >
           <div class="flex items-center gap-3">
             <div
-              class="w-10 h-10 bg-indigo-600 rounded-full flex items-center justify-center"
+              class="w-10 h-10 bg-[var(--primary-color)] rounded-full flex items-center justify-center"
             >
               <component :is="FireIcon" class="w-6 h-6 text-white" />
             </div>
@@ -23,7 +23,7 @@
           <!-- 连胜和累计打卡 -->
           <div class="grid grid-cols-2 sm:grid-cols-2 gap-4">
             <div
-              class="bg-indigo-600 rounded-3xl p-5 text-white transition-all duration-200 hover:bg-indigo-700"
+              class="bg-[var(--primary-color)] rounded-3xl p-5 text-white transition-all duration-200 hover:bg-[var(--primary-color)]/90"
             >
               <div class="flex items-center gap-2 mb-3">
                 <component
@@ -68,7 +68,7 @@
             <div
               class="text-sm font-medium text-[var(--text-primary)] mb-4 flex items-center gap-2"
             >
-              <component :is="CalendarIcon" class="w-5 h-5 text-indigo-600" />
+              <component :is="CalendarIcon" class="w-5 h-5 text-[var(--primary-color)]" />
               <span>本周打卡记录</span>
             </div>
             <div class="flex gap-3">
@@ -81,10 +81,10 @@
                   :class="[
                     'w-full h-12 rounded-full flex items-center justify-center border-2 transition-all duration-300',
                     day.checked
-                      ? 'bg-indigo-600 border-indigo-600 text-white hover:bg-indigo-700'
+                      ? 'bg-[var(--primary-color)] border-[var(--primary-color)] text-white hover:bg-[var(--primary-color)]/90'
                       : day.isToday
-                      ? 'bg-[var(--surface-color)] border-indigo-600 text-indigo-600 hover:bg-[var(--hover-color)]'
-                      : 'bg-[var(--hover-color)] border-[var(--border-color)] text-[var(--text-tertiary)] hover:border-indigo-300 hover:bg-[var(--surface-color)]',
+                      ? 'bg-[var(--surface-color)] border-[var(--primary-color)] text-[var(--primary-color)] hover:bg-[var(--hover-color)]'
+                      : 'bg-[var(--hover-color)] border-[var(--border-color)] text-[var(--text-tertiary)] hover:border-[var(--primary-color)]/50 hover:bg-[var(--surface-color)]',
                   ]"
                 >
                   <component v-if="day.checked" :is="CheckIcon" class="w-5 h-5" />
@@ -125,7 +125,7 @@
             <button
               v-if="latestProgress && !loadingProgress"
               @click="continueLearning"
-              class="w-full bg-indigo-600 text-white rounded-full p-5 flex items-center justify-center gap-3 transition-transform duration-200 active:scale-95"
+              class="w-full bg-[var(--primary-color)] text-white rounded-full p-5 flex items-center justify-center gap-3 transition-transform duration-200 active:scale-95"
             >
               <div
                 class="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center"
@@ -161,10 +161,10 @@
           <!-- 操作按钮 -->
           <!-- <div class="flex gap-4">
             <button
-              class="flex-1 bg-white border-2 border-slate-200 rounded-full p-4 flex items-center justify-center gap-3 hover:border-indigo-600 transition-all duration-200"
+              class="flex-1 bg-[var(--surface-color)] border-2 border-[var(--border-color)] rounded-full p-4 flex items-center justify-center gap-3 hover:border-[var(--primary-color)] transition-all duration-200"
             >
               <svg
-                class="w-6 h-6 text-indigo-600"
+                class="w-6 h-6 text-[var(--primary-color)]"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -179,7 +179,7 @@
               <span class="text-base font-bold text-gray-900">打卡日历</span>
             </button>
             <button
-              class="flex-1 bg-indigo-600 text-white rounded-full p-4 flex items-center justify-center gap-3 transition-transform duration-200 active:scale-95"
+              class="flex-1 bg-[var(--primary-color)] text-white rounded-full p-4 flex items-center justify-center gap-3 transition-transform duration-200 active:scale-95"
             >
               <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path
@@ -197,14 +197,14 @@
 
       <!-- 最近学习 -->
       <div
-        class="bg-[var(--surface-color)] border-2 border-[var(--border-color)] rounded-3xl overflow-hidden transition-all duration-200 hover:border-indigo-600"
+        class="bg-[var(--surface-color)] border-2 border-[var(--border-color)] rounded-3xl overflow-hidden transition-all duration-200 hover:border-[var(--primary-color)]"
       >
         <div
           class="p-3 border-b border-[var(--border-color)] flex items-center justify-between"
         >
           <div class="flex items-center gap-3">
             <div
-              class="w-10 h-10 bg-indigo-600 rounded-full flex items-center justify-center"
+              class="w-10 h-10 bg-[var(--primary-color)] rounded-full flex items-center justify-center"
             >
               <component :is="ClockIcon" class="w-6 h-6 text-white" />
             </div>
@@ -212,7 +212,7 @@
           </div>
           <button
             @click="$router.push('/discovery')"
-            class="text-sm text-indigo-600 font-bold hover:text-indigo-700 flex items-center gap-1"
+            class="text-sm text-[var(--primary-color)] font-bold hover:text-[var(--primary-color)]/90 flex items-center gap-1"
           >
             <span>查看更多</span>
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -230,10 +230,10 @@
             v-for="(lesson, index) in recentLessons"
             :key="index"
             @click="goToLesson(lesson)"
-            class="flex items-center gap-4 p-4 bg-[var(--surface-color)] rounded-2xl border border-[var(--border-color)] transition-all duration-200 cursor-pointer hover:border-indigo-600"
+            class="flex items-center gap-4 p-4 bg-[var(--surface-color)] rounded-2xl border border-[var(--border-color)] transition-all duration-200 cursor-pointer hover:border-[var(--primary-color)]"
           >
             <div
-              class="w-16 h-16 bg-indigo-600 rounded-2xl flex-shrink-0 overflow-hidden relative"
+              class="w-16 h-16 bg-[var(--primary-color)] rounded-2xl flex-shrink-0 overflow-hidden relative"
             >
               <img
                 :src="getCourseCover(lesson.courseId, lesson.courseName)"
@@ -259,7 +259,7 @@
                 </div>
               </div>
               <div
-                class="text-sm text-[var(--text-secondary)] truncate hover:text-indigo-600 transition-colors duration-300"
+                class="text-sm text-[var(--text-secondary)] truncate hover:text-[var(--primary-color)] transition-colors duration-300"
               >
                 {{ lesson.title }}
               </div>
@@ -292,7 +292,7 @@
             <div class="text-[var(--text-tertiary)] text-base mb-4">暂无最近学习记录</div>
             <button
               @click="$router.push('/discovery')"
-              class="text-indigo-600 font-bold hover:text-indigo-700 text-sm flex items-center gap-1 mx-auto"
+              class="text-[var(--primary-color)] font-bold hover:text-[var(--primary-color)]/90 text-sm flex items-center gap-1 mx-auto"
             >
               <span>去课程广场开始学习</span>
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -310,14 +310,14 @@
 
       <!-- 学习统计部分 -->
       <div
-        class="bg-[var(--surface-color)] border-2 border-[var(--border-color)] rounded-3xl overflow-hidden transition-all duration-200 hover:border-indigo-600"
+        class="bg-[var(--surface-color)] border-2 border-[var(--border-color)] rounded-3xl overflow-hidden transition-all duration-200 hover:border-[var(--primary-color)]"
       >
         <div
           class="flex items-center justify-between p-3 border-b border-[var(--border-color)]"
         >
           <div class="flex items-center gap-3">
             <div
-              class="w-10 h-10 bg-indigo-600 rounded-full flex items-center justify-center"
+              class="w-10 h-10 bg-[var(--primary-color)] rounded-full flex items-center justify-center"
             >
               <component :is="CalendarIcon" class="w-6 h-6 text-white" />
             </div>
@@ -331,7 +331,7 @@
               :class="[
                 'px-4 py-2 rounded-full text-xs font-bold transition-all duration-200',
                 currentPeriod === period.key
-                  ? 'bg-indigo-600 text-white transform scale-105'
+                  ? 'bg-[var(--primary-color)] text-white transform scale-105'
                   : 'text-gray-700 hover:bg-slate-200',
               ]"
             >
@@ -343,12 +343,12 @@
         <div class="p-3">
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <div
-              class="bg-indigo-50 rounded-3xl p-6 border border-indigo-100 transition-all duration-200 hover:border-indigo-300"
+              class="bg-[var(--primary-color)]/5 rounded-3xl p-6 border border-[var(--primary-color)]/10 transition-all duration-200 hover:border-[var(--primary-color)]/30"
             >
               <div class="flex items-center justify-between mb-4">
                 <div class="text-sm font-bold text-gray-600">学习时长</div>
                 <div
-                  class="w-12 h-12 bg-indigo-600 rounded-full flex items-center justify-center"
+                  class="w-12 h-12 bg-[var(--primary-color)] rounded-full flex items-center justify-center"
                 >
                   <svg
                     class="w-6 h-6 text-white"
@@ -471,7 +471,7 @@
                 </div>
                 <div class="mt-3 flex items-center gap-1">
                   <div
-                    class="text-xs font-bold text-indigo-600 bg-indigo-100 px-3 py-1 rounded-full flex items-center gap-1"
+                    class="text-xs text-[var(--primary-color)] font-bold bg-[var(--primary-color)]/10 px-3 py-1 rounded-full flex items-center gap-1"
                   >
                     <span>74题</span>
                     <span class="text-[10px] opacity-80">待复习</span>

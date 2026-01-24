@@ -43,7 +43,7 @@
         :class="[
           'mb-5 transition-all duration-300 py-6 px-5 rounded-3xl',
           index === learningStore.currentSentenceIndex
-            ? 'opacity-100 bg-[var(--surface-color)] border-2 border-indigo-600'
+            ? 'opacity-100 bg-[var(--surface-color)] border-2 border-[var(--primary-color)]'
             : 'opacity-50 bg-[var(--surface-color)] border-2 border-[var(--border-color)]',
         ]"
       >
