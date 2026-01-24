@@ -12,11 +12,11 @@
         class="p-2 hover:bg-[var(--hover-color)] rounded-full transition-colors shrink-0"
       >
         <svg
-          class="w-6 h-6 text-indigo-600"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
+            class="w-6 h-6 text-[var(--primary-color)]"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
           <path
             stroke-linecap="round"
             stroke-linejoin="round"
@@ -25,7 +25,7 @@
           />
         </svg>
       </button>
-      <div class="text-sm font-bold text-indigo-600 shrink-0 ml-2">
+      <div class="text-sm font-bold text-[var(--primary-color)] shrink-0 ml-2">
         {{ currentLessonIndex + 1 }}/{{ totalLessons }}
       </div>
       <div class="text-sm font-medium text-[var(--text-primary)] truncate ml-2 flex-1">
@@ -84,7 +84,7 @@
             <!-- 单词处理：可点击播放语音和显示 -->
             <template v-else>
               <span
-                class="inline-block cursor-pointer hover:text-fuchsia-500 transition-all duration-200 hover:scale-110 mr-2"
+                class="inline-block cursor-pointer hover:text-[var(--primary-color)] transition-all duration-200 hover:scale-110 mr-2"
                 @click="handleWordClick(index, wordIndex, word)"
               >
                 <!-- 单词中的每个字符 -->
@@ -113,7 +113,7 @@
         </div>
 
         <!-- 音标显示区域 -->
-        <div v-if="sentence.soundmark" class="text-sm text-gray-600 mt-2">
+        <div v-if="sentence.soundmark" class="text-sm text-[var(--text-secondary)] mt-2">
           音标：{{ sentence.soundmark }}
         </div>
       </div>
@@ -130,12 +130,12 @@
       <!-- 错误提示 -->
       <div
         v-if="validationErrors.length > 0"
-        class="mb-4 p-4 bg-red-50 dark:bg-red-900/20 border-2 border-red-200 dark:border-red-800 rounded-3xl"
+        class="mb-4 p-4 bg-[var(--error-color)]/10 border-2 border-[var(--error-color)]/30 rounded-3xl"
       >
-        <div class="text-red-600 dark:text-red-400 text-sm font-bold mb-1">
+        <div class="text-[var(--error-color)] text-sm font-bold mb-1">
           发现以下错误：
         </div>
-        <div class="text-red-500 dark:text-red-300 text-sm space-y-2">
+        <div class="text-[var(--error-color)] text-sm space-y-2">
           <div v-for="error in validationErrors" :key="error.index">
             {{ error.message }}
           </div>
@@ -152,7 +152,7 @@
             title="重播当前行"
           >
             <svg
-              class="w-6 h-6 text-indigo-600"
+              class="w-6 h-6 text-[var(--primary-color)]"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -168,7 +168,7 @@
           <button
             @click="handleRestart"
             :disabled="isSubmitting"
-            class="p-3 rounded-full text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+            class="p-3 rounded-full text-xs font-bold text-white bg-[var(--primary-color)] hover:bg-[var(--primary-color)]/90 active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
             title="重新学习"
           >
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -191,7 +191,7 @@
             title="跳过当前课时"
           >
             <svg
-              class="w-5 h-5 text-indigo-600"
+              class="w-5 h-5 text-[var(--primary-color)]"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -211,7 +211,7 @@
             :class="
               isSubmitting
                 ? 'bg-gray-400 cursor-not-allowed opacity-50 text-white'
-                : 'bg-lime-400 text-black hover:bg-lime-500 active:scale-95'
+                : 'bg-[var(--accent-color)] text-white hover:bg-[var(--accent-color)]/90 active:scale-95'
             "
             title="提交当前课时"
           >
@@ -978,24 +978,9 @@ const initLearningPage = async () => {
   // 初始化学习状态
   learningStore.initLearning(lessonData);
 
-  // 聚焦输入框 - 使用nextTick确保DOM更新完成，再添加延迟确保键盘能被正确调起
+  // 聚焦输入框 - 使用nextTick确保DOM更新完成
   nextTick(() => {
-    setTimeout(() => {
-      focusInput();
-      // 对于移动设备，额外的触摸事件触发可能有助于浏览器调起键盘
-      if (hiddenInputRef.value) {
-        // 创建并触发一个触摸事件，模拟用户点击
-        const touchEvent = new TouchEvent('touchstart', {
-          bubbles: true,
-          cancelable: true,
-          view: window,
-          touches: [{ clientX: 0, clientY: 0 }],
-          targetTouches: [{ clientX: 0, clientY: 0 }],
-          changedTouches: [{ clientX: 0, clientY: 0 }]
-        });
-        hiddenInputRef.value.dispatchEvent(touchEvent);
-      }
-    }, 200);
+    focusInput();
   });
 };
 
@@ -1024,46 +1009,16 @@ const focusInput = () => {
   nextTick(() => {
     if (hiddenInputRef.value) {
       try {
-        // 先移除所有事件监听器，避免重复触发
-        hiddenInputRef.value.removeEventListener('touchstart', focusInput);
-        
         // 聚焦输入框
         hiddenInputRef.value.focus();
         
-        // 对于移动设备，额外触发点击事件可能有助于调起键盘
+        // 对于移动设备，触发click事件有助于调起键盘
         const clickEvent = new MouseEvent('click', {
           bubbles: true,
           cancelable: true,
           view: window
         });
         hiddenInputRef.value.dispatchEvent(clickEvent);
-        
-        // 对于iOS设备，可能需要额外的处理
-        if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
-          // 创建并触发一个触摸事件
-          const touchEvent = new TouchEvent('touchstart', {
-            bubbles: true,
-            cancelable: true,
-            view: window,
-            touches: [{ clientX: 0, clientY: 0 }],
-            targetTouches: [{ clientX: 0, clientY: 0 }],
-            changedTouches: [{ clientX: 0, clientY: 0 }]
-          });
-          hiddenInputRef.value.dispatchEvent(touchEvent);
-          
-          // 延迟触发touchend事件
-          setTimeout(() => {
-            const touchEndEvent = new TouchEvent('touchend', {
-              bubbles: true,
-              cancelable: true,
-              view: window,
-              touches: [],
-              targetTouches: [],
-              changedTouches: [{ clientX: 0, clientY: 0 }]
-            });
-            hiddenInputRef.value.dispatchEvent(touchEndEvent);
-          }, 100);
-        }
       } catch (error) {
         console.error('聚焦输入框失败:', error);
       }

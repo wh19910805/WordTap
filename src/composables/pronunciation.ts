@@ -49,8 +49,22 @@ export function usePronunciation() {
   function getPronunciationUrl(text: string | undefined): string {
     if (!text) return "";
 
-    // 编码文本
-    const encodedText = encodeURIComponent(text.trim());
+    // 处理文本：确保符合有道 API 要求
+    let processedText = text.trim();
+
+    // 1. 移除中文文本（仅支持英文）
+    processedText = processedText.replace(/[\u4e00-\u9fa5]/g, "");
+
+    // 2. 限制文本长度（建议不超过500个字符）
+    if (processedText.length > 500) {
+      processedText = processedText.substring(0, 500);
+    }
+
+    // 3. 确保文本非空
+    if (!processedText) return "";
+
+    // 4. 编码文本（符合 URL 编码要求）
+    const encodedText = encodeURIComponent(processedText);
     const type = getPronunciationType();
 
     // 有道词典 API

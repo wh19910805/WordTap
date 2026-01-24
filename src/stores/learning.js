@@ -343,11 +343,30 @@ export const useLearningStore = defineStore("learning", () => {
     if (settingsStore.mute) return;
     if (!text) return;
 
+    // 修复常见的缩写错误
+    let processedText = text;
+    // 将 "Whats" 修复为 "What's"
+    processedText = processedText.replace(/\bWhats\b/g, "What's");
+    // 将 "name s" 修复为 "name's"
+    processedText = processedText.replace(/name\s+s/g, "name's");
+    // 将 "dont" 修复为 "don't"
+    processedText = processedText.replace(/\bdont\b/g, "don't");
+    // 将 "cant" 修复为 "can't"
+    processedText = processedText.replace(/\bcant\b/g, "can't");
+    // 将 "wont" 修复为 "won't"
+    processedText = processedText.replace(/\bwont\b/g, "won't");
+
     // 停止当前播放的音频
     stop();
 
     // 获取发音URL并更新音频源（直接使用完整文本，支持单词、句子、段落、文章）
-    const pronunciationUrl = getPronunciationUrl(text);
+    const pronunciationUrl = getPronunciationUrl(processedText);
+    console.log(
+      "[DEBUG] 播放音频 URL:",
+      pronunciationUrl,
+      "文本:",
+      processedText,
+    );
     updateSource(pronunciationUrl);
 
     isPlaying.value = true;
@@ -355,8 +374,9 @@ export const useLearningStore = defineStore("learning", () => {
     try {
       // 播放音频
       await play();
+      console.log("[DEBUG] 音频播放成功");
     } catch (error) {
-      console.error("播放音频失败:", error);
+      console.error("播放音频失败:", error, "URL:", pronunciationUrl);
     } finally {
       // 更新播放状态
       isPlaying.value = getIsPlaying();
@@ -379,8 +399,36 @@ export const useLearningStore = defineStore("learning", () => {
       courseStore.lessonData?.sentences[currentSentenceIndex.value];
     if (!sentence) return;
 
-    const sentenceText = sentence.text;
+    let sentenceText = sentence.text;
     if (!sentenceText) return;
+
+    // 处理自动填充人名的情况：去掉人名前缀，只播放句子内容
+    // 匹配格式：
+    // 1. 尊称+名字+冒号，如 "MR. BLAKE:"
+    // 2. 名字+冒号，如 "ROBERT:"
+    // 3. 尊称+名字+空格，如 "MR. BLAKE "
+    // 4. 支持冒号后无空格的情况，如 "MR. BLAKE:Good"
+    // 5. 支持中文全角冒号，如 "TEACHER：Whose"
+    // 6. 支持多词头衔，如 "CUSTOMS OFFICER:"
+    let cleanedText = sentenceText;
+    // 匹配并移除名字前缀，支持ASCII冒号(:)和中文全角冒号(：)
+    // 支持多词头衔（如 "CUSTOMS OFFICER"）和带尊称的头衔
+    cleanedText = cleanedText.replace(/^(?:[A-Z][a-zA-Z]*\.?\s*)+[:：]/i, "");
+    // 移除可能的前导空格
+    cleanedText = cleanedText.trim();
+    sentenceText = cleanedText;
+
+    // 修复常见的缩写错误
+    // 将 "Whats" 修复为 "What's"
+    sentenceText = sentenceText.replace(/\bWhats\b/g, "What's");
+    // 将 "name s" 修复为 "name's"
+    sentenceText = sentenceText.replace(/name\s+s/g, "name's");
+    // 将 "dont" 修复为 "don't"
+    sentenceText = sentenceText.replace(/\bdont\b/g, "don't");
+    // 将 "cant" 修复为 "can't"
+    sentenceText = sentenceText.replace(/\bcant\b/g, "can't");
+    // 将 "wont" 修复为 "won't"
+    sentenceText = sentenceText.replace(/\bwont\b/g, "won't");
 
     await playAudio(sentenceText);
   }
