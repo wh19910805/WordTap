@@ -139,59 +139,64 @@ ol {
   animation: fadeIn 0.3s ease-in;
 }
 
-/* 核心组件样式 - Gen Z Flat Design */
+/* 核心组件样式 - Gen Z Flat Design 无阴影扁平化 */
 @layer components {
-  /* 卡片样式 */
+  /* 卡片样式 - 统一圆角 16px */
   .card {
-    @apply bg-[var(--surface-color)] border-2 border-[var(--border-color)] rounded-3xl p-4 transition-all duration-200 mb-6 w-full;
+    @apply bg-[var(--surface-color)] border-2 border-[var(--border-color)] rounded-2xl p-4 transition-all duration-200 mb-6 w-full;
   }
 
   .card-hover {
-    @apply hover:border-[var(--primary-color)];
+    @apply hover:border-[var(--primary-color)] hover:bg-[var(--hover-color)];
   }
 
-  /* 主要按钮 */
+  /* 主要按钮 - 圆角 12px */
   .btn-primary {
-    @apply bg-[var(--primary-color)] text-white font-bold px-8 py-3 rounded-full active:scale-95 transition-transform duration-200;
+    @apply bg-[var(--primary-color)] text-white font-bold px-6 py-3 rounded-xl active:scale-95 transition-transform duration-200;
   }
 
-  /* 次要按钮 */
+  /* 次要按钮 - 圆角 12px */
   .btn-secondary {
-    @apply bg-[var(--surface-color)] border-2 border-[var(--border-color)] text-[var(--primary-color)] font-bold px-8 py-3 rounded-full hover:border-[var(--primary-color)] active:scale-95 transition-all duration-200;
+    @apply bg-[var(--surface-color)] border-2 border-[var(--border-color)] text-[var(--primary-color)] font-bold px-6 py-3 rounded-xl hover:border-[var(--primary-color)] hover:bg-[var(--hover-color)] active:scale-95 transition-all duration-200;
   }
 
-  /* 强调按钮 */
+  /* 强调按钮 - 圆角 12px */
   .btn-accent {
-    @apply bg-[var(--accent-color)] text-white font-bold px-8 py-3 rounded-full active:scale-95 transition-transform duration-200;
+    @apply bg-[var(--accent-color)] text-white font-bold px-6 py-3 rounded-xl active:scale-95 transition-transform duration-200;
   }
 
-  /* 危险按钮 */
+  /* 危险按钮 - 圆角 12px */
   .btn-danger {
-    @apply bg-[var(--error-color)] text-white font-bold px-8 py-3 rounded-full active:scale-95 transition-transform duration-200;
+    @apply bg-[var(--error-color)] text-white font-bold px-6 py-3 rounded-xl active:scale-95 transition-transform duration-200;
   }
 
-  /* 输入框 */
+  /* 输入框 - 圆角 12px */
   .input-field {
-    @apply w-full bg-[var(--border-color)] rounded-2xl px-4 py-3 text-lg font-medium focus:ring-0 focus:border-2 focus:border-[var(--primary-color)] focus:bg-[var(--surface-color)] transition-all duration-200;
+    @apply w-full bg-[var(--border-color)] rounded-xl px-4 py-3 text-lg font-medium focus:ring-0 focus:border-2 focus:border-[var(--primary-color)] focus:bg-[var(--surface-color)] transition-all duration-200;
   }
 
-  /* 标签样式 */
+  /* 标签样式 - 圆角 8px */
   .tag {
-    @apply bg-[var(--accent-color)] text-white text-xs font-bold px-3 py-1 rounded-full;
+    @apply bg-[var(--accent-color)] text-white text-xs font-bold px-3 py-1 rounded-lg;
   }
 
-  /* 数据统计卡片 */
+  /* 数据统计卡片 - 圆角 16px */
   .stat-card {
-    @apply bg-[var(--surface-color)] border-2 border-[var(--border-color)] rounded-3xl p-5 transition-all duration-200 hover:border-[var(--primary-color)];
+    @apply bg-[var(--surface-color)] border-2 border-[var(--border-color)] rounded-2xl p-5 transition-all duration-200 hover:border-[var(--primary-color)] hover:bg-[var(--hover-color)];
   }
 
-  /* 进度条 */
+  /* 进度条 - 圆角 8px */
   .progress-bar {
-    @apply w-full bg-[var(--border-color)] rounded-full h-2 overflow-hidden;
+    @apply w-full bg-[var(--border-color)] rounded-lg h-2 overflow-hidden;
   }
 
   .progress-fill {
-    @apply h-full bg-[var(--primary-color)] transition-all duration-500;
+    @apply h-full bg-[var(--primary-color)] transition-all duration-500 rounded-lg;
+  }
+
+  /* Gen Z Flat 设计 - 图片蒙版 */
+  .img-mask {
+    @apply rounded-2xl overflow-hidden;
   }
 }
 
@@ -210,34 +215,66 @@ ol {
   animation: logoFloat 3s ease-in-out infinite;
 }
 
-/* 主题色变量覆盖 - Gen Z Flat Design */
+/* 主题色变量 - Gen Z Flat Design 高饱和度配色 */
 :root {
-  --primary-color: #4f46e5; /* 系统主色调 - indigo-600 */
-  --accent-color: #22c55e; /* 亮绿色 */
-  --background-color: #f3f4f6; /* 浅灰色背景 */
-  --surface-color: #ffffff; /* 白色卡片 */
-  --border-color: #e5e7eb; /* 浅灰色边框 */
-  --error-color: #ef4444; /* 鲜艳红色 */
-  --success-color: #22c55e; /* 亮绿色 */
-  --text-primary: #1e293b; /* 深灰色文本 */
-  --text-secondary: #64748b; /* 中灰色文本 */
-  --text-tertiary: #94a3b8; /* 浅灰色文本 */
-  --hover-color: #e5e7eb; /* 浅灰色悬停 */
+  /* 主色调 - 鲜艳靛蓝 */
+  --primary-color: #6366f1;
+  --primary-light: #818cf8;
+  --primary-dark: #4f46e5;
+
+  /* 强调色 - 活力青柠绿 */
+  --accent-color: #84cc16;
+  --accent-light: #a3e635;
+  --accent-dark: #65a30d;
+
+  /* 背景色 - 清爽浅灰 */
+  --background-color: #f8fafc;
+  --surface-color: #ffffff;
+
+  /* 边框和悬停 - 柔和灰 */
+  --border-color: #e2e8f0;
+  --hover-color: #f1f5f9;
+
+  /* 状态色 - 高饱和度 */
+  --error-color: #f43f5e;
+  --success-color: #10b981;
+  --warning-color: #f59e0b;
+
+  /* 文本色 - 清晰对比 */
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-tertiary: #94a3b8;
+
+  /* Gen Z 辅助色 */
+  --genz-pink: #ec4899;
+  --genz-cyan: #06b6d4;
+  --genz-purple: #8b5cf6;
+  --genz-orange: #f97316;
 }
 
 /* Gen Z Flat 深色主题 */
 :root.dark {
-  --primary-color: #4f46e5; /* 系统主色调 - indigo-600 */
-  --accent-color: #22c55e; /* 亮绿色 */
-  --background-color: #0f172a; /* 深蓝色背景 */
-  --surface-color: #1e293b; /* 深灰色卡片 */
-  --border-color: #475569; /* 中灰色边框 */
-  --error-color: #f87171; /* 亮红色 */
-  --success-color: #34d399; /* 亮绿色 */
-  --text-primary: #f1f5f9; /* 浅灰色文本 */
-  --text-secondary: #cbd5e1; /* 中灰色文本 */
-  --text-tertiary: #94a3b8; /* 深灰色文本 */
-  --hover-color: #334155; /* 深灰色悬停 */
+  --primary-color: #818cf8;
+  --primary-light: #a5b4fc;
+  --primary-dark: #6366f1;
+
+  --accent-color: #a3e635;
+  --accent-light: #bef264;
+  --accent-dark: #84cc16;
+
+  --background-color: #0f172a;
+  --surface-color: #1e293b;
+
+  --border-color: #334155;
+  --hover-color: #334155;
+
+  --error-color: #fb7185;
+  --success-color: #34d399;
+  --warning-color: #fbbf24;
+
+  --text-primary: #f8fafc;
+  --text-secondary: #cbd5e1;
+  --text-tertiary: #64748b;
 }
 
 /* 全局深色主题样式 */

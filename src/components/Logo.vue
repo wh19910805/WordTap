@@ -4,7 +4,7 @@
       <img
         :src="logoImg"
         alt="WordTap Logo"
-        class="w-10 h-10 rounded-xl shadow-lg logo-float"
+        class="w-10 h-10 rounded-xl logo-float"
       />
     </div>
     <span class="text-2xl font-bold gradient-text">WordTap</span>
