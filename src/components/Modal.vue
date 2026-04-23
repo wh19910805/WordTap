@@ -5,7 +5,7 @@
     @click.self="handleClose"
   >
     <div
-      class="modal-container bg-white rounded-3xl shadow-xl max-w-md w-full transform transition-all duration-300 ease-out"
+      class="modal-container bg-white rounded-2xl max-w-md w-full transform transition-all duration-300 ease-out"
       :style="modalStyle"
     >
       <!-- 标题 -->

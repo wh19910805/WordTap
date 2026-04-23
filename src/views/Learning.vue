@@ -9,20 +9,11 @@
     >
       <button
         @click="goBack"
-        class="p-2 hover:bg-[var(--hover-color)] rounded-full transition-colors shrink-0"
+        class="w-10 h-10 rounded-xl bg-[var(--surface-color)] border-2 border-[var(--border-color)] hover:border-[var(--primary-color)] text-[var(--primary-color)] active:scale-95 transition-all duration-200 flex items-center justify-center shrink-0"
       >
-        <svg
-            class="w-6 h-6 text-[var(--primary-color)]"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M15 19l-7-7 7-7"
-          />
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M19 12H5"/>
+          <path d="M12 19l-7-7 7-7"/>
         </svg>
       </button>
       <div class="text-sm font-bold text-[var(--primary-color)] shrink-0 ml-2">
@@ -41,10 +32,10 @@
         :key="sentence.id"
         :data-sentence-index="index"
         :class="[
-          'mb-5 transition-all duration-300 py-6 px-5 rounded-3xl',
+          'mb-5 transition-all duration-300 py-6 px-5 rounded-2xl',
           index === learningStore.currentSentenceIndex
             ? 'opacity-100 bg-[var(--surface-color)] border-2 border-[var(--primary-color)]'
-            : 'opacity-50 bg-[var(--surface-color)] border-2 border-[var(--border-color)]',
+            : 'opacity-50 bg-[var(--surface-color)] border-2 border-[var(--border-color)] hover:border-[var(--primary-color)]/50',
         ]"
       >
         <!-- 中文释义 -->
@@ -145,83 +136,58 @@
       <!-- 功能按钮组 -->
       <div class="flex items-center justify-between gap-3">
         <!-- 左侧按钮：重播、重新学习 -->
-        <div class="flex items-center gap-2">
+        <div class="flex items-center gap-3">
+          <!-- 重播音频按钮 -->
           <button
             @click="replayAudio"
-            class="p-3 bg-[var(--border-color)] text-[var(--text-primary)] rounded-full text-xs font-bold active:scale-95 transition-all flex items-center justify-center"
-            title="重播当前行"
+            class="w-12 h-12 rounded-2xl bg-[var(--surface-color)] border-2 border-[var(--border-color)] text-[var(--primary-color)] hover:bg-[var(--hover-color)] hover:border-[var(--primary-color)] active:scale-95 transition-all duration-200 flex items-center justify-center"
+            title="重播当前音频"
           >
-            <svg
-              class="w-6 h-6 text-[var(--primary-color)]"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
-              />
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M11 5L6 9H2v6h4l5 4V5z"/>
+              <path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
+              <path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>
             </svg>
           </button>
+
+          <!-- 重新开始按钮 -->
           <button
             @click="handleRestart"
             :disabled="isSubmitting"
-            class="p-3 rounded-full text-xs font-bold text-white bg-[var(--primary-color)] hover:bg-[var(--primary-color)]/90 active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
-            title="重新学习"
+            class="w-12 h-12 rounded-2xl bg-[var(--primary-color)] text-white hover:bg-[var(--primary-color)]/90 active:scale-95 transition-all duration-200 flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
+            title="重新学习本课"
           >
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-              />
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
+              <path d="M3 3v5h5"/>
             </svg>
           </button>
         </div>
 
         <!-- 右侧按钮：跳过、提交 -->
-        <div class="flex items-center gap-2">
+        <div class="flex items-center gap-3">
+          <!-- 跳过按钮 -->
           <button
             @click="handleSkip"
             :disabled="isSubmitting"
-            class="p-3 bg-[var(--border-color)] text-[var(--text-primary)] rounded-full text-xs font-bold hover:bg-[var(--hover-color)] active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+            class="w-12 h-12 rounded-2xl bg-[var(--surface-color)] border-2 border-[var(--border-color)] text-[var(--text-secondary)] hover:bg-[var(--hover-color)] hover:border-[var(--primary-color)]/50 active:scale-95 transition-all duration-200 flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
             title="跳过当前课时"
           >
-            <svg
-              class="w-5 h-5 text-[var(--primary-color)]"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M17 8l4 4m0 0l-4 4m4-4H3"
-              />
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M13 5l7 7-7 7M5 5l7 7-7 7"/>
             </svg>
           </button>
+
+          <!-- 提交按钮 -->
           <button
             @click="handleSubmit"
             :disabled="isSubmitting"
-            class="p-3 rounded-full text-xs font-bold transition-all flex items-center justify-center"
-            :class="
-              isSubmitting
-                ? 'bg-gray-400 cursor-not-allowed opacity-50 text-white'
-                : 'bg-[var(--accent-color)] text-white hover:bg-[var(--accent-color)]/90 active:scale-95'
-            "
-            title="提交当前课时"
+            class="w-14 h-14 rounded-2xl text-white active:scale-95 transition-all duration-200 flex items-center justify-center"
+            :class="isSubmitting ? 'bg-gray-400 cursor-not-allowed' : 'bg-[var(--accent-color)] hover:bg-[var(--accent-color)]/90'"
+            title="提交完成学习"
           >
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M5 13l4 4L19 7"
-              />
+            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M5 13l4 4L19 7"/>
             </svg>
           </button>
         </div>
