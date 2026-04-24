@@ -9,8 +9,8 @@ services:
       - "8000:8000"
     environment:
       - DATABASE_URL=sqlite:///./wordtap.db
-      - SECRET_KEY=your_secure_secret_key
-      - CORS_ORIGINS=http://localhost,http://localhost:8080
+      - SECRET_KEY=dev_secret_key_change_in_production
+      - CORS_ORIGINS=*
     volumes:
       - ./backend:/app
     restart: always

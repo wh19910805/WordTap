@@ -11,6 +11,31 @@ node_modules
 dist
 dist-ssr
 *.local
+sound
+dicts\en
+public/sound
+public/dicts
+
+# Python backend
+backend/__pycache__/
+backend/*.pyc
+backend/venv/
+backend/.venv
+backend/.env
+backend/*.sqlite3
+backend/.pytest_cache/
+backend/requirements.lock
+
+# Scripts in root directory
+*.py
+test*.txt
+
+# Docker and deployment
+daemon.json
+docker-compose.yml
+deploy.sh
+Dockerfile.frontend
+nginx.conf
 
 # Editor directories and files
 .vscode/*
