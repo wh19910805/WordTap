@@ -98,12 +98,13 @@ export const useCourseStore = defineStore("course", () => {
           coursesLoaded.value = true;
         } else {
           // 4. 缓存也失败时，使用静态文件作为最后降级方案
-          // 同时加载 article、word 和 xingrong 类型的课程
-          const [articleResponse, wordResponse, xingrongResponse] =
+          // 同时加载 article、word、xingrong 和 desperate 类型的课程
+          const [articleResponse, wordResponse, xingrongResponse, desperateResponse] =
             await Promise.all([
               fetch("/list/article.json").catch(() => null),
               fetch("/list/word.json").catch(() => null),
               fetch("/list/xingrong.json").catch(() => null),
+              fetch("/list/desperate.json").catch(() => null),
             ]);
 
           const articleData = articleResponse
@@ -112,6 +113,9 @@ export const useCourseStore = defineStore("course", () => {
           const wordData = wordResponse ? await wordResponse.json() : [];
           const xingrongData = xingrongResponse
             ? await xingrongResponse.json()
+            : [];
+          const desperateData = desperateResponse
+            ? await desperateResponse.json()
             : [];
 
           // 为 article 类型添加 type 字段
@@ -126,12 +130,18 @@ export const useCourseStore = defineStore("course", () => {
             ...c,
             type: c.type || "xingrong",
           }));
+          // desperate 类型
+          const desperateCourses = desperateData.map((c) => ({
+            ...c,
+            type: c.type || "desperate",
+          }));
 
           // 合并所有课程
           courses.value = [
             ...articleCourses,
             ...wordCourses,
             ...xingrongCourses,
+            ...desperateCourses,
           ];
           // 设置课程加载完成标志
           coursesLoaded.value = true;
@@ -258,6 +268,33 @@ export const useCourseStore = defineStore("course", () => {
             lessonNum: i + 1,
           };
         });
+      } else if (courseType === "desperate") {
+        // desperate 类型：直接从JSON文件加载课时数据
+        // url 格式: dicts/en/LAST-FANTASY/data/pdf/desperate_s01e01.json
+        if (!course.url) {
+          console.error(`课程ID ${courseId} 的URL为空，无法加载课时列表`);
+          lessons = [];
+          return;
+        }
+        try {
+          const response = await fetch(`/${course.url}`);
+          if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+          }
+          const data = await response.json();
+          // 每集一个课时
+          lessons = [
+            {
+              id: course.id,
+              title: course.name || `第 ${course.id} 集`,
+              lessonNum: 1,
+              sentenceCount: data.length,
+            },
+          ];
+        } catch (err) {
+          console.error("加载绝望的主妇课时失败:", err);
+          lessons = [];
+        }
       } else {
         // 优先使用后端API获取课时列表
         try {
@@ -441,6 +478,66 @@ export const useCourseStore = defineStore("course", () => {
           console.warn(
             `星荣课程加载不完整：预期55个课时，实际加载${lessons.length}个`,
           );
+        }
+      } else if (courseType === "desperate") {
+        // desperate 类型：加载单个课时（每集一个文件）
+        // url 格式: dicts/en/LAST-FANTASY/data/pdf/desperate_s01e01.json
+        if (!course.url) {
+          console.error(`课程ID ${courseId} 的URL为空，无法加载课程详情`);
+          return null;
+        }
+        
+        // 解析课时的季和集，用于构建本地音频URL
+        const idMatch = course.id.match(/desperate_s(\d+)/);
+        const season = idMatch ? idMatch[1] : "01";
+        const currentSeason = season.padStart(2, "0");
+        
+        // 尝试获取当前课时编号
+        let episode = "01";
+        if (lessonId) {
+          const lessonMatch = lessonId.match(/e(\d+)/);
+          if (lessonMatch) {
+            episode = lessonMatch[1].padStart(2, "0");
+          }
+        } else if (course.lessons && course.lessons.length > 0) {
+          const firstLesson = course.lessons[0];
+          if (firstLesson.title) {
+            const titleMatch = firstLesson.title.match(/第(\d+)集/);
+            if (titleMatch) {
+              episode = titleMatch[1].padStart(2, "0");
+            }
+          }
+        }
+        
+        // 构建本地音频URL（课时级别，用于整集播放）
+        const localAudioUrl = `/sound/desperate_housewives/desperate_s${currentSeason}e${episode}.mp3`;
+        
+        try {
+          const response = await fetch(`/${course.url}`);
+          if (!response.ok) {
+            console.error(
+              `加载绝望的主妇课时失败: HTTP ${response.status}`,
+            );
+            return null;
+          }
+          const data = await response.json();
+          // 将每句台词转换为一个课时
+          lessons = data.map((item, index) => ({
+            id: `desperate-${course.id}-${index}`,
+            title: `第 ${index + 1} 句`,
+            text: item.english,
+            textTranslate: item.chinese,
+            nameList: [],
+            sentenceCount: 1,
+          }));
+          
+          // 在第一个课时添加本地音频URL（用于整集播放）
+          if (lessons.length > 0) {
+            lessons[0].audioSrc = localAudioUrl;
+          }
+        } catch (error) {
+          console.error("加载绝望的主妇课时失败:", error);
+          lessons = [];
         }
       } else {
         // 加载课程数据

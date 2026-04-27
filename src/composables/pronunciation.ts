@@ -9,6 +9,90 @@ export enum PronunciationType {
 }
 
 /**
+ * 本地音频目录映射
+ * 用于绝望主妇等课程的本地音频
+ */
+// 缓存音频目录存在性检查
+let localAudioDirsChecked = false;
+const localAudioDirs: Record<string, boolean> = {};
+
+/**
+ * 检查本地音频目录是否存在
+ */
+function checkLocalAudioDir(courseType: string): boolean {
+  if (!courseType) return false;
+  
+  // 已检查过直接返回结果
+  if (localAudioDirsChecked && localAudioDirs[courseType] !== undefined) {
+    return localAudioDirs[courseType] || false;
+  }
+  
+  // 检查常见音频目录
+  const audioDirs = [
+    `/sound/desperate_housewives`,
+    `/sound/${courseType}`,
+  ];
+  
+  for (const dir of audioDirs) {
+    try {
+      // 使用fetch检查目录是否存在（实际是检查目录中的文件）
+      // 这里简单返回true，让后续逻辑尝试加载
+      localAudioDirs[courseType] = true;
+    } catch (e) {
+      localAudioDirs[courseType] = false;
+    }
+  }
+  
+  localAudioDirsChecked = true;
+  return localAudioDirs[courseType] || false;
+}
+
+/**
+ * 获取本地音频文件URL
+ * @param courseType 课程类型
+ * @param episode 集数 (如 1 表示 s01e01)
+ * @returns 本地音频URL或null
+ */
+export function getLocalAudioUrl(courseType: string, episode: number | string): string | null {
+  if (!courseType || !episode) return null;
+  
+  // 只有desperate类型使用本地音频
+  if (courseType !== "desperate") return null;
+  
+  // episode可能是数字或字符串格式
+  let ep = episode;
+  if (typeof episode === "number") {
+    ep = String(episode).padStart(2, "0");
+  }
+  
+  // 绝望主妇音频命名格式: desperate_s01e01.mp3
+  // 需要从episode解析出季和集
+  // 这里简化处理，假设传入的是完整的集标识如 "s01e01"
+  const episodeStr = String(ep);
+  
+  // 检查是否是 season + episode 格式，如 s01e01
+  if (!episodeStr.match(/^s\d+e\d+$/i)) {
+    return null;
+  }
+  
+  return `/sound/desperate_housewives/desperate_${episodeStr.toLowerCase()}.mp3`;
+}
+
+/**
+ * 预检查本地音频文件是否存在
+ * @param audioUrl 音频URL
+ * @returns Promise<boolean>
+ */
+async function checkAudioFileExists(audioUrl: string): Promise<boolean> {
+  try {
+    const response = await fetch(audioUrl, { method: "HEAD" });
+    return response.ok;
+  } catch {
+    return false;
+  }
+}
+
+/**
  * 发音功能管理
  * 使用有道词典 Web API 进行语音播放
  */
@@ -78,6 +162,8 @@ export function usePronunciation() {
     getPronunciationType,
     togglePronunciation,
     getPronunciationUrl,
+    getLocalAudioUrl,
+    checkAudioFileExists,
   };
 }
 
@@ -101,4 +187,27 @@ export function getPronunciationUrl(text: string | undefined): string {
   // type=1: 英音
   // type=2: 美音
   return `https://dict.youdao.com/dictvoice?type=${type}&audio=${encodedText}`;
+}
+
+/**
+ * 获取音频URL（优先本地音频，fallback到有道TTS）
+ * @param text 要发音的文本
+ * @param localAudioUrl 本地音频URL（可选）
+ * @returns Promise<string> 音频URL
+ */
+export async function getAudioUrl(text: string, localAudioUrl?: string | null): Promise<string> {
+  // 1. 优先使用本地音频
+  if (localAudioUrl) {
+    try {
+      const exists = await checkAudioFileExists(localAudioUrl);
+      if (exists) {
+        return localAudioUrl;
+      }
+    } catch {
+      // 检查失败，继续使用有道
+    }
+  }
+  
+  // 2. fallback到有道TTS
+  return getPronunciationUrl(text);
 }

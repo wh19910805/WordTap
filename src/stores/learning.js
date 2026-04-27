@@ -345,8 +345,17 @@ export const useLearningStore = defineStore("learning", () => {
     // 停止当前播放的音频
     stop();
 
-    // 获取发音URL并更新音频源（直接使用完整文本，支持单词、句子、段落、文章）
-    const pronunciationUrl = getPronunciationUrl(processedText);
+    // 获取发音URL（优先使用本地音频，fallback到有道TTS）
+    let pronunciationUrl;
+    const course = courseStore.currentCourse;
+    const lessonData = courseStore.lessonData;
+    
+    // 如果课时数据有本地音频URL，使用它；否则使用有道TTS
+    if (lessonData?.audioSrc) {
+      pronunciationUrl = lessonData.audioSrc;
+    } else {
+      pronunciationUrl = getPronunciationUrl(processedText);
+    }
 
     updateSource(pronunciationUrl);
 

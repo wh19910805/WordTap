@@ -17,8 +17,7 @@ class Settings(BaseSettings):
     # CORS设置
     CORS_ORIGINS: List[str] = ["*"]  # 生产环境应限制来源
     
-    class Config:
-        env_file = ".env"
-        case_sensitive = True
+    # 允许额外字段
+    model_config = {"extra": "ignore"}
 
 settings = Settings()
